@@ -116,7 +116,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ch15\15.3.test.hpp" />
+    <ClInclude Include="ch15\15.4.test.hpp" />
     <ClInclude Include="ch15\common_dp_sln.hpp" />
+    <ClInclude Include="ch15\common_subsequence.hpp" />
     <ClInclude Include="ch15\cutting_pod.hpp" />
     <ClInclude Include="ch15\15.1.test.hpp" />
     <ClInclude Include="ch15\fibonacci.hpp" />
