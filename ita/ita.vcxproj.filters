@@ -33,6 +33,9 @@
     <ClInclude Include="ch15\fibonacci.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ch15\15.3.test.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ita_unit_test.cpp">

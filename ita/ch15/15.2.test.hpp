@@ -86,16 +86,17 @@ namespace enfw
 				BOOST_AUTO_TEST_CASE(test_15_2_2_matrix_chain_multiply) {
 					boost::random_device device(random_provider);
 					const boost::random::uniform_int_distribution<long> random(-1, 1);
-					const boost::random::uniform_int_distribution<long> size_random(1, 20);
+					const boost::random::uniform_int_distribution<long> size_random(1, 100);
 
 					using namespace std;
 					using ds::tiny_matrix;
 					using size_type = unsigned int;
 					auto matrix_scale_arr = vector<size_type>{};
-					for(auto i=0;i<400+1;i++)
+					for(auto i=0;i<100;i++)
 					{
 						matrix_scale_arr.push_back(size_random(device));
 					}
+					matrix_scale_arr.push_back(10);
 					vector<tiny_matrix<long>> vec_mat(1);
 					vec_mat[0] = tiny_matrix<long>{};
 					for(size_type i=0;i<matrix_scale_arr.size()-1;i++)
@@ -122,6 +123,7 @@ namespace enfw
 						start_time = high_resolution_clock::now();
 						auto optimal_mult_res = matrix_multiply::wrapped_matrix_chain_multiply(vec_mat.begin(), matrix_scale_arr.size() - 1);
 						const auto optimal_mult_duration = duration_cast<microseconds>(high_resolution_clock::now() - start_time);
+						start_time = high_resolution_clock::now();
 						stringstream ss;
 						ss << tmp_mult_res;
 						BOOST_TEST_MESSAGE(ss.str());

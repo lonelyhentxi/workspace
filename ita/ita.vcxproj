@@ -115,6 +115,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ch15\15.3.test.hpp" />
     <ClInclude Include="ch15\cutting_pod.hpp" />
     <ClInclude Include="ch15\15.1.test.hpp" />
     <ClInclude Include="ch15\fibonacci.hpp" />

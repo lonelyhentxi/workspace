@@ -44,7 +44,7 @@ namespace enfw
 				}
 
 				template<typename Iterator, typename Length = unsigned, typename Matrix = ds::tiny_matrix<Length>>
-				static std::pair<Matrix, Matrix> matrix_chain_order(Iterator p, Length size)
+				static std::pair<Matrix, Matrix> matrix_chain_order(Iterator p, Length size, const std::function<bool(Length,Length)> &compare = std::less<Length>())
 				{
 					auto expense = Matrix(size + 1,size + 1,0 );
 					auto method = Matrix(size + 1,size + 1,0 );
@@ -58,7 +58,7 @@ namespace enfw
 							for (k = i + 1; k<=j-1; ++k)
 							{
 								current_q = expense.at_element(i, k) + expense.at_element(k + 1, j) + *(p + i - 1) * *(p + k) * *(p + j);
-								if (current_q<q)
+								if (compare(current_q,q))
 								{
 									q = current_q;
 									s = k;
@@ -90,7 +90,10 @@ namespace enfw
 				static typename Iterator::value_type matrix_chain_multiply(Iterator aitr,
 					MethodMatrix &matrix_optimal_method,
 					const typename Iterator::value_type::size_type &start,
-					const typename Iterator::value_type::size_type &end)
+					const typename Iterator::value_type::size_type &end,
+					const std::function<bool(typename Iterator::value_type::size_type,
+						typename Iterator::value_type::size_type)> &compare = std::less<typename Iterator::value_type::size_type>()
+					)
 				{
 					using matrix_type = typename Iterator::value_type;
 					using size_type = typename matrix_type::size_type;
@@ -98,15 +101,18 @@ namespace enfw
 					if (start == end) return *(aitr + start);
 					else
 					{
-						matrix_type left = matrix_chain_multiply(aitr, s, start, s.at_element(start, end));
-						matrix_type right = matrix_chain_multiply(aitr, s, s.at_element(start, end) + 1, end);
+						matrix_type left = matrix_chain_multiply(aitr, s, start, s.at_element(start, end),compare);
+						matrix_type right = matrix_chain_multiply(aitr, s, s.at_element(start, end) + 1, end,compare);
 						return std::move(simple_matrix_multiply(left, right));
 					}
 				}
 
 				template<typename Iterator>
 				static typename Iterator::value_type wrapped_matrix_chain_multiply(Iterator aitr,
-					const typename Iterator::value_type::size_type &size)
+					const typename Iterator::value_type::size_type &size,
+					const std::function< bool(typename Iterator::value_type::size_type,
+						typename Iterator::value_type::size_type)> &compare = std::less<typename Iterator::value_type::size_type>()
+					)
 				{
 					using matrix_type = typename Iterator::value_type;
 					using size_type = typename Iterator::value_type::size_type;
@@ -116,8 +122,8 @@ namespace enfw
 						matrix_scale_arr[i] = (*(aitr + i)).size2();
 					}
 					matrix_scale_arr[0] = (*(aitr+1)).size1();
-					auto matrix_optimal_method = matrix_multiply::matrix_chain_order(matrix_scale_arr.begin(), size).second;
-					return matrix_multiply::matrix_chain_multiply(aitr, matrix_optimal_method, static_cast<typename Iterator::value_type::size_type>(1), size);
+					auto matrix_optimal_method = matrix_multiply::matrix_chain_order(matrix_scale_arr.begin(), size, compare).second;
+					return matrix_multiply::matrix_chain_multiply(aitr, matrix_optimal_method, static_cast<typename Iterator::value_type::size_type>(1), size,compare);
 				}
 			};
 		}
