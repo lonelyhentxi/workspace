@@ -9,6 +9,7 @@
 #include <chrono>
 
 #include "./matrix_multiply.hpp"
+#include "./common_dp_sln.hpp"
 
 namespace enfw
 {
@@ -72,6 +73,12 @@ namespace enfw
 							<< "[optimal greatest multiply]:\nrun: " << optimal_greatest_mult_duration.count() << "us \n";
 						BOOST_TEST_MESSAGE(ss.str());
 					}
+				}
+
+				BOOST_AUTO_TEST_CASE(test_15_3_common_dp_sln) {
+					const std::vector<long> test = { 0,1,5,8,9,10,17,17,20,24,30 };
+					const auto pod_pair = common_dp_sln::common_linear_dp(test.cbegin(), 10, 0);
+					BOOST_CHECK(pod_pair == std::make_pair(std::vector<long>{ {0, 1, 5, 8, 10, 13, 17, 18, 22, 25, 30}}, std::vector<unsigned>{ {0, 1, 2, 3, 2, 2, 6, 1, 2, 3, 10}}));
 				}
 			}
 		}
