@@ -1,0 +1,6 @@
+[package]
+name = "rustudy"
+version = "0.1.0"
+authors = ["lonelyhentai <master@evernightfireworks.com>"]
+
+[dependencies]
