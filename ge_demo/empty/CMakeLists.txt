@@ -1,2 +1,2 @@
-add_exeuctable(empty empty_application.cpp)
-target_link_library(empty common)
+add_executable(empty empty_application.cpp)
+target_link_libraries(empty common)
