@@ -58,6 +58,11 @@ int main(void) {
     while((p_event = xcb_wait_for_event(p_conn)) && !is_quit) {
         switch (p_event->response_type & ~0x80) {
             case XCB_EXPOSE:
+                {
+                    xcb_rectangle_t rect = {20,20,60,80};
+                    xcb_poly_fill_rectangle(p_conn,window,foreground,1,&rect);
+                    xcb_flush(p_conn);
+                }
                 break;
             case XCB_KEY_PRESS:
                 is_quit = true;
@@ -65,5 +70,6 @@ int main(void) {
         }
         free(p_event);
     }
+    xcb_disconnect(p_conn);
     return 0;
 }
