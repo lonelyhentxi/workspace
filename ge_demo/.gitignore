@@ -390,3 +390,4 @@ fabric.properties
 
 # Editor-based Rest Client
 .idea/httpRequests
+cmake-build-debug/*
