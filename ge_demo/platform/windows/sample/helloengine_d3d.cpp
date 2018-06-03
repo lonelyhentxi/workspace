@@ -57,7 +57,7 @@ void create_render_target()
 	ID3D11Texture2D* p_back_buffer;
 
 	// get a pointer to back buffer
-	gp_swap_chain->GetBuffer(0, __uuidof(IID_ID3D11Texture2D), (LPVOID *)p_back_buffer);
+	gp_swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID *)&p_back_buffer);
 	// create a render-target view
 	gp_dev->CreateRenderTargetView(p_back_buffer, nullptr, &gp_rtview);
 	p_back_buffer->Release();
@@ -89,8 +89,8 @@ void init_pipeline()
 	gp_dev->CreatePixelShader(ps->GetBufferPointer(),
 	                          ps->GetBufferSize(), nullptr, &gp_ps);
 	// set the shader object
-	gp_devcon->VSSetShader(gp_vs, 0, 0);
-	gp_devcon->PSSetShader(gp_ps, 0, 0);
+	gp_devcon->VSSetShader(gp_vs, nullptr, 0);
+	gp_devcon->PSSetShader(gp_ps, nullptr, 0);
 	// create the input layout object
 	D3D11_INPUT_ELEMENT_DESC ied[] =
 	{
@@ -222,6 +222,109 @@ void render_frame()
 	gp_devcon->ClearRenderTargetView(gp_rtview, clear_color);
 	// do 3D render on the back buffer here
 	{
-		// select 
+		// select which vertex buffer to display
+		UINT stride = sizeof(VERTEX);
+		UINT offset = 0;
+		gp_devcon->IASetVertexBuffers(0,1, &gp_buffer, &stride, &offset);
+		// select which primtive type we are using
+		gp_devcon->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		// draw the back buffer and the front buffer
+		gp_devcon->Draw(3, 0);
 	}
+
+	// swap the back buffer and the front buffer
+	gp_swap_chain->Present(0, 0);
+}
+
+// the window proc func prototype
+LRESULT CALLBACK window_proc(HWND h_wnd, UINT message,
+	WPARAM w_param, LPARAM l_param);
+
+// the entry point for any window program
+int WINAPI WinMain(HINSTANCE h_instance,HINSTANCE prev_instance,
+	LPTSTR lp_cmd_line,int n_cmd_show)
+{
+	// the handle for the window, filled by a function
+	HWND h_wnd;
+	// the struct holds information for the window class
+	WNDCLASSEX wc;
+	// clear the window class for use
+	ZeroMemory(&wc, sizeof(WNDCLASSEX));
+
+	// fill in the struct with the needed information
+	wc.cbSize = sizeof(WNDCLASSEX);
+	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.lpfnWndProc = window_proc;
+	wc.hInstance = h_instance;
+	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
+	wc.lpszClassName = _T("WindowClass1");
+	// register the window class
+	RegisterClassEx(&wc);
+	// create the window and use the result as the handle
+	h_wnd = CreateWindowEx(0,
+		_T("WindowClass1"),
+		_T("Hello, Engine![Direct 3D]"),
+		WS_OVERLAPPEDWINDOW,
+		100, 100,
+		SCREEN_WIDTH, SCREEN_HEIGHT,
+		nullptr, nullptr, h_instance, nullptr);
+	// display the window on the screen
+	ShowWindow(h_wnd, n_cmd_show);
+	//  enter the main loop
+	// hold the windows event message
+	MSG msg;
+	// wait for the next message in the queue, store the result in 'msg'
+	while(GetMessage(&msg,nullptr,0,0))
+	{
+		// translate keystoke message into the right format
+		TranslateMessage(&msg);
+		// send the message to the WindowPro function
+		DispatchMessage(&msg);
+	}
+	// return the part to the windowProc  function 
+	return msg.wParam;
+}
+
+// main message handle for the program 
+LRESULT CALLBACK window_proc(HWND h_wnd, UINT message, WPARAM w_param, LPARAM l_param)
+{
+	LRESULT result = 0;
+	bool was_handled = false;
+
+	// sort through and find what code to run the message given 
+	switch(message)
+	{
+	case WM_CREATE:
+		was_handled = true;
+		break;
+	case WM_PAINT:
+		result = create_graphics_resources(h_wnd);
+		render_frame();
+		was_handled = true;
+		break;
+	case WM_SIZE:
+		if(gp_swap_chain!=nullptr)
+		{
+			discard_graphics_resources();
+		}
+		was_handled = true;
+		break;
+	case WM_DESTROY:
+		discard_graphics_resources();
+		PostQuitMessage(0);
+		was_handled = true;
+		break;
+	case WM_DISPLAYCHANGE:
+		InvalidateRect(h_wnd, nullptr, false);
+		was_handled = true;
+		break;
+	}
+
+	// handle any message the switch statement didn't
+	if(!was_handled)
+	{
+		result = DefWindowProc(h_wnd, message, w_param, l_param);
+	}
+	return result;
 }
