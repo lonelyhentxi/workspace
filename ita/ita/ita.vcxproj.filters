@@ -50,5 +50,8 @@
     <ClCompile Include="ita_unit_test.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="temp\travelling_salesman.hpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
