@@ -1,0 +1,27 @@
+<nz-layout class="minisys-layout">
+  <nz-header class="minisys-header">
+    <div class="minisys-header-logo">
+      <p><i class="anticon anticon-code"></i> Minisys-32 Online Assembler </p>
+    </div>
+  </nz-header>
+  <nz-content class="minisys-content-outer">
+      <div nz-row class="minisys-content">
+        <div nz-col [nzSpan]="12" class="minisys-display">
+          <div class="minisys-prompt"><span>请输入汇编代码</span><button nz-button nzType="default" style="float:right;" (click)="onAssembler()">汇编 [64K]</button></div>
+          <textarea [nzAutosize] nz-input [(ngModel)]="inputAsm" style="height:100%;"></textarea>
+        </div>
+        <div nz-col [nzSpan]="12" class="minisys-display">
+          <div class="minisys-prompt"><span style="color:rgba(255,255,255,0);">''</span></div>
+          <nz-card style="width: 100%;height:100%;border-bottom: none;">
+            <nz-card-tab>
+              <nz-tabset nzSize="large" [(nzSelectedIndex)]="outputIndex">
+                <nz-tab nzTitle="代码 coe"></nz-tab>
+                <nz-tab nzTitle="数据 coe"></nz-tab>
+              </nz-tabset>
+            </nz-card-tab>
+            <div [innerHtml]="output[outputIndex]"></div>
+          </nz-card>
+        </div>
+      </div>
+  </nz-content>
+</nz-layout>
