@@ -28,8 +28,8 @@ export class Minisys32PreProcessService {
     const splitCode = this.codeSplit(segmentsMap.get('text'));
     const instructionsWithOutLabel = this.labelMark(splitCode, marks);
     return {
-      code: instructionsWithOutLabel.map(ins => {
-        return me.instructionSplitAndReplaceLabel(ins, marks);
+      code: instructionsWithOutLabel.map((ins,index) => {
+        return me.instructionSplitAndReplaceLabel(ins,index, marks);
       }), data: dataFrags
     };
   }
@@ -82,7 +82,7 @@ export class Minisys32PreProcessService {
     });
   }
 
-  instructionSplitAndReplaceLabel(instruction: string, marks: Map<string, string>): [AssemblyFragment, AssemblyFragment[]] {
+  instructionSplitAndReplaceLabel(instruction: string,index:number, marks: Map<string, string>): [AssemblyFragment, AssemblyFragment[]] {
     const me = this;
     const slices = instruction.split(/\s+/);
     const operator = {
@@ -91,9 +91,17 @@ export class Minisys32PreProcessService {
     };
     const post = slices.slice(1, slices.length).join('').trim();
     const operands = post.split(this.operandSplitter).map(val => val.trim()).filter(val => val !== '').map(operand => {
+      let operandCode = operand;
+      if(marks.has(operand)) {
+        if(operator.code==='beq'||operator.code==='bne') {
+          operandCode=(parseInt(marks.get(operand))-index-1).toString();
+        } else {
+          operandCode=marks.get(operand);
+        }
+      }
       return {
         type: 'operand',
-        code: marks.has(operand) ? marks.get(operand) : operand,
+        code: operandCode
       };
     });
     return [operator, operands];

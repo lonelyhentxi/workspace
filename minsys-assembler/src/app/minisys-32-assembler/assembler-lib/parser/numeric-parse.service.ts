@@ -19,7 +19,7 @@ export class NumericParseService {
 
   public comp(value:number,length:number):string {
     if(value<0){
-      const tempStr = (value-1).toString(2);
+      const tempStr = (Math.abs(value)-1).toString(2);
       return this.neg(this.fill(tempStr,length));
     } else {
       const tempStr = value.toString(2);

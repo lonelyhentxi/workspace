@@ -21,9 +21,9 @@ export class Minisys32AssemblerComponent {
     try {
       const {program,memory} = this.assemblerService.process(this.inputAsm,(parseInt(this.memSize,10)/4)*Math.pow(2,10));
       this.output[0]= `memory_initialization_radix = 16;<br>
-            memory_initialization_vector =<br>${program}`;
+            memory_initialization_vector =<br>${program};`;
       this.output[1]=`memory_initialization_radix = 16;<br>
-            memory_initialization_vector =<br>${memory}`;
+            memory_initialization_vector =<br>${memory};`;
     } catch (e) {
       console.debug(e);
       this.output[0]='错误的输入';
