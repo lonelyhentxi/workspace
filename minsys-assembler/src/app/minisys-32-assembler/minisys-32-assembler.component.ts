@@ -15,12 +15,15 @@ export class Minisys32AssemblerComponent {
   inputAsm: string = '';
   output: string[] = ['',''];
   outputIndex:number = 0;
+  memSize:string = '64';
 
   onAssembler() {
     try {
-      const {program,memory} = this.assemblerService.process(this.inputAsm,16*Math.pow(2,10));
-      this.output[0]= program;
-      this.output[1]=memory;
+      const {program,memory} = this.assemblerService.process(this.inputAsm,(parseInt(this.memSize,10)/4)*Math.pow(2,10));
+      this.output[0]= `memory_initialization_radix = 16;<br>
+            memory_initialization_vector =<br>${program}`;
+      this.output[1]=`memory_initialization_radix = 16;<br>
+            memory_initialization_vector =<br>${memory}`;
     } catch (e) {
       console.debug(e);
       this.output[0]='错误的输入';

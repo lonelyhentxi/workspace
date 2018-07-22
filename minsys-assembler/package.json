@@ -1,6 +1,6 @@
 {
-  "name": "minisys-32-assembler",
-  "version": "0.0.2-beta0",
+  "name": "minisys-assembler",
+  "version": "0.0.2-rc0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
