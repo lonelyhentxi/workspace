@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RxjsComponent } from './rxjs.component';
+import { RxjsComponent } from './rxjs-ch1.component';
 
 describe('RxjsComponent', () => {
   let component: RxjsComponent;

@@ -3,15 +3,15 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { RxjsComponent } from './rxjs/rxjs.component';
+import { RxjsModule } from './rxjs/rxjs.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    RxjsComponent
   ],
   imports: [
     BrowserModule,
+    RxjsModule,
     AppRoutingModule
   ],
   providers: [],
