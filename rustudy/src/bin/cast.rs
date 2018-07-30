@@ -1,5 +1,10 @@
 #![allow(overflowing_literals)]
 
+type NanoSecond = u64;
+type Inch = u64;
+#[allow(non_camel_case_types)]
+type u64_t = u64;
+
 fn main() {
     let decimal = 65.4321_f32;
     let integer: u8 = decimal as u8;
@@ -28,4 +33,9 @@ fn main() {
     let mut vec = Vec::new();
     vec.push(elem);
     println!("{:?}", vec);
+    // alias
+    let nanoseconds:NanoSecond = 5 as u64_t;
+    let inches: Inch = 2 as u64_t;
+    println!("{} nanoseconds + {} inches = {} unit?",
+             nanoseconds, inches, nanoseconds + inches);
 }
