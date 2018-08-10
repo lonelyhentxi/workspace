@@ -7,7 +7,7 @@ import { RxjsCh8Component } from './rxjs-ch8/rxjs-ch8.component';
 
 const routes: Routes = [{
   path: 'rxjs',
-  redirectTo:'rxjs/ch8',
+  redirectTo:'rxjs/ch15',
   pathMatch:'full'
 },{
   path: 'rxjs/ch1',
@@ -18,7 +18,7 @@ const routes: Routes = [{
 },{
   path: 'rxjs/ch5',
   component: RxjsCh5Component
-  {
+},{
     path: 'rxjs/ch8',
     component: RxjsCh8Component
 }];

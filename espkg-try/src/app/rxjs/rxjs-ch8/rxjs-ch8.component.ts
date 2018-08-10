@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { fromEvent, Observable, merge, Subject } from 'rxjs';
-import { pluck, throttleTime, takeUntil, groupBy.filter, mergeAll } from 'rxjs/operators';
+import { pluck, throttleTime, takeUntil, groupBy, filter, mergeAll } from 'rxjs/operators';
 
 @Component({
   selector: 'app-rxjs-ch8',
