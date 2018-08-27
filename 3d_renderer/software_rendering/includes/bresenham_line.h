@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include "tgaimage.h"
+#include "typedefs.h"
 
 void line_fixed_step(int x0, int y0, int x1, int y1, TGAImage &image, const TGAColor &color) {
     for (double t = 0; t < 1; t += .01) {
@@ -72,7 +73,7 @@ void line_pixel_step_optimized(int x0, int y0, int x1, int y1, TGAImage &image, 
     }
 }
 
-void line_pixel_step_optimized2(int x0, int y0, int x1, int y1, TGAImage &image, const TGAColor &color) {
+void line(int x0, int y0, int x1, int y1, TGAImage &image, const TGAColor &color) {
     bool steep = false;
     if (std::abs(x0 - x1) < std::abs(y0 - y1)) {
         std::swap(x0, y0);
@@ -95,11 +96,17 @@ void line_pixel_step_optimized2(int x0, int y0, int x1, int y1, TGAImage &image,
             image.set(x, y, color);
         }
         error2 += derror2;
-        if(error2>dx) {
-            y += (y1>y0?1:-1);
-            error2 -= dx*2;
+        if (error2 > dx) {
+            y += (y1 > y0 ? 1 : -1);
+            error2 -= dx * 2;
         }
     }
 }
+
+void line(const Vec2i &t0,const Vec2i &t1,TGAImage &image, const TGAColor &color) {
+    line(t0[0],t0[1],t1[0],t1[1],image,color);
+}
+
+const auto& line_pixel_step_optimized2 = line;
 
 #endif //SOFTWARE_RENDERING_BRESENHAM_LINE_H

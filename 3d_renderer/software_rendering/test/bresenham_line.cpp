@@ -16,6 +16,6 @@ int main() {
     line_pixel_step_optimized2(13,20,80,40,image,white);
     line_pixel_step_optimized2(20,13,40,80,image,red);
     image.flip_vertically();
-    image.write_tga_file("bresenham_line.tga");
+    image.write_tga_file("test.tga");
     return 0;
 }

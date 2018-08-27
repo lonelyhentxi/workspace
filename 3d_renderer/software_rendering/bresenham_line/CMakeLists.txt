@@ -1,4 +1,0 @@
-project(software_rendering)
-set(bresenham_line bresenham_line_main.cpp)
-add_executable(bresenham_line bresenham_line_main.cpp)
-target_link_libraries(bresenham_line tga)

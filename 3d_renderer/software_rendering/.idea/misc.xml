@@ -3,9 +3,9 @@
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
   <component name="CidrRootsConfiguration">
     <sourceRoots>
-      <file path="$PROJECT_DIR$/bresenham_line" />
       <file path="$PROJECT_DIR$/home" />
       <file path="$PROJECT_DIR$/includes" />
+      <file path="$PROJECT_DIR$/test" />
     </sourceRoots>
     <libraryRoots>
       <file path="$PROJECT_DIR$/deps" />
