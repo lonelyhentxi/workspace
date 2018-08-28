@@ -8,6 +8,6 @@ link_directories(${PROJECT_BINARY_DIR}/libs)
 add_subdirectory(deps)
 add_subdirectory(impl)
 file(GLOB_RECURSE SOURCES
-        include
-        impl)
+        include/*.h
+        impl/*.cpp)
 add_subdirectory(test)

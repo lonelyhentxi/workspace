@@ -9,5 +9,11 @@ add_executable(home home.cpp)
 target_link_libraries(home tga)
 
 set(triangle triangle.cpp)
-add_executable(triangle triangle.cpp)
+add_executable(triangle triangle.cpp ${SOURCES})
 target_link_libraries(triangle tga)
+
+add_custom_command(
+        TARGET triangle POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/obj/african_head.obj
+        ${CMAKE_CURRENT_BINARY_DIR}/obj/african_head.obj)
