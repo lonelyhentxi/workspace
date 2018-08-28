@@ -35,7 +35,7 @@ namespace software_rendering {
     struct vec<2, T> {
         vec() = default;
 
-        vec(T x, T y, T z) : x{std::move(x)}, y{std::move(y)} {};
+        vec(T x, T y) : x{std::move(x)}, y{std::move(y)} {};
 
         T &operator[](const size_t i) {
             assert(i < 2);
@@ -147,9 +147,9 @@ namespace software_rendering {
     };
 
     template<size_t Dim, typename T>
-    std::ostream &operator<<(std::ostream &out, vec<Dim, T> &v) {
+    std::ostream &operator<<(std::ostream &out, const vec<Dim, T> &v) {
         for (size_t i = 0; i < Dim; i++) {
-            out << v[i] << " ";
+            out << v[i] << '\t';
         }
         return out;
     }
@@ -307,7 +307,7 @@ namespace software_rendering {
     }
 
     template<size_t DimRows, size_t DimCols, typename T>
-    std::ostream &operator<<(std::ostream &out, mat<DimRows, DimCols, T> &m) {
+    std::ostream &operator<<(std::ostream &out, const mat<DimRows, DimCols, T> &m) {
         for (size_t i = 0; i < DimRows; i++) {
             out << m.row(i) << std::endl;
         }

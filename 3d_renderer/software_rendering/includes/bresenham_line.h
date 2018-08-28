@@ -74,7 +74,7 @@ namespace software_rendering {
         }
     }
 
-    void line(int x0, int y0, int x1, int y1, TGAImage &image, const TGAColor &color) {
+    void line_pixel_step_optimized2(int x0, int y0, int x1, int y1, TGAImage &image, const TGAColor &color) {
         bool steep = false;
         if (std::abs(x0 - x1) < std::abs(y0 - y1)) {
             std::swap(x0, y0);
@@ -105,10 +105,8 @@ namespace software_rendering {
     }
 
     void line(const Vec2i &t0,const Vec2i &t1,TGAImage &image, const TGAColor &color) {
-        line(t0[0],t0[1],t1[0],t1[1],image,color);
+        line_pixel_step_optimized2(t0[0],t0[1],t1[0],t1[1],image,color);
     }
-
-    const auto & line_pixel_step_optimized2 = line;
 };
 
 #endif //SOFTWARE_RENDERING_BRESENHAM_LINE_H
