@@ -5,6 +5,7 @@
 #include "geometry.h"
 #include "bresenham_line.h"
 #include "util.h"
+#include <limits>
 
 namespace software_rendering {
     void triangle_line(Vec2i t0,Vec2i t1,Vec2i t2, TGAImage &image,const TGAColor &color) {
@@ -68,15 +69,12 @@ namespace software_rendering {
     }
 
     template<typename Container>
-    Vec3f barycentric(const Container &pts,Vec2i P) {
+    Vec3f barycentric(const Container &pts,const Vec2i &P) {
         Vec3f u = cross(Vec3f(pts[2].x-pts[0].x,pts[1].x-pts[0].x,pts[0].x-P.x),Vec3f(pts[2].y-pts[0].y,pts[1].y-pts[0].y,pts[0].y-P.y));
         if(std::abs(u[2])<1) return Vec3f(-1,1,1);
         return Vec3f(1.f-(u.x+u.y)/u.z, u.y/u.z, u.x/u.z);
     }
 
-    /**
-     * @TODO：Read the detailed docs
-     */
     template<typename Container>
     void triangle_simplify(const Container &pts,TGAImage &image,const TGAColor &color) {
         Vec2i bbox_min(image.get_width()-1,  image.get_height()-1);
@@ -96,6 +94,54 @@ namespace software_rendering {
                 image.set(P.x,P.y,color);
             }
         }
+    }
+
+    template<typename VecContainer>
+    Vec3f barycentric(const VecContainer& pts,const Vec3f &P) {
+        auto s = std::array<Vec3f,2>{};
+        for(int i=2;i--;){
+            s[i][0] = pts[2][i]-pts[0][i];
+            s[i][1] = pts[1][i]-pts[0][i];
+            s[i][2] = pts[0][i]-P[i];
+        }
+        Vec3f u = cross(s[0],s[1]);
+        if(std::abs(u[2])>1e-2) return Vec3f(1.f-(u.x+u.y)/u.z,u.y/u.z,u.x/u.z);
+        return Vec3f(-1,1,1);
+    }
+
+    template<typename VecContainer,typename ZBufferContainer>
+    void triangle_culling(const VecContainer &pts,ZBufferContainer &zbuffer,
+                          TGAImage &image,const TGAColor &color) {
+        int width = image.get_width();
+        Vec2f bbox_min{std::numeric_limits<float>::max(),std::numeric_limits<float>::max()};
+        Vec2f bbox_max{-std::numeric_limits<float>::max(),-std::numeric_limits<float>::max()};
+        Vec2f clamp{static_cast<float>(image.get_width()-1), static_cast<float>(image.get_height()-1)};
+        for(int i=0;i<3;i++) {
+            for(int j=0;j<2;j++) {
+                bbox_min[j] = std::max(0.f,std::min<float>(bbox_min[j],pts[i][j]));
+                bbox_max[j] = std::min(clamp[j],std::max<float>(bbox_max[j],pts[i][j]));
+            }
+        }
+        Vec3f P;
+        for(P.x=bbox_min.x;P.x<=bbox_max.x;P.x++) {
+            for(P.y=bbox_min.y;P.y<=bbox_max.y;P.y++) {
+                Vec3f bc_screen = barycentric(pts,P);
+                if(bc_screen.x<0||bc_screen.y<0||bc_screen.z<0) continue;
+                P.z = 0;
+                for(int i=0;i<3;i++) {
+                    P.z += pts[i][2]*bc_screen[i];
+                }
+                if(zbuffer[static_cast<int>(P.x+P.y*width)]<P.z) {
+                    zbuffer[static_cast<int>(P.x+P.y*width)] = P.z;
+                    image.set(static_cast<int>(P.x), static_cast<int>(P.y),color);
+                }
+            }
+        }
+    };
+
+    template<typename ... Args>
+    inline constexpr auto triangle(Args &&... args) -> decltype(triangle_culling(std::forward<Args>(args)...)){
+        return triangle_culling(std::forward<Args>(args)...);
     }
 
     template<typename ... Args>
