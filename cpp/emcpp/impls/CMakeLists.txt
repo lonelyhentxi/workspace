@@ -1,6 +1,11 @@
 project(emcpp)
 
-include_directories(${Boost_INCLUDE_DIR})
 set(ti type_inference.cpp)
 add_executable(ti type_inference.cpp)
-target_link_libraries(ti ${Boost_LIBRARIES})
+# target_link_libraries(ti ${Boost_LIBRARIES})
+
+set(auto auto.cpp)
+add_executable(auto auto.cpp)
+
+set(mc modern_cpp.cpp)
+add_executable(mc modern_cpp.cpp)
