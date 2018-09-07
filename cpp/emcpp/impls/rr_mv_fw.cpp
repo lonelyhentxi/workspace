@@ -6,6 +6,7 @@
 #include <chrono>
 #include <iomanip>
 #include <sstream>
+#include <vector>
 
 namespace move_forward {
     template<typename T>
@@ -81,6 +82,22 @@ namespace alter_forward {
     };
 }
 
+namespace reference_folding {
+    template <typename T>
+    T&& forward(std::remove_reference_t<T>& param) {
+        return static_cast<T&&>(param);
+    }
+}
+
+namespace fail_forward {
+    auto f = [](const std::vector<int>& v) {};
+
+    template <typename T>
+    void fwd(T&& param) {
+        f(param);
+    }
+}
+
 int main() {
     /**
      * 理解 std::move 和 std::forward
@@ -127,6 +144,32 @@ int main() {
         cout << p1.name << " " << p2.name << " " << p.name << endl;
         //
     }
-
+    /**
+     * 理解引用折叠
+     */
+    {
+        // 在引用折叠中，只要有一个左值引用就是左值引用
+    }
+    /**
+     * 假定移动操作不存在、成本高、未使用
+     */
+    // 在没有移动操作、移动操作不能更快、移动不可用的情况下，移动语意不会带来好处
+    /**
+     * 熟悉完美转发的失败情形
+     */
+    {
+        using namespace fail_forward;
+        // 大括号初始化物
+        // 在直接调用的情况下，编译器先领受实参类型，再领受形参类型，比较或隐式转换
+        // 在“完美转发”的情况下，推导得到形参，再转发给需要处比较：1. 无法为一个或多个形参推导出结果，2. 编译器为一个或多个推导出错误的结果
+        f({1,2,3});
+        auto a = {1,2,3};
+        fwd(a);
+        // 0 和 NULL 用作空指针，已陈述过
+        // 仅有声明的整型static_const成员变量
+        // 整型static_const成员变量的值会实施常数传播，但是在按值传递时，若是只声明会失败
+        // 重载的函数和名字由于无法调用指针，无法转发
+        // 位域由于无法调用指针，无法转发，可以使用转换成有指针 的 uint的方式转发
+    }
 }
 
