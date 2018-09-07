@@ -17,3 +17,6 @@ target_include_directories(sp PUBLIC smart_ptr)
 
 set(rmf rr_mv_fw.cpp)
 add_executable(rmf rr_mv_fw.cpp)
+
+set(lambda lambda.cpp)
+add_executable(lambda lambda.cpp)
