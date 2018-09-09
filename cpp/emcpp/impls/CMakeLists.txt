@@ -20,3 +20,7 @@ add_executable(rmf rr_mv_fw.cpp)
 
 set(lambda lambda.cpp)
 add_executable(lambda lambda.cpp)
+
+set(concurrency concurrency.cpp)
+add_executable(concurrency concurrency.cpp)
+target_link_libraries(concurrency pthread)
