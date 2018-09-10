@@ -23,4 +23,9 @@ add_executable(lambda lambda.cpp)
 
 set(concurrency concurrency.cpp)
 add_executable(concurrency concurrency.cpp)
-target_link_libraries(concurrency pthread)
+if(${UNIX})
+    target_link_libraries(concurrency pthread)
+endif(${UNIX})
+
+set(trim trim.cpp)
+add_executable(trim trim.cpp)
