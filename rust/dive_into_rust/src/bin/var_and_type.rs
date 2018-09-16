@@ -1,4 +1,7 @@
 #![feature(const_fn)]
+#[allow(unused_variables)]
+#[allow(unused_parens)]
+#[allow(dead_code)]
 fn main() {
     fn test(condition: bool) {
         let x: i32;
@@ -91,13 +94,13 @@ fn main() {
     let f2 = 0.1f32;
     let f3 = 12E+99_f64;
     let f4: f64 = 2.;
-    println!("{},{},{},{}",f1,f2,f3,f4);
+    println!("{},{},{},{}", f1, f2, f3, f4);
     let x = 1.0f32 / 0.0;
     let y = 0.0f32 / 0.0;
     println!("{} {}", x, y);
     // 因为 NaN 的存在，浮点数无法形成偏序关系
     let nan = std::f32::NAN;
-    println!("{} {} {}",nan<nan,nan>nan,nan==nan);
+    println!("{} {} {}", nan < nan, nan > nan, nan == nan);
     // 指针类型
     // Box<T> 指向T类型的，具有所有权的指针，有权释放内存
     // &T 指向T的借用指针，也称为引用，无权释放内存，无权写数据
@@ -111,11 +114,85 @@ fn main() {
     // rust 的类型转换控制的非常严格
     let var1: i8 = 41;
     let var2: i16 = var1 as i16;
-    println!("{}",var2);
+    println!("{}", var2);
     // as 类似于 static_cast 只能用在合理的转换上
     let i = 42;
     let p = &i as *const i32 as *mut i32;
-    println!("{:p}",p);
+    println!("{:p}", p);
     // 复合数据类型
-    // @TODO:finish
+    // tuple
+    let a = (1i32, false);
+    let a = (0, ); // tuple, like python
+    let b = (0); // parentheses
+    let c = (); // empty tuple，内存大小为 0
+    println!("size of '()' {}", std::mem::size_of::<()>());
+    // struct 结构体的每个变量都有名字
+    {
+        struct Point {
+            x: i32,
+            y: i32,
+        }
+        let p = Point { x: 0, y: 0 };
+        let Point { x, y } = p;
+        let Point { x: px, y: py } = p;
+        struct Point3d {
+            x: i32,
+            y: i32,
+            z: i32,
+        }
+        fn default() -> Point3d {
+            Point3d { x: 0, y: 0, z: 0 }
+        }
+        let origin = Point3d { x: 5, ..default() };
+        let point = Point3d { z: 1, x: 2, ..origin };
+        struct Foo1;
+        struct Foo2();
+        struct Foo3 {};
+        // 空结构体，内存大小为0
+    }
+    // tuple struct
+    {
+        struct Color(i32, i32, i32);
+        /* equal to
+        struct Color1 {
+            0: i32,
+            1: i32,
+            2: i32,
+        }
+        */
+        struct T1 {
+            v: i32
+        }
+
+        struct T2(i32);
+        let v1 = T1 {v:1};
+        let v2 = T2(1);
+        // struct Inches(i32);
+        // 帮助创建新的类型
+        // type I = i32; // 并非新的类型
+    }
+    // enum
+    {
+        enum Number {
+            Int(i32),
+            Float(i32),
+        }
+        fn read_num(num: &Number){
+            match num {
+                &Number::Int(value) => println!("Integer {}",value),
+                &Number::Float(value) => println!("Float {}",value),
+            }
+        }
+        let n:Number = Number::Int(10);
+        read_num(&n);
+        // enum 内部的 variant 是一个函数
+    }
+    // 类型递归定义
+    {
+        struct Recursive {
+            data: i32,
+            rec: Box<Recursive>
+        }
+        // 只要使得 struct 可以计算内存大小，就可以递归的定义
+    }
 }
