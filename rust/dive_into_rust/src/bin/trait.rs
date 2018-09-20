@@ -1,5 +1,3 @@
-use std::fmt::Error;
-
 #[allow(dead_code)]
 fn main() {
     // 成员函数
