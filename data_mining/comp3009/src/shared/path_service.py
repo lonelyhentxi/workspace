@@ -1,5 +1,4 @@
 from os import path
-from collections.abc import Iterable
 
 current_dir: str = path.dirname(__file__)
 
