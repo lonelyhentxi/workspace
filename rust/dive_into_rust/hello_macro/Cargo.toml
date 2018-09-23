@@ -1,9 +1,7 @@
 [package]
-name = "dive_into_rust"
+name = "hello_macro"
 version = "0.1.0"
 authors = ["lonelyhentai <master@evernightfireworks.com>"]
 edition = "2018"
 
 [dependencies]
-hello_macro = { path = "./hello_macro" }
-hello_macro_derive = { path = "./hello_macro_derive" }

@@ -1,9 +1,12 @@
 [package]
-name = "dive_into_rust"
+name = "hello_macro_derive"
 version = "0.1.0"
 authors = ["lonelyhentai <master@evernightfireworks.com>"]
 edition = "2018"
 
+[lib]
+proc-macro = true
+
 [dependencies]
-hello_macro = { path = "./hello_macro" }
-hello_macro_derive = { path = "./hello_macro_derive" }
+syn = "^0.15.4"
+quote = "^0.6.8"
