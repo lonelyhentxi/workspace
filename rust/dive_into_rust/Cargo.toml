@@ -7,3 +7,4 @@ edition = "2018"
 [dependencies]
 hello_macro = { path = "./hello_macro" }
 hello_macro_derive = { path = "./hello_macro_derive" }
+scoped_threadpool = "^0.1.9"
