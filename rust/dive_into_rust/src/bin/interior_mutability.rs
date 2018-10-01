@@ -1,3 +1,5 @@
+#![feature(lang_items)]
+#![allow(dead_code)]
 fn main() {
     {
         // rust 中 mut 关键字不能再声明类型的时候使用，只能和类型使用
@@ -67,11 +69,11 @@ fn main() {
             // 存在野指针的风险，unsafe 导致生命周期推断失效
         }
         {
-            #[lang="unsafe_cell"]
+            /* #[lang="unsafe_cell"]
             #[stable(feature="rust1",since="1.0.0")]
-            pub struct UnsafeCell<T:?Sized> {
+            pub struct MyUnsafeCell<T:?Sized> {
                 value: T,
-            }
+            }*/
             // 所有具有内部可变性特点的类型都必须基于 UnsafeCell 来实现
             // 这个类型是唯一合法的将 &T 类型转换为 &mut T 类型的办法
         }
