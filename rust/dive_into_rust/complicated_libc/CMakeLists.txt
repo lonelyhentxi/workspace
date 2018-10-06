@@ -1,0 +1,8 @@
+project(RUST_LOG)
+set(CMAKE_C_STANDARD c11)
+if(${UNIX})
+    set(CCALLER ${PROJECT_SOURCE_DIR}/src/ccaller_posix.c)
+else()
+    set(CCALLER ${PROJECT_SOURCE_DIR}/src/ccaller_win.c)
+endif()
+add_executable(libc ${CCALLER})

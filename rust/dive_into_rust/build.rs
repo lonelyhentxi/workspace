@@ -20,4 +20,7 @@ fn main() {
         let output = format!(r#"pub const CURRENT_COMMIT_ID: &'static str = "{}";"#,commit);
         f.write_all(output.as_bytes()).unwrap();
     }).unwrap_or_else(|_| {println!("There have a panic, but just a try")});
+    // let dir = env::var("CARGO_MANIFEST_DIR").unwrap();
+    // println!("cargo:rustc-link-search=native={}", Path::new(&dir).join("src/ffi/rslib").display());
+    // println!("cargo:rustc-link-lib=static=rslib")
 }
