@@ -99,3 +99,45 @@
     } println(s"op:$op,upper:$upper")
   }
 }
+// # 其他循环结构
+// while 和 do-while 和 JAVA 等相同
+// # 条件操作符
+// 和 JAVA 相同
+{
+  // # 使用 try、catch、final 子句
+  // 见 TryCatch.scala
+  // scala 推崇通过函数式结构和强类型以减少对异常和异常处理的依赖
+  // scala 将检查型异常视为非检查型
+  // 使用 finally 以进行清理逻辑
+  // 可以使用 throw new MyBadException() 方式
+  // 使用 case 可以不 new
+  // 为了自动资源管理，可以使用 scalaARM 独立项目
+}; {
+  // 名字调用和值调用
+  // 见 TryCatchArm.scala
+  // ## manage.apply 方法
+  // R <: Closable 表示 Closable 接口中定义了对应方法并且实现了该接口
+  // 结构化类型代价较高，反射机制造成许多系统开销，被列为可选特性
+  // resource 是个传名参数，暂且将其视为一个在调用时应省略括号的函数
+  // scala 支持延迟计算，因此提供了传名参数
+  // 传名参数参数的求值惰性计算
+};{
+  // # 枚举
+  // scala 在标准库中定义了 Enumeration 类
+  // 见 enumeration.sc
+}; {
+  // 可插入字符串
+  // ${xxx} 标准插入
+  // $xxx 无歧义插入
+  // $$ 打印 $
+  // 使用 f 开始还可能格式化
+  // scala 编译器会为某些语境中对 Java 字符串进行封装并提供了一些额外的方法
+}; {
+  // # trait: scala 语言的接口和混入
+  /*
+     目前可以将其视为允许将声明方法实现的接口
+     使用 trait 时可以声明示例字段并选择是否定义这些字段
+     也可以声明和定义类型
+     实现混入的特征
+   */
+}
