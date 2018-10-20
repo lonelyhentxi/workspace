@@ -6,10 +6,6 @@
     <Version>0.0.1</Version>
     <Authors>lonelyhentai</Authors>
     <Company>evernightfireworks</Company>
+    <StartupObject>essential_cs.Program</StartupObject>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="intro\HelloWorld1.res" />
-  </ItemGroup>
-
 </Project>
