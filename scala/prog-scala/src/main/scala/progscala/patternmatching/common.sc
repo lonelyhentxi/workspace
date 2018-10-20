@@ -73,12 +73,75 @@
     case head +: tail => s"($head,_)," + window2(tail)
     case Nil => "Nil"
   }
-  val lst = List(1,2,3)
+
+  val lst = List(1, 2, 3)
   println(window2(lst))
   // 滑动窗口如此有用，Seq 甚至提供了两个方法用于创建窗口
-  val seq = Seq(1,2,3,4,5)
+  val seq = Seq(1, 2, 3, 4, 5)
   val slide2 = seq.sliding(2)
   println(slide2.toList)
   println(slide2.toSeq)
-  println(seq.sliding(3,2).toList)
+  println(seq.sliding(3, 2).toList)
+}; {
+  // # 可变参数列表的匹配
+  // 见 match-vararglist.sc
+}; {
+  // # 正则表达式的匹配
+  val BookExtractorRE =
+    """Book: title=([^,]+),\s+author=(.+)""".r
+  val MagazineExtractorRE = """Magazine: title=([^,]+),\s+issue=(.+)""".r
+
+  val catalog = Seq(
+    "Book: title=Programming Scala Second Edition, author=Dean Wampler",
+    "Magazine: title=The New Yorker, issue=January 2014",
+    "Unknown: text=Who put this here??"
+  )
+
+  for (item <- catalog) {
+    item match {
+      case BookExtractorRE(title, author) =>
+        println(s"""Book "$title", written by $author """)
+      case MagazineExtractorRE(title, issue) =>
+        println(s"""Magazine "$title", issue $issue""")
+      case entry => println(s"Unrecognized entry: $entry")
+    }
+  }
+  // 普通的三引号不需要转义
+  // 插值三引号需要转义
+  // scala.util.matching.Regex 定义了若干个用于正则表达式的方法
+}; {
+  // # 再谈 case 语句的变量绑定
+  case class Person(name: String, age: Int)
+  val person = Person("mary",10)
+  person match {
+    case p @Person("mary", age) => println(s"Hi $age gay, $p")
+    case _ => println("other")
+  }
+}; {
+  // # 再谈类型匹配
+  // JVM 泛型存在类型擦除，无法实现泛型 match
+  // 可以使用嵌套匹配的方法
+}; {
+  // # 封闭继承层级与全覆盖匹配
+  // 对封闭基类做模式匹配时，如果匹配了所有分支，那么就是全覆盖的
+  // 还可以用一个值代替一个总是返回固定值的表达式
+  // 当类型匹配时避免使用枚举类型，编译器无法判断是否完全匹配
+}; {
+  // # 模式匹配的其他用法
+  // 在定义变量以及比较时也可以使用模式匹配
+  case class Address(street: String, city: String, country: String)
+  case class Person(name: String, age: Int, address: Address)
+  val Person(name,age,Address(_,state,_)) = Person("Dean",29,Address(
+    "1 Scala Way","CA","USA"))
+  println(name)
+  println(age)
+  println(state)
+  val head :+ tail = List(1,2,3)
+  println(head)
+  println(tail)
+  val Seq(a,b,c) = List(1,2,3)
+  println(s"$a $b $c")
+  // 在 if 中也能使用模式匹配，但是不能使用 _ , 不符合 JVM $eq$eq 规范
 }
+// 模式匹配匹配可以自定义 unapply 方法控制暴露状态
+// 要谨慎的对待默认 case 的情况
