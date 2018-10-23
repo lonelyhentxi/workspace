@@ -1,7 +1,30 @@
-import math
 import operator
-from typing import Any, Dict, Union
+import abc
+from typing import Any, Dict
 from pandas import DataFrame, Series
+
+
+class DecisionTree(abc.ABC):
+    @abc.abstractmethod
+    def type(self) -> str:
+        pass
+
+
+class DecisionNode(DecisionTree):
+    def __init__(self, feature: Any):
+        self.feature = feature
+        self.children = {}
+
+    def type(self) -> str:
+        return "node"
+
+
+class DecisionLeaf(DecisionTree):
+    def __init__(self, label: Any):
+        self.label = label
+
+    def type(self) -> str:
+        return "leaf"
 
 
 def calculate_shannon_entropy(data_set: DataFrame) -> float:
@@ -67,25 +90,31 @@ def majority_count(class_list: Series) -> Any:
     return sorted_class_count[0][0]
 
 
-Leaf = Any
-Node = Dict[Any, Dict]
-Tree = Union[Leaf, Node]
-
-
-def create_tree(data_set: DataFrame, labels: Series) -> Tree:
+def create_tree_node(data_set: DataFrame, labels: Series) -> DecisionTree:
     class_list: Series = data_set.iloc[:, -1]
     if class_list.count(class_list[0]) == len(class_list):
-        return class_list[0]
+        return DecisionLeaf(class_list[0])
     if len(data_set[0]) == 1:
-        return majority_count(class_list)
+        return DecisionLeaf(majority_count(class_list))
     best_feature = choose_best_feature_to_split(data_set)
     best_feature_label = labels[best_feature]
-    my_tree: Dict[Any, Dict] = {best_feature_label: {}}
+    this_node = DecisionNode(best_feature_label)
     del (labels[best_feature])
     feature_values = data_set.iloc[:, best_feature]
     unique_values = set(feature_values)
     for value in unique_values:
         sub_labels = labels[:]
-        my_tree[best_feature_label][value] = create_tree(split_data_set(data_set, best_feature, value), sub_labels)
-    return my_tree
+        this_node.children[value] = create_tree_node(
+            split_data_set(data_set, best_feature, value), sub_labels)
+    return this_node
 
+
+def classify(input_tree: DecisionTree, feature_map: Dict[Any, int], test_vector: Series) -> Any:
+    if isinstance(input_tree, DecisionLeaf):
+        return input_tree.label
+    elif isinstance(input_tree, DecisionNode):
+        feature_value = test_vector[feature_map[input_tree.feature]]
+        return classify(input_tree.children[feature_value]
+                        , feature_map, test_vector)
+    else:
+        raise TypeError("Invalid Tree Node Type.")

@@ -238,5 +238,6 @@ typings/
 !.vscode/launch.json
 !.vscode/extensions.json
 resource/lab1/*
+resource/lab3/*
 !**/.gitkeep
 
