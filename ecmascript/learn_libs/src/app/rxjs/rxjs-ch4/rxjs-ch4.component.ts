@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { fromEvent } from 'rxjs';
+import {Component, OnInit} from '@angular/core';
+import {fromEvent} from 'rxjs';
 
 @Component({
   selector: 'app-rxjs-ch4',
@@ -7,12 +7,14 @@ import { fromEvent } from 'rxjs';
   styleUrls: ['./rxjs-ch4.component.less']
 })
 export class RxjsCh4Component implements OnInit {
-  clickCount:number = 0;
-  constructor() { }
+  clickCount: number = 0;
+
+  constructor() {
+  }
 
   ngOnInit() {
-    const event$ = fromEvent(document.querySelector('#clickMe'),'click');
-    event$.subscribe(()=>this.clickCount++)
+    const event$ = fromEvent(document.querySelector('#clickMe'), 'click');
+    event$.subscribe(() => this.clickCount++);
   }
 
 }

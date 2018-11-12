@@ -1,6 +1,6 @@
 {
-  "name": "espkg-try",
-  "version": "0.0.0",
+  "name": "learn-libs",
+  "version": "0.1.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -44,6 +44,6 @@
     "protractor": "^6.0.0",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
-    "typescript": "^3.4.5"
+    "typescript": "~3.4.5"
   }
 }

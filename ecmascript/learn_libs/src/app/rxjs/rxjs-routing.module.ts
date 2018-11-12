@@ -6,20 +6,21 @@ import { RxjsCh5Component } from './rxjs-ch5/rxjs-ch5.component';
 import { RxjsCh8Component } from './rxjs-ch8/rxjs-ch8.component';
 
 const routes: Routes = [{
-  path: 'rxjs',
-  redirectTo:'rxjs/ch8',
+  path: '',
+  redirectTo:'ch8',
   pathMatch:'full'
 },{
-  path: 'rxjs/ch1',
+  path: 'ch1',
   component:RxjsCh1Component 
 },{
-  path: 'rxjs/ch4',
+  path: 'ch4',
   component:RxjsCh4Component
-},{
-  path: 'rxjs/ch5',
+}, {
+  path: 'ch5',
   component: RxjsCh5Component
+},
   {
-    path: 'rxjs/ch8',
+    path: 'ch8',
     component: RxjsCh8Component
 }];
 
