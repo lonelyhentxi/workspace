@@ -8,7 +8,6 @@ edition = "2018"
 name = "actix_learn"
 path = "src/lib.rs"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 actix = "0.7"
+futures = "0.1.27"
