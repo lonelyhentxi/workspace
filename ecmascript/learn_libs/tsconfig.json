@@ -4,11 +4,11 @@
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
-    "declaration": false,
+    "declaration": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es5",
+    "target": "es2016", // to support @angular/element, should set at least es2015
     "typeRoots": [
       "node_modules/@types"
     ],

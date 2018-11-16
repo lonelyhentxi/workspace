@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { RxjsModule } from './rxjs/rxjs.module';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -11,7 +11,7 @@ import { RxjsModule } from './rxjs/rxjs.module';
   ],
   imports: [
     BrowserModule,
-    RxjsModule,
+    BrowserAnimationsModule,
     AppRoutingModule
   ],
   providers: [],
