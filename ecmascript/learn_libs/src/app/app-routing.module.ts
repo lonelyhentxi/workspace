@@ -9,7 +9,7 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'learn-element',
+        redirectTo: 'learn-dcl',
         pathMatch: 'full'
       }, {
         path: 'learn-element',
@@ -17,6 +17,11 @@ const routes: Routes = [
       }, {
         path: 'rxjs',
         loadChildren: () => import('./rxjs/rxjs.module').then(m => m.RxjsModule),
+      },
+      {
+        path: 'learn-dcl',
+        loadChildren: () => import('./learn-dynamic-component-loader/learn-dynamic-component-loader.module')
+          .then(m => m.LearnDynamicComponentLoaderModule)
       }
     ]
   }
