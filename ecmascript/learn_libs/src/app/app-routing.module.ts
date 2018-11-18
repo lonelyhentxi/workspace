@@ -9,12 +9,19 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'learn-dcl',
+        redirectTo: 'learn-attribute-directives',
         pathMatch: 'full'
-      }, {
+      },
+      {
+        path: 'learn-attribute-directives',
+        loadChildren: () => import('./learn-attribute-directives/learn-attribute-directives.module')
+          .then(m => m.LearnAttributeDirectivesModule)
+      },
+      {
         path: 'learn-element',
         loadChildren: () => import('./learn-element/learn-element.module').then(m => m.LearnElementModule)
-      }, {
+      },
+      {
         path: 'rxjs',
         loadChildren: () => import('./rxjs/rxjs.module').then(m => m.RxjsModule),
       },
