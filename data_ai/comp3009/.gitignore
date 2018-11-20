@@ -239,5 +239,6 @@ typings/
 !.vscode/extensions.json
 resource/lab1/*
 resource/lab3/*
+resource/exp2/model/*
 !**/.gitkeep
 
