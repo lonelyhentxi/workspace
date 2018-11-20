@@ -9,8 +9,13 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'learn-attribute-directives',
+        redirectTo: 'learn-structural-directives',
         pathMatch: 'full'
+      },
+      {
+        path: 'learn-structural-directives',
+        loadChildren: () => import('./learn-structural-directives/learn-structural-directives.module')
+          .then(m => m.LearnStructuralDirectivesModule)
       },
       {
         path: 'learn-attribute-directives',
