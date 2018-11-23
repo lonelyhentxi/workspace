@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/resource/exp2/diabetes/README.md" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/resource/exp2/diabetes/d_answer_a_20180128.csv" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/resource/exp2/diabetes/d_answer_b_20180130.csv" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/resource/exp2/diabetes/d_test_A_20180102.csv" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/resource/exp2/diabetes/d_test_B_20180128.csv" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/resource/exp2/diabetes/d_train_20180102.csv" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/resource/exp2/diabetes/d_train_20180102_add.csv" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/resource/exp2/diabetes/test_change.csv" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/resource/exp2/diabetes/test_change_B.csv" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/resource/exp2/阶段1/d_test.csv" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/resource/exp2/阶段2/f_train.csv" charset="GBK" />
+  </component>
+</project>
