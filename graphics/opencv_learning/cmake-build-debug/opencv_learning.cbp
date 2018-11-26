@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="opencv_learning"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="msvc8"/>
+		<Option virtualFolders="CMake Files\;CMake Files\workspace\;CMake Files\workspace\vcpkg\;CMake Files\workspace\vcpkg\scripts\;CMake Files\workspace\vcpkg\scripts\buildsystems\;CMake Files\workspace\vcpkg\installed\;CMake Files\workspace\vcpkg\installed\x64-windows\;CMake Files\workspace\vcpkg\installed\x64-windows\share\;CMake Files\workspace\vcpkg\installed\x64-windows\share\opencv\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="D:/workspace/impls/impls-graphics/graphics/opencv_learning/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 all"/>
+					<CompileFile command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="opencv_learning">
+				<Option output="D:/workspace/impls/impls-graphics/graphics/opencv_learning/cmake-build-debug/opencv_learning.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="D:/workspace/impls/impls-graphics/graphics/opencv_learning/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add directory="C:/workspace/vcpkg/installed/x64-windows/include"/>
+					<Add directory="C:/workspace/vcpkg/installed/x64-windows/include/opencv"/>
+					<Add directory="D:\code\Visual Studio\VC\Tools\MSVC\14.16.27023\ATLMFC\include"/>
+					<Add directory="D:\code\Visual Studio\VC\Tools\MSVC\14.16.27023\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 opencv_learning"/>
+					<CompileFile command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="opencv_learning/fast">
+				<Option output="D:/workspace/impls/impls-graphics/graphics/opencv_learning/cmake-build-debug/opencv_learning.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="D:/workspace/impls/impls-graphics/graphics/opencv_learning/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add directory="C:/workspace/vcpkg/installed/x64-windows/include"/>
+					<Add directory="C:/workspace/vcpkg/installed/x64-windows/include/opencv"/>
+					<Add directory="D:\code\Visual Studio\VC\Tools\MSVC\14.16.27023\ATLMFC\include"/>
+					<Add directory="D:\code\Visual Studio\VC\Tools\MSVC\14.16.27023\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 opencv_learning/fast"/>
+					<CompileFile command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="D:/workspace/impls/impls-graphics/graphics/opencv_learning/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 edit_cache"/>
+					<CompileFile command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="D:/workspace/impls/impls-graphics/graphics/opencv_learning/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="D:/code/Visual Studio/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/nmake.exe /NOLOGO /f D:\workspace\impls\impls-graphics\graphics\opencv_learning\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="D:/workspace/impls/impls-graphics/graphics/opencv_learning/main.cpp">
+			<Option target="opencv_learning"/>
+		</Unit>
+		<Unit filename="D:/workspace/impls/impls-graphics/graphics/opencv_learning/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="D:/workspace/impls/impls-graphics/graphics/opencv_learning/workspace/vcpkg/scripts/buildsystems/vcpkg.cmake">
+			<Option virtualFolder="CMake Files\workspace\vcpkg\scripts\buildsystems\"/>
+		</Unit>
+		<Unit filename="D:/workspace/impls/impls-graphics/graphics/opencv_learning/workspace/vcpkg/installed/x64-windows/share/opencv/OpenCVConfig-version.cmake">
+			<Option virtualFolder="CMake Files\workspace\vcpkg\installed\x64-windows\share\opencv\"/>
+		</Unit>
+		<Unit filename="D:/workspace/impls/impls-graphics/graphics/opencv_learning/workspace/vcpkg/installed/x64-windows/share/opencv/OpenCVConfig.cmake">
+			<Option virtualFolder="CMake Files\workspace\vcpkg\installed\x64-windows\share\opencv\"/>
+		</Unit>
+		<Unit filename="D:/workspace/impls/impls-graphics/graphics/opencv_learning/workspace/vcpkg/installed/x64-windows/share/opencv/OpenCVModules-debug.cmake">
+			<Option virtualFolder="CMake Files\workspace\vcpkg\installed\x64-windows\share\opencv\"/>
+		</Unit>
+		<Unit filename="D:/workspace/impls/impls-graphics/graphics/opencv_learning/workspace/vcpkg/installed/x64-windows/share/opencv/OpenCVModules-release.cmake">
+			<Option virtualFolder="CMake Files\workspace\vcpkg\installed\x64-windows\share\opencv\"/>
+		</Unit>
+		<Unit filename="D:/workspace/impls/impls-graphics/graphics/opencv_learning/workspace/vcpkg/installed/x64-windows/share/opencv/OpenCVModules.cmake">
+			<Option virtualFolder="CMake Files\workspace\vcpkg\installed\x64-windows\share\opencv\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
