@@ -9,8 +9,13 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'learn-pipes',
+        redirectTo: 'learn-form',
         pathMatch: 'full'
+      },
+      {
+        path: 'learn-form',
+        loadChildren: () => import('./learn-form/learn-form.module')
+          .then(m=>m.LearnFormModule)
       },
       {
         path: 'learn-pipes',
