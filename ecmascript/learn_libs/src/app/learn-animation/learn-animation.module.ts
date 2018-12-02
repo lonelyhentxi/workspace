@@ -4,9 +4,10 @@ import {CommonModule} from '@angular/common';
 import {LearnAnimationRoutingModule} from './learn-animation-routing.module';
 import {AnimationDemoComponent} from './animation-demo/animation-demo.component';
 import { TransitionTriggerComponent } from './transition-trigger/transition-trigger.component';
+import { ComplexSequencesComponent } from './complex-sequences/complex-sequences.component';
 
 @NgModule({
-  declarations: [AnimationDemoComponent, TransitionTriggerComponent],
+  declarations: [AnimationDemoComponent, TransitionTriggerComponent, ComplexSequencesComponent],
   imports: [
     CommonModule,
     LearnAnimationRoutingModule
