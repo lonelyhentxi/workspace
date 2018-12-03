@@ -167,7 +167,8 @@ fabric.properties
 
 # customlization
 
-data/
-tmp/
-model/
+data/*
+tmp/*
+model/*
+log/*
 !**/.gitkeep
