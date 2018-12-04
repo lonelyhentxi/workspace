@@ -9,8 +9,13 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'learn-animation',
+        redirectTo: 'learn-security',
         pathMatch: 'full'
+      },
+      {
+        path: 'learn-security',
+        loadChildren: () => import('./learn-security/learn-security.module')
+          .then(m=>m.LearnSecurityModule)
       },
       {
         path: 'learn-animation',
