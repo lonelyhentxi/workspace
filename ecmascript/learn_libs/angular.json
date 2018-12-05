@@ -36,6 +36,14 @@
             ]
           },
           "configurations": {
+            "zh-Hans": {
+              "aot": true,
+              "outputPath": "dist/learn-libs-zh-Hans/",
+              "i18nFile": "src/locale/messages.zh-Hans.xlf",
+              "i18nFormat": "xlf",
+              "i18nLocale": "zh-Hans",
+              "i18nMissingTranslation": "error"
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -63,6 +71,9 @@
           "configurations": {
             "production": {
               "browserTarget": "learn-libs:build:production"
+            },
+            "zh-Hans": {
+              "browserTarget": "learn-libs:build:zh-Hans"
             }
           }
         },
