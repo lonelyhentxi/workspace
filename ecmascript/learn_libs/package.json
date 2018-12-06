@@ -20,12 +20,15 @@
     "@angular/http": "^8.0.0-beta.10",
     "@angular/platform-browser": "^8.0.3",
     "@angular/platform-browser-dynamic": "^8.0.3",
+    "@angular/platform-server": "^8.0.3",
+    "@angular/pwa": "^0.800.4",
     "@angular/router": "^8.0.3",
+    "@angular/service-worker": "^8.0.3",
     "core-js": "^3.1.4",
+    "document-register-element": "^1.7.2",
     "less": "^3.9.0",
     "rxjs": "^6.5.2",
-    "zone.js": "^0.9.1",
-    "document-register-element": "^1.7.2"
+    "zone.js": "^0.9.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.800.4",
@@ -36,6 +39,7 @@
     "@types/jasminewd2": "^2.0.6",
     "@types/node": "^12.0.10",
     "codelyzer": "^5.1.0",
+    "http-server": "^0.11.1",
     "jasmine-core": "^3.4.0",
     "jasmine-spec-reporter": "^4.2.1",
     "karma": "^4.1.0",

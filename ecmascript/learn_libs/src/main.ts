@@ -10,7 +10,8 @@ if (environment.production) {
 declare const require;
 const translations = require('raw-loader!./locale/messages.zh-Hans.xlf');
 
-platformBrowserDynamic().bootstrapModule(AppModule, {
+document.addEventListener('DOMContentLoaded', () => {
+     platformBrowserDynamic().bootstrapModule(AppModule, {
   providers: [
     {
       provide: TRANSLATIONS, useValue: translations,
@@ -21,4 +22,5 @@ platformBrowserDynamic().bootstrapModule(AppModule, {
   ]
 })
   .catch(err => console.log(err));
+   });
 

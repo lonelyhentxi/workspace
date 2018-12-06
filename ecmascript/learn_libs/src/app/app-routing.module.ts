@@ -13,6 +13,11 @@ const routes: Routes = [
         pathMatch: 'full'
       },
       {
+        path: 'learn-service-workers',
+        loadChildren: () => import('./learn-service-workers/learn-service-workers.module')
+          .then(m=>m.LearnServiceWorkersModule)
+      },
+      {
         path: 'learn-i18n',
         loadChildren: () => import('./learn-i18n/learn-i18n.module')
           .then(m=>m.LearnI18nModule)

@@ -7,6 +7,9 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {registerLocaleData} from '@angular/common';
 import localeZhHans from '@angular/common/locales/zh-Hans';
 import localeZhHansExtra from '@angular/common/locales/extra/zh-Hans';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
+import { RouterModule } from '@angular/router';
 registerLocaleData(localeZhHans, 'zh-Hans', localeZhHansExtra);
 
 @NgModule({
@@ -19,9 +22,11 @@ registerLocaleData(localeZhHans, 'zh-Hans', localeZhHansExtra);
     }
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'serverApp' }),
     BrowserAnimationsModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+    RouterModule
   ],
   bootstrap: [AppComponent]
 })
