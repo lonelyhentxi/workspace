@@ -34,7 +34,8 @@
               {
                 "input": "node_modules/document-register-element/build/document-register-element.js"
               }
-            ]
+            ],
+            "webWorkerTsConfig": "tsconfig.worker.json"
           },
           "configurations": {
             "zh-Hans": {
@@ -109,7 +110,8 @@
           "options": {
             "tsConfig": [
               "src/tsconfig.app.json",
-              "src/tsconfig.spec.json"
+              "src/tsconfig.spec.json",
+              "tsconfig.worker.json"
             ],
             "exclude": [
               "**/node_modules/**"
@@ -183,5 +185,8 @@
       }
     }
   },
-  "defaultProject": "learn-libs"
+  "defaultProject": "learn-libs",
+  "cli": {
+    "packageManager": "yarn"
+  }
 }

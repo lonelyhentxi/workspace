@@ -9,8 +9,13 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'learn-i18n',
+        redirectTo: 'learn-web-worker',
         pathMatch: 'full'
+      },
+      {
+        path: 'learn-web-worker',
+        loadChildren: () => import('./learn-web-worker/learn-web-worker.module')
+          .then(m=>m.LearnWebWorkerModule)
       },
       {
         path: 'learn-service-workers',
