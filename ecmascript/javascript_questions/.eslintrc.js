@@ -23,6 +23,7 @@ module.exports = {
             "error",
             "double"
         ],
+        "no-prototype-builtins":"off",
         "semi": [
             "error",
             "always"
