@@ -24,8 +24,13 @@ namespace tiny_gc {
                 blocks[sweeping + 1] = static_cast<int64_t>(false);
             }
             else {
-                blocks[sweeping + 1] = static_cast<int64_t>(freelist);
-                freelist = sweeping;
+                if(freelist<blocks.size()&&sweeping==static_cast<uint64_t>(blocks[freelist])+freelist) {
+                    blocks[freelist] = blocks[freelist] + blocks[sweeping];
+                }
+                else {
+                    blocks[sweeping + 1] = static_cast<int64_t>(freelist);
+                    freelist = sweeping;
+                }
             }
             sweeping += static_cast<uint64_t>(blocks[sweeping]);
         }

@@ -25,12 +25,12 @@ TEST_CASE("mark sweep", "[mark_sweep]") {
             0, 0, 0, 0,
             4, 0, 1, 24,
             4, 0, 0, 0,
-            4, 64, 1, 24,
-            8, 28, 0, 0,
+            12, 64, 1, 24,
+            8, 0, 0, 0,
             0, 0, 0, 0};
     mark_sweep(blocks, roots, freelist);
     REQUIRE(blocks == expect);
-    REQUIRE(freelist == 32);
+    REQUIRE(freelist == 28);
     vector<int64_t> expect1{
             4, 0, 1, 4,
             8, 0, 0, 0,
@@ -39,13 +39,13 @@ TEST_CASE("mark sweep", "[mark_sweep]") {
             0, 0, 0, 0,
             4, 0, 1, 24,
             4, 0, 0, 0,
-            4, 64, 1, 24,
-            4, 0, 0, 0,
-            4, 28, 0, 0};
+            4, 0, 1, 24,
+            8, 64, 0, 0,
+            0, 0, 0, 0};
     const auto res = new_obj(blocks, freelist, 1);
-    REQUIRE(res == 32);
+    REQUIRE(res == 28);
     REQUIRE(blocks == expect1);
-    REQUIRE(freelist == 36);
+    REQUIRE(freelist == 32);
     vector<int64_t> expect2{
             4, 0, 1, 4,
             8, 0, 0, 0,
@@ -54,12 +54,12 @@ TEST_CASE("mark sweep", "[mark_sweep]") {
             0, 0, 0, 0,
             4, 0, 1, 24,
             4, 0, 0, 0,
-            4, 64, 1, 24,
+            4, 0, 1, 24,
             4, 0, 0, 0,
-            4, 0, 0, 0};
-    REQUIRE(new_obj(blocks, freelist, 1) == 36);
+            4, 64, 0, 0};
+    REQUIRE(new_obj(blocks, freelist, 1) == 32);
     REQUIRE(blocks == expect2);
-    REQUIRE(freelist == 28);
+    REQUIRE(freelist == 36);
     vector<int64_t> expect3{
             4, 0, 1, 4,
             8, 0, 0, 0,
@@ -71,7 +71,7 @@ TEST_CASE("mark sweep", "[mark_sweep]") {
             4, 0, 1, 24,
             4, 0, 0, 0,
             4, 0, 0, 0};
-    REQUIRE(new_obj(blocks, freelist, 1) == 28);
+    REQUIRE(new_obj(blocks, freelist, 1) == 36);
     REQUIRE(blocks == expect3);
     REQUIRE(freelist == 64);
     try {
