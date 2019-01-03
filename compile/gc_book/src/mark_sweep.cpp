@@ -3,7 +3,6 @@
 namespace tiny_gc {
     using std::runtime_error;
 
-
     void mark(vector<int64_t>& blocks, uint64_t r) {
         if (!static_cast<bool>(blocks[r + 1])) {
             blocks[r + 1] = static_cast<int64_t>(true);
@@ -24,7 +23,7 @@ namespace tiny_gc {
                 blocks[sweeping + 1] = static_cast<int64_t>(false);
             }
             else {
-                if(freelist<blocks.size()&&sweeping==static_cast<uint64_t>(blocks[freelist])+freelist) {
+                if(freelist!=null&&sweeping==static_cast<uint64_t>(blocks[freelist])+freelist) {
                     blocks[freelist] = blocks[freelist] + blocks[sweeping];
                 }
                 else {
@@ -39,9 +38,31 @@ namespace tiny_gc {
         mark_phrase(blocks, roots);
         sweep_phrase(blocks, freelist);
     }
+    void sweep_phrase_multi_lists(vector<int64_t>& blocks, const vector<uint64_t>& roots, vector<uint64_t>& freelists) {
+        uint64_t sweeping = 0;
+        while (sweeping < blocks.size()) {
+            if (static_cast<bool>(blocks[sweeping + 1])) {
+                blocks[sweeping + 1] = static_cast<int64_t>(false);
+            }
+            else {
+                uint64_t index = static_cast<uint64_t>(blocks[sweeping]) / 4 - 1;
+                if(index>=freelists.size()-1) {
+                    index = freelists.size() - 1;
+                }
+                uint64_t& freelist = freelists[index];
+                blocks[sweeping + 1] = static_cast<int64_t>(freelist);
+                freelist = sweeping;
+            }
+            sweeping += static_cast<uint64_t>(blocks[sweeping]);
+        }
+    }
+    void mark_sweep_multi_lists(vector<int64_t>& blocks, const vector<uint64_t>& roots, vector<uint64_t>& freelists) {
+        mark_phrase(blocks, roots);
+        sweep_phrase_multi_lists(blocks, roots, freelists);
+    }
     uint64_t pick_chunk(vector<int64_t>& blocks, uint64_t& freelist, uint64_t size) {
         uint64_t current = freelist;
-        uint64_t last = 64;
+        uint64_t last = null;
         while (current < blocks.size()) {
             if (static_cast<uint64_t>(blocks[current]) == size) {
                 const uint64_t res = current;
@@ -74,12 +95,12 @@ namespace tiny_gc {
                 current = static_cast<uint64_t>(blocks[current + 1]);
             }
         }
-        return 64;
+        return null;
     }
     uint64_t new_obj(vector<int64_t>& blocks, uint64_t& freelist, uint64_t size) {
         if (size == 0) throw runtime_error("empty alloc");
         const auto chunk = pick_chunk(blocks, freelist, static_cast<uint64_t>(ceil(static_cast<float>(size + 3) / 4.0)) * 4);
-        if (chunk >= blocks.size()) {
+        if (chunk == null) {
             throw runtime_error("alloc failed");
         }
         else {
