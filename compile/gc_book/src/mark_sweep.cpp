@@ -1,8 +1,6 @@
 #include "mark_sweep.hpp"
 
 namespace tiny_gc {
-    using std::runtime_error;
-
     void mark(vector<int64_t> &blocks, uint64_t r) {
         if (!static_cast<bool>(blocks[r + 1])) {
             blocks[r + 1] = static_cast<int64_t>(true);
@@ -149,6 +147,46 @@ namespace tiny_gc {
             throw runtime_error("alloc failed");
         } else {
             return chunk;
+        }
+    }
+
+
+    uint64_t lazy_sweep(vector<int64_t> &blocks,  uint64_t &sweeping, uint64_t size) {
+        while(sweeping < blocks.size()) {
+            let sweeping_size = static_cast<uint64_t>(blocks[sweeping]);
+            if(static_cast<bool>(blocks[sweeping+1])) {
+                blocks[sweeping+1] = static_cast<bool>(false);
+            } else {
+                if(sweeping_size >= size) {
+                    let chunk = sweeping;
+                    sweeping += sweeping_size;
+                    return chunk;
+                }
+            }
+            sweeping += sweeping_size;
+        }
+        sweeping = 0;
+        return null;
+    }
+
+    uint64_t new_obj_lazy_sweep(vector<int64_t> &blocks, const vector<uint64_t> &roots, uint64_t &sweeping, uint64_t size) {
+        if(size==0) {
+            throw runtime_error{"empty alloc"};
+        }
+        let alloc_size = static_cast<uint64_t>(ceil(static_cast<float>(size + 3) / 4.0)) * 4;
+        {
+            let chunk = lazy_sweep(blocks, sweeping, alloc_size);
+            if (chunk != null) {
+                return chunk;
+            }
+        }
+        {
+            mark_phrase(blocks, roots);
+            let chunk = lazy_sweep(blocks, sweeping,  alloc_size);
+            if (chunk != null) {
+                return chunk;
+            }
+            throw runtime_error{"alloc failed"};
         }
     }
 }

@@ -5,7 +5,7 @@ TEST_CASE("mark sweep", "[mark_sweep]") {
     using namespace std;
     using namespace tiny_gc;
 
-    SECTION("mark sweep with single list") {
+    SECTION("mark sweep with single list and new obj") {
         vector<int64_t> blocks{
                 4, 0, 1, 4,
                 8, 0, 0, 0,
@@ -150,5 +150,30 @@ TEST_CASE("mark sweep", "[mark_sweep]") {
         sweep_phrase_bitmap(blocks, bitmap, freelist);
         REQUIRE(bitmap[0] == 0);
         REQUIRE(freelist == 32);
+    }
+
+    SECTION("new obj with lazy sweeping") {
+        vector<int64_t> blocks{
+                4, 0, 1, 4,
+                8, 0, 0, 0,
+                0, 0, 0, 0,
+                8, 0, 0, 0,
+                0, 0, 0, 0,
+                4, 0, 1, 24,
+                4, 0, 0, 0,
+                4, 0, 1, 24,
+                8, 0, 0, 0,
+                0, 0, 0, 0};
+        vector<uint64_t> roots{0, 12, 20};
+        mark_phrase(blocks, roots);
+        auto sweeping = uint64_t{0};
+        new_obj_lazy_sweep(blocks, roots, sweeping, 1);
+        REQUIRE(sweeping==32);
+        REQUIRE(blocks==vector<int64_t>{
+            4, 0, 1, 4, 8, 0, 0, 0,
+            0, 0, 0, 0, 8, 0, 0, 0,
+            0, 0, 0, 0, 4, 0, 1, 24,
+            4, 0, 0, 0, 4, 0, 1, 24,
+            8, 0, 0, 0, 0, 0, 0, 0 });
     }
 }
