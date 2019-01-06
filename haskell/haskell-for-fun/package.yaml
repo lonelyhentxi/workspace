@@ -32,3 +32,4 @@ tests:
     dependencies:
     - haskell-for-fun
     - hspec
+    - hspec-discover
