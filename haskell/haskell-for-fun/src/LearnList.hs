@@ -102,3 +102,4 @@ elemIndices'' :: (Eq a) => a -> [a] -> [Int]
 elemIndices'' x xs = findIndices' (== x) xs
 
 -- xxBy = xx (==)
+
