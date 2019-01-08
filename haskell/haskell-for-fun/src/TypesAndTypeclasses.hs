@@ -199,6 +199,8 @@ class Tofu t where
 data Frank a b = Frank {frankField :: b a} deriving (Show)
 
 
+
+
 script :: IO ()
 script = do
     learn $ Car { company = "Ford", model = "Mustang", year = 1967 }
