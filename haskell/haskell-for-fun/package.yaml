@@ -18,6 +18,8 @@ description:         Learn haskell-for-fun
 dependencies:
 - base >= 4.7 && < 5
 - containers
+- random
+- bytestring
 
 library:
   source-dirs: src

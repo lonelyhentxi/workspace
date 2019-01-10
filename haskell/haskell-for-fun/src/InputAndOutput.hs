@@ -3,6 +3,10 @@ module InputAndOutput where
 import Text.Printf
 import Control.Monad
 import Data.Char
+import System.IO
+import System.Random
+import qualified Data.ByteString.Lazy as B
+import qualified Data.ByteString as S
 
 -- hello world
 
@@ -75,3 +79,66 @@ tryGetContents :: IO ()
 tryGetContents = do
     contents <- getContents
     putStr (map toUpper contents)
+
+convertIO :: IO ()
+convertIO = interact shortLinesOnly
+
+shortLinesOnly :: String -> String
+shortLinesOnly = unlines . filter (\line->length line < 10) . lines
+
+-- file io
+
+{--
+openFile :: FilePath -> IOMode -> IO Handle
+data IOMode = ReadMode | WriteMode | AppendMode | ReadWriteMode
+type FilePath = String
+withFile :: FilePath -> IOMode -> (Handle -> IO a) -> IO a
+--}
+
+tryWithFile :: IO ()
+tryWithFile = do 
+    withFile "../resource/io.txt" ReadMode (\handle -> do
+        contents <- hGetContents handle
+        putStrLn contents
+        )
+
+-- random
+{--
+random :: (RandomGen g, Random a) => g -> (a,g)
+should get new random gen from output, otherwise yield same results
+--}
+
+validateCoins :: StdGen -> Int -> Bool
+validateCoins gen times =
+    if times == 0 then True
+    else case random gen of
+        (state,newGen) -> validateCoinsRec newGen state (times-1)
+        where validateCoinsRec :: StdGen -> Bool -> Int -> Bool
+              validateCoinsRec gen state times =
+                if times == 0 then True
+                else
+                    let (res,newGen) = random gen
+                    in if res==state then validateCoinsRec newGen state (times-1)
+                    else False
+
+validateCoins' :: StdGen -> Int -> Bool
+validateCoins' gen times =
+    if times == 0 then True
+    else case random gen of
+        (state,_) -> validateCoinsRec' gen state (times-1)
+        where validateCoinsRec' :: StdGen -> Bool -> Int -> Bool
+              validateCoinsRec' gen state times =
+                if times == 0 then True
+                else
+                    let (res,_) = random gen
+                    in if res==state then validateCoinsRec' gen state (times-1)
+                    else False
+
+{--
+bytestring
+--}
+
+tryByteStringSimpleUse :: IO()
+tryByteStringSimpleUse = do
+    putStrLn $ show $ B.pack [99,97,110]
+    putStrLn $ show $ B.unpack $ B.pack [99,97,110]
