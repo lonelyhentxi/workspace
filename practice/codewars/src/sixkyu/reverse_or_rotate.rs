@@ -1,4 +1,4 @@
-fn revrot(s: &str, c: usize) -> String {
+pub fn revrot(s: &str, c: usize) -> String {
     if s.len() == 0 || c <= 0 {
         return "".to_string();
     }
