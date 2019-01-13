@@ -1,0 +1,9 @@
+[package]
+name = "codewars"
+version = "0.0.1"
+authors = ["lonelyhentai <master@evernightfireworks.com>"]
+edition = "2018"
+
+
+[dependencies]
+num = "0.2.0"
