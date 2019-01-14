@@ -1,2 +1,3 @@
 mod common_denominators;
 mod integers_recreation_one;
+mod product_of_consecutive_fib_numbers;
