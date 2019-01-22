@@ -4,7 +4,7 @@
   "description": "typescript trains in codewars",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register typescript/**/*.spec.ts"
+    "test": "mocha -r ts-node/register src/**/*.spec.ts"
   },
   "author": "lonelyhentai <master@evernightfireworks.com>",
   "license": "MIT",

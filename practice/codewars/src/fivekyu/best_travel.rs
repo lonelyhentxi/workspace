@@ -1,6 +1,5 @@
 use std::cmp::max;
 use std::collections::HashSet;
-use std::collections::HashMap;
 
 fn choose_best_sum_recursively(start: usize, towns: usize, ls: &Vec<i32>) -> HashSet<i32> {
     let mut res = HashSet::new();

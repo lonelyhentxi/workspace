@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace Codewars
 {
 
-    public class Kata
+    public partial class Kata
     {
         public static int FinalGrade(int exam, int projects)
         {
@@ -17,7 +17,7 @@ namespace Codewars
     }
 
     [TestFixture]
-    public class Testing
+    public partial class Testing
     {
         [Test]
         public void FinalGradeTest()
