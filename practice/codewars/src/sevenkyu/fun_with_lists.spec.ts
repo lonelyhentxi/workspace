@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { indexOf, FunWithListsNode, length } from "./fun_with_lists";
+import { indexOf, FunWithListsNode, length, lastIndexOf, countIf } from "./fun_with_lists";
 
 function listFromArray(array: any[]): FunWithListsNode | null {
   const mapedArray = array.map(item => new FunWithListsNode(item, null));
@@ -30,3 +30,29 @@ describe("length", function() {
     assert(length(listFromArray([1, 2, 3, 4])) == 4);
   });
 });
+
+describe("lastIndexOf", function() {
+
+    it("basic tests", function() {
+      assert(lastIndexOf(null, 17)=== -1);
+      assert(lastIndexOf(listFromArray([1, 2, 3]), 2)=== 1);
+      assert(lastIndexOf(listFromArray(['aaa', 'b', 'abc']), 'aaa')=== 0);
+      assert(lastIndexOf(listFromArray([17, '17', 1.2]), 17)=== 0);
+      assert(lastIndexOf(listFromArray([17, '17', 1.2]), '17')=== 1);
+      assert(lastIndexOf(listFromArray([1, 2, 3, 3]), 3)=== 3);
+    });
+  });
+
+
+  describe("countIf", function() {
+
+    it("basic tests", function() {
+      assert(countIf(null, x => false)=== 0);
+      assert(countIf(listFromArray([1, 2, 3]), x => true)=== 3);
+    });
+    
+    it("array of ints", function() {
+      assert(countIf(listFromArray([1, 2, 3]), x => x <= 2)=== 2);
+    });
+  
+  });

@@ -37,3 +37,23 @@ exports.length = function length(head) {
     })
     return index;
 }
+
+exports.lastIndexOf = function lastIndexOf(head, value) {
+    let index = -1;
+    forEach(head, (item, i) => {
+        if(item===value) {
+            index = i;
+        }
+    })
+    return index;
+}
+
+exports.countIf = function countIf(head, p) {
+    let count = 0;
+    forEach(head, (item,i) => {
+        if(p(item)) {
+            count+=1;
+        }
+    })
+    return count;
+}
