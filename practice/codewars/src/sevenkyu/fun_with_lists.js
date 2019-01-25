@@ -1,11 +1,13 @@
-exports.FunWithListsNode = class FunWithListsNode {
+class FunWithListsNode {
     constructor(data, next = null) {
         this.data = data;
-        this.next = next;
+        this.next = next == null || next === undefined ? null : next;
     }
 }
 
-function forEach (head, callback) {
+exports.FunWithListsNode = FunWithListsNode;
+
+function forEach(head, callback) {
     let index = -1;
     let current = head;
     while (current) {
@@ -20,6 +22,31 @@ function forEach (head, callback) {
 }
 
 exports.forEach = forEach;
+
+function nodeEqual(lhs,rhs) {
+    if(lhs===rhs) {
+        if(lhs==null) {
+            return true;
+        } else if(!(lhs instanceof FunWithListsNode)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    else if(lhs instanceof FunWithListsNode&&rhs instanceof FunWithListsNode) {
+        if(lhs.data!==rhs.data) {
+            return false;
+        }
+        else {
+            return nodeEqual(lhs.next, rhs.next);
+        }
+    }
+    else {
+        return false;
+    }
+}
+
+exports.nodeEqual = nodeEqual;
 
 exports.indexOf = function indexOf(head, value) {
     const index = forEach(head, (item, i) => {
@@ -41,7 +68,7 @@ exports.length = function length(head) {
 exports.lastIndexOf = function lastIndexOf(head, value) {
     let index = -1;
     forEach(head, (item, i) => {
-        if(item===value) {
+        if (item === value) {
             index = i;
         }
     })
@@ -50,10 +77,47 @@ exports.lastIndexOf = function lastIndexOf(head, value) {
 
 exports.countIf = function countIf(head, p) {
     let count = 0;
-    forEach(head, (item,i) => {
-        if(p(item)) {
-            count+=1;
+    forEach(head, (item, i) => {
+        if (p(item)) {
+            count += 1;
         }
     })
     return count;
+}
+
+exports.anyMatch = function anyMatch(head, p) {
+    return forEach(head, (item, i) => {
+        if (p(item)) {
+            return true;
+        }
+    }) == true ? true : false;
+}
+
+exports.allMatch = function allMatch(head, p) {
+    return forEach(head, (item, i) => {
+        if (!p(item)) {
+            return false;
+        }
+    }) === false ? false : true;
+}
+
+function listFromArray(array) {
+    const mapedArray = array.map(item => new FunWithListsNode(item, null));
+    const length = mapedArray.length;
+    mapedArray.forEach((node, index) => {
+        node.next = index + 1 < length ? mapedArray[index + 1] : null;
+    });
+    return mapedArray.length > 0 ? mapedArray[0] : null;
+}
+
+exports.listFromArray = listFromArray;
+
+exports.filter = function filter(head, p) {
+    const res = [];
+    forEach(head, (item, i) => {
+        if (p(item)) {
+            res.push(item);
+        }
+    })
+    return listFromArray(res);
 }

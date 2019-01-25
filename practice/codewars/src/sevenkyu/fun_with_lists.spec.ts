@@ -1,14 +1,16 @@
 import { assert } from "chai";
-import { indexOf, FunWithListsNode, length, lastIndexOf, countIf } from "./fun_with_lists";
-
-function listFromArray(array: any[]): FunWithListsNode | null {
-  const mapedArray = array.map(item => new FunWithListsNode(item, null));
-  const length = mapedArray.length;
-  mapedArray.forEach((node, index) => {
-    node.next = index + 1 < length ? mapedArray[index + 1] : null;
-  });
-  return mapedArray.length > 0 ? mapedArray[0] : null;
-}
+import {
+  indexOf,
+  length,
+  lastIndexOf,
+  countIf,
+  allMatch,
+  anyMatch,
+  listFromArray,
+  FunWithListsNode,
+  nodeEqual,
+  filter,
+} from "./fun_with_lists";
 
 describe("indexOf", function() {
   it("null tests", function() {
@@ -32,27 +34,55 @@ describe("length", function() {
 });
 
 describe("lastIndexOf", function() {
+  it("basic tests", function() {
+    assert(lastIndexOf(null, 17) === -1);
+    assert(lastIndexOf(listFromArray([1, 2, 3]), 2) === 1);
+    assert(lastIndexOf(listFromArray(["aaa", "b", "abc"]), "aaa") === 0);
+    assert(lastIndexOf(listFromArray([17, "17", 1.2]), 17) === 0);
+    assert(lastIndexOf(listFromArray([17, "17", 1.2]), "17") === 1);
+    assert(lastIndexOf(listFromArray([1, 2, 3, 3]), 3) === 3);
+  });
+});
 
-    it("basic tests", function() {
-      assert(lastIndexOf(null, 17)=== -1);
-      assert(lastIndexOf(listFromArray([1, 2, 3]), 2)=== 1);
-      assert(lastIndexOf(listFromArray(['aaa', 'b', 'abc']), 'aaa')=== 0);
-      assert(lastIndexOf(listFromArray([17, '17', 1.2]), 17)=== 0);
-      assert(lastIndexOf(listFromArray([17, '17', 1.2]), '17')=== 1);
-      assert(lastIndexOf(listFromArray([1, 2, 3, 3]), 3)=== 3);
-    });
+describe("countIf", function() {
+  it("basic tests", function() {
+    assert(countIf(null, x => false) === 0);
+    assert(countIf(listFromArray([1, 2, 3]), x => true) === 3);
   });
 
+  it("array of ints", function() {
+    assert(countIf(listFromArray([1, 2, 3]), x => x <= 2) === 2);
+  });
+});
 
-  describe("countIf", function() {
+describe("anyMatch & allMatch", function() {
+  it("null tests", function() {
+    assert(anyMatch(null, x => false) === false);
+    assert(anyMatch(null, x => true) === false);
+    assert(allMatch(null, x => false) === true);
+    assert(allMatch(null, x => true) === true);
+  });
+  it("any tests", ()=>{
+    assert(anyMatch(listFromArray([1, 2, 3]), x => x > 1) === true, ""+(anyMatch(listFromArray([1, 2, 3]), x => x > 1)));
+  })
 
+  it("all tests",()=>{
+    assert(allMatch(listFromArray([1, 2, 3]), x => x > 1) === false,""+(allMatch(listFromArray([1, 2, 3]), x => x > 1)));
+  })
+});
+
+
+describe("filter", function() {
+
+    function testFilter(input_list_head: FunWithListsNode|null, predicate: (value: any)=>boolean, expected_list_head: FunWithListsNode|null) {
+        assert(nodeEqual(filter(input_list_head, predicate), expected_list_head));
+    }
+    
     it("basic tests", function() {
-      assert(countIf(null, x => false)=== 0);
-      assert(countIf(listFromArray([1, 2, 3]), x => true)=== 3);
+      testFilter(null, x => false, null);
+      testFilter(new FunWithListsNode(1, new FunWithListsNode(2, new FunWithListsNode(3))), x => true, new FunWithListsNode(1, new FunWithListsNode(2, new FunWithListsNode(3))));
+      testFilter(new FunWithListsNode(1, new FunWithListsNode(2, new FunWithListsNode(3))), x => x <= 2, new FunWithListsNode(1, new FunWithListsNode(2)));
+      testFilter(new FunWithListsNode(1, new FunWithListsNode(2, new FunWithListsNode(3))), x => x === 1, new FunWithListsNode(1));
     });
     
-    it("array of ints", function() {
-      assert(countIf(listFromArray([1, 2, 3]), x => x <= 2)=== 2);
-    });
-  
   });
