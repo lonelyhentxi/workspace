@@ -25,3 +25,7 @@ export declare function anyMatch(head: FunWithListsNode|null, p: (item: any)=>bo
 export declare function allMatch(head: FunWithListsNode|null, p: (item: any)=>boolean): boolean;
 
 export declare function filter(head: FunWithListsNode|null, p: (item: any)=>boolean): FunWithListsNode|null;
+
+export declare function map(head: FunWithListsNode|null, p: (item: any)=>any): FunWithListsNode|null;
+
+export declare function reduce(head: FunWithListsNode|null, f: (acc: any, curr: any)=>any, init: any): any;

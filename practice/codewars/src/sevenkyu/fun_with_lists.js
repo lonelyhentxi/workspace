@@ -121,3 +121,19 @@ exports.filter = function filter(head, p) {
     })
     return listFromArray(res);
 }
+
+exports.map = function map(head, f) {
+    const res = [];
+    forEach(head, (item,i)=>{
+        res.push(f(item));
+    })
+    return listFromArray(res);
+}
+
+exports.reduce = function reduce(head, f, init) {
+    let acc = init;
+    forEach(head,(item,i)=>{
+        acc = f(acc,item)
+    })
+    return acc;
+}

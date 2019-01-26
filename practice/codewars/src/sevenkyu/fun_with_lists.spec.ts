@@ -10,6 +10,8 @@ import {
   FunWithListsNode,
   nodeEqual,
   filter,
+  map,
+  reduce,
 } from "./fun_with_lists";
 
 describe("indexOf", function() {
@@ -83,6 +85,30 @@ describe("filter", function() {
       testFilter(new FunWithListsNode(1, new FunWithListsNode(2, new FunWithListsNode(3))), x => true, new FunWithListsNode(1, new FunWithListsNode(2, new FunWithListsNode(3))));
       testFilter(new FunWithListsNode(1, new FunWithListsNode(2, new FunWithListsNode(3))), x => x <= 2, new FunWithListsNode(1, new FunWithListsNode(2)));
       testFilter(new FunWithListsNode(1, new FunWithListsNode(2, new FunWithListsNode(3))), x => x === 1, new FunWithListsNode(1));
+    });
+    
+  });
+
+  describe("map", function() {
+
+    function testMap(input_list_head: FunWithListsNode|null, f: (value: any)=>any, expected_list_head: FunWithListsNode|null) {
+      assert(nodeEqual(map(input_list_head, f), expected_list_head));
+  }
+  
+    it("basic tests", function() {
+      testMap(null, x => false, null);
+      testMap(new FunWithListsNode(1, new FunWithListsNode(2, new FunWithListsNode(3))), x => x * 2, new FunWithListsNode(2, new FunWithListsNode(4, new FunWithListsNode(6))));
+    });
+  });
+
+
+  describe("reduce", function() {
+
+    it("basic tests", function() {
+      assert(reduce(null, (a, b) => a + b, 0)=== 0);
+      assert(reduce(new FunWithListsNode(1, new FunWithListsNode(2, new FunWithListsNode(3))), (a, b) => a + b, 0)=== 6);
+      assert(reduce(new FunWithListsNode(1, new FunWithListsNode(2, new FunWithListsNode(3, new FunWithListsNode(4)))), (a, b) => a * b, 1)=== 24);
+      assert(reduce(new FunWithListsNode('a', new FunWithListsNode('b', new FunWithListsNode('c'))), (a, b) => a + b, '')=== 'abc');
     });
     
   });
