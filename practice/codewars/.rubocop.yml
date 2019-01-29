@@ -4,3 +4,6 @@ Style/FormatString:
 
 Style/Documentation:
   Enable: false
+
+Metrics/MethodLength:
+  Enable: false
