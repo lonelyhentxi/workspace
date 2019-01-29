@@ -1,0 +1,9 @@
+Style/FormatString:
+  Enable: true
+  EnforcedStyle: percent
+
+Style/Documentation:
+  Enable: false
+
+Metrics/MethodLength:
+  Enable: false
