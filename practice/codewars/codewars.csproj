@@ -4,16 +4,10 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp2.1</TargetFramework>
         <IsPackable>false</IsPackable>
-        <BaseOutputPath>./csharp_build/bin</BaseOutputPath>
-        <BaseIntermediateOutputPath>./csharp_build/obj</BaseIntermediateOutputPath>
         <CleanFile>True</CleanFile>
-        <RestoreOutputPath>./csharp_build/obj</RestoreOutputPath>
         <BaseDirectory>./src</BaseDirectory>
         <StartupObject>Codewars.Program</StartupObject>
     </PropertyGroup>
-
-    <Import Project="$(RestoreOutputPath)\$(MSBuildProjectFile).nuget.g.props" />
-    <Import Project="$(RestoreOutputPath)\$(MSBuildProjectFile).nuget.g.targets" />
 
     <ItemGroup>
         <PackageReference Include="nunit" Version="3.10.1" />
