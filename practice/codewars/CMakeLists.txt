@@ -5,6 +5,7 @@ project(codewars)
 
 set(CMAKE_CXX_STANDARD 14)
 find_package(Catch2 CONFIG REQUIRED)
+SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/cmake-build)
 include_directories(
         src/fivekyu
         src/sixkyu
