@@ -3,7 +3,7 @@
 
 TEST_CASE( "path_finder3","[path_finder3_the_alpinist]" )
 {
-	using namespace codewars::fourkyu::path_finder3;
+	using namespace codewars::threekyu::path_finder3;
 	const string s1 =
 
 		"000\n"

@@ -10,10 +10,11 @@
 #include <unordered_set>
 #include <limits>
 #include <algorithm>
+#include <queue>
 
 namespace codewars
 {
-	namespace fourkyu
+	namespace threekyu
 	{
 		namespace path_finder3_worse
 		{
@@ -248,7 +249,7 @@ namespace codewars
 
 		}
 
-		namespace path_finder3
+		namespace path_finder3_vec
 		{
 			using namespace std;
 
@@ -315,6 +316,93 @@ namespace codewars
 
 					return -1;
 				}
+		}
+
+		namespace path_finder3
+		{
+			using namespace std;
+
+			using node_id_t = int32_t;
+
+			vector<pair<int32_t, int32_t>> directions = { {0, 1}, {1, 0}, {0, -1}, {-1, 0} };
+
+			struct node
+			{
+				node_id_t next;
+				int32_t cost;
+				friend  bool operator<(const node&, const node&);
+			};
+
+			bool operator<(const node& lhs,const node &rhs)
+			{
+				return lhs.cost > rhs.cost;
+			}
+
+
+
+			int32_t path_finder(const string &literal_maze)
+			{
+				const auto size = static_cast<int32_t>(floor(sqrt(literal_maze.size())));
+				const auto point_size = size * size;
+
+				const auto point_to_id = [size](const int32_t x, const int32_t y) -> node_id_t { return x * size + y;  };
+				const auto point_to_literal_id = [size](const int32_t x,const int32_t y) -> node_id_t { return x * (size + 1) + y;  };
+
+				vector<vector<node>> edge(point_size, vector<node>{});
+				for(auto x=0;x<size;x++)
+				{
+					for(auto y=0;y<size;y++)
+					{
+						for(const auto &dir: directions)
+						{
+							const auto next_x = x + dir.first;
+							const auto next_y = y + dir.second;
+							if(next_x>=0&&next_y>=0&&next_x<size&&next_y<size)
+							{
+								edge[point_to_id(x, y)]
+								.push_back(
+									node{
+										point_to_id(next_x,next_y),
+										abs(literal_maze[point_to_literal_id(x,y)]-literal_maze[point_to_literal_id(next_x,next_y)])
+									}
+								);
+							}
+						}
+					}
+				}
+
+				const node_id_t entry = 0;
+
+				vector<int32_t> dist(point_size, -1);
+				dist[entry] = 0;
+
+				priority_queue<node> unknown{};
+				unknown.push(node{ entry,dist[entry] });
+
+				while(!unknown.empty())
+				{
+					auto current = unknown.top();
+					unknown.pop();
+					node_id_t u = current.next;
+					if(u == point_size-1)
+					{
+						return dist[u];
+					}
+					for (auto i = 0; i < edge[u].size(); i++)
+					{
+						const auto v = edge[u][i].next;
+						const auto cost = edge[u][i].cost;
+						if (dist[v] == -1 || dist[u] + cost < dist[v])
+						{
+							dist[v] = dist[u] + cost;
+							current.cost = dist[v];
+							current.next = v;
+							unknown.push(current);
+						}
+					}
+				}
+				return dist[point_size - 1];
+			}
 		}
 	}
 }
