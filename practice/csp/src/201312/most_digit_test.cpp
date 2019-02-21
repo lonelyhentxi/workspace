@@ -1,9 +1,6 @@
 #include "most_digit.hpp"
 #ifdef WITH_CMAKE
 #include <catch2/catch.hpp>
-#else
-#define CATCH_CONFIG_MAIN
-#include "../../include/catch.hpp"
 #endif
 
 

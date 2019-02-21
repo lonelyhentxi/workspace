@@ -4,8 +4,8 @@
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
-OBJ      = src/test.o src/201312/most_digit.o
-LINKOBJ  = src/test.o src/201312/most_digit.o
+OBJ      = src/201312/most_digit.o src/201312/most_digit_submit.o
+LINKOBJ  = src/201312/most_digit.o src/201312/most_digit_submit.o
 LIBS     = -L"C:/code/Dev-Cpp/MinGW64/lib" -L"C:/code/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc
 INCS     = -I"C:/code/Dev-Cpp/MinGW64/include" -I"C:/code/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/code/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"C:/code/Dev-Cpp/MinGW64/include" -I"C:/code/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/code/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/code/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
@@ -24,8 +24,8 @@ clean: clean-custom
 $(BIN): $(OBJ)
 	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
 
-src/test.o: src/test.cpp
-	$(CPP) -c src/test.cpp -o src/test.o $(CXXFLAGS)
-
 src/201312/most_digit.o: src/201312/most_digit.cpp
 	$(CPP) -c src/201312/most_digit.cpp -o src/201312/most_digit.o $(CXXFLAGS)
+
+src/201312/most_digit_submit.o: src/201312/most_digit_submit.cpp
+	$(CPP) -c src/201312/most_digit_submit.cpp -o src/201312/most_digit_submit.o $(CXXFLAGS)

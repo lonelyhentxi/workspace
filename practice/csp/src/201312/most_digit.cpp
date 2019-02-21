@@ -1,6 +1,6 @@
 #include "most_digit.hpp"
 #include <cassert>
-using namespace csp::p1312;
+#ifdef NOW
 
 int main() {
 	int32_t size = 6;
@@ -9,3 +9,5 @@ int main() {
 	assert(most_digit(size,numbers)==expected);
 	return 0;
 }
+
+#endif
