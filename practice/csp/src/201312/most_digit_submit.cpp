@@ -3,7 +3,7 @@
 #include <iostream>
 #include <limits>
 
-#define NOW
+
 #ifdef NOW
 
 using namespace std;
@@ -34,4 +34,3 @@ int main()
 }
 
 #endif
-#undef NOW
