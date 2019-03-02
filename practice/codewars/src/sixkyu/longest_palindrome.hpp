@@ -3,41 +3,44 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <numeric>
 
 namespace codewars
 {
 	namespace sixkyu
 	{
 		using namespace std;
-		int longest_palindrome(const string &s)
+
+		int longest_palindrome(const string& s)
 		{
-			string workstation = "$#";
-			for(auto i=0;i<s.size();i++)
+			auto t = string{"$#"};
+			for (const auto& c : s)
 			{
-				workstation += s[i];
-				workstation += '#';
+				t.push_back(c);
+				t.push_back('#');
 			}
-			auto p = vector<int>(workstation.size(), 0);
-			int id = 0, max=0, res_id = 0, res_max = 0;
-			for(int i=0;i<workstation.size();i++)
+			t.push_back('@');
+			const int length = t.size();
+			auto p = vector<int>(length, 0);
+			auto r = 0;
+			auto c = 0;
+			for (auto i = 1; i < length - 1; i++)
 			{
-				p[i] = max > i ? min(p[2 * id - i], max - i) : 1;
-				while(workstation[i+p[i]]==workstation[i-p[i]])
+				if (i < r)
 				{
-					++p[i];
+					p[i] = min(p[2 * c - i], r - i);
 				}
-				if(max<i+p[i])
+				while (t[i + (p[i] + 1)] == t[i - (p[i] + 1)])
 				{
-					max = i + p[i];
-					id = i;
+					p[i] += 1;
 				}
-				if (res_max < p[i])
+				if (p[i] + i > r)
 				{
-					res_max = p[i];
-					res_id = i;
+					r = p[i] + i;
+					c = i;
 				}
 			}
-			return res_max - 1;
+			return accumulate(p.cbegin(), p.cend(), 0, [](auto x, auto y) { return max(x, y); });
 		}
 	}
 }
