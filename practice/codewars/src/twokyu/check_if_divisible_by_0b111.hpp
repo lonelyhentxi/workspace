@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <tuple>
+#include <initializer_list>
 
 namespace codewars
 {
@@ -108,7 +109,7 @@ namespace codewars
 						get<0>(adjs[i]).insert(adj);
 						get<1>(adjs[adj]).insert(i);
 					}
-					links[i][adj] = { symbols[j] };
+					links[i][adj] = {symbols[j]};
 				}
 			}
 			for (const auto i : med_symbols)
