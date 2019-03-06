@@ -17,31 +17,28 @@ function forEach(head, callback) {
             return res;
         }
         current = current.next;
-    };
-    return;
+    }
 }
 
 exports.forEach = forEach;
 
-function nodeEqual(lhs,rhs) {
-    if(lhs===rhs) {
-        if(lhs==null) {
+function nodeEqual(lhs, rhs) {
+    if (lhs === rhs) {
+        if (lhs == null) {
             return true;
-        } else if(!(lhs instanceof FunWithListsNode)) {
+        }
+        if (!(lhs instanceof FunWithListsNode)) {
             return false;
         } else {
             return true;
         }
-    }
-    else if(lhs instanceof FunWithListsNode&&rhs instanceof FunWithListsNode) {
-        if(lhs.data!==rhs.data) {
+    } else if (lhs instanceof FunWithListsNode && rhs instanceof FunWithListsNode) {
+        if (lhs.data !== rhs.data) {
             return false;
-        }
-        else {
+        } else {
             return nodeEqual(lhs.next, rhs.next);
         }
-    }
-    else {
+    } else {
         return false;
     }
 }
@@ -90,7 +87,7 @@ exports.anyMatch = function anyMatch(head, p) {
         if (p(item)) {
             return true;
         }
-    }) == true ? true : false;
+    }) === true;
 }
 
 exports.allMatch = function allMatch(head, p) {
@@ -98,7 +95,7 @@ exports.allMatch = function allMatch(head, p) {
         if (!p(item)) {
             return false;
         }
-    }) === false ? false : true;
+    })!==false;
 }
 
 function listFromArray(array) {
@@ -124,7 +121,7 @@ exports.filter = function filter(head, p) {
 
 exports.map = function map(head, f) {
     const res = [];
-    forEach(head, (item,i)=>{
+    forEach(head, (item, i) => {
         res.push(f(item));
     })
     return listFromArray(res);
@@ -132,8 +129,8 @@ exports.map = function map(head, f) {
 
 exports.reduce = function reduce(head, f, init) {
     let acc = init;
-    forEach(head,(item,i)=>{
-        acc = f(acc,item)
+    forEach(head, (item, i) => {
+        acc = f(acc, item)
     })
     return acc;
 }
