@@ -1,5 +1,5 @@
 require 'rspec'
-require 'rgb_to_hex_conversation'
+require 'fivekyu/rgb_to_hex_conversation'
 
 describe 'Solution' do
   it 'should test for something' do

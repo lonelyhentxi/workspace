@@ -1,5 +1,5 @@
 require 'rspec'
-require 'who_likes_it'
+require 'sixkyu/who_likes_it'
 
 describe 'who likes it' do
   it 'should return value' do

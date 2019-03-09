@@ -14,10 +14,7 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
-Dir.entries(File.expand_path("../../src",__FILE__))
-        .select { |f| !File.directory? f }
-        .select { |f| f.match(/kyu$/) }
-        .each { |f| $LOAD_PATH.push(File.expand_path("../../src/"+f,__FILE__)) }
+$LOAD_PATH.push(File.expand_path("../../src",__FILE__))
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate

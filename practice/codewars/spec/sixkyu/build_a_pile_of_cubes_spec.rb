@@ -1,5 +1,5 @@
 require 'rspec'
-require 'build_a_pile_of_cubes'
+require 'sixkyu/build_a_pile_of_cubes'
 
 describe 'build a pile of cubes spec' do
   it 'should return correct value' do

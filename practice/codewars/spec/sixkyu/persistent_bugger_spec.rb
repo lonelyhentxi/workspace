@@ -1,5 +1,5 @@
 require 'rspec'
-require 'persistent_bugger'
+require 'sixkyu/persistent_bugger'
 
 describe 'persistent_bugger' do
 

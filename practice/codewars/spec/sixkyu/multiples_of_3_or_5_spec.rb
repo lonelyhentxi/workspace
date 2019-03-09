@@ -1,5 +1,5 @@
 require 'rspec'
-require 'multiples_of_3_or_5'
+require 'sixkyu/multiples_of_3_or_5'
 
 describe 'multiples of 3 or 5' do
 

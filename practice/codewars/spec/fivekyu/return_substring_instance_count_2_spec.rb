@@ -1,5 +1,5 @@
 require 'rspec'
-require 'return_substring_instance_count_2'
+require 'fivekyu/return_substring_instance_count_2'
 
 describe 'Solution' do
   it 'should test for something' do

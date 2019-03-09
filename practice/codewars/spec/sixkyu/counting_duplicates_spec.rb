@@ -1,5 +1,5 @@
 require 'rspec'
-require 'counting_duplicates'
+require 'sixkyu/counting_duplicates'
 
 describe 'duplicate count' do
 

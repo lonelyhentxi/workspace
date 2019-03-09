@@ -1,5 +1,5 @@
 require 'rspec'
-require 'where_my_anagrams_at'
+require 'fivekyu/where_my_anagrams_at'
 
 describe 'where my anagrams at' do
 

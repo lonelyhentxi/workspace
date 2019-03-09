@@ -1,5 +1,5 @@
 require 'rspec'
-require 'tribonacci_sequence'
+require 'sixkyu/tribonacci_sequence'
 
 describe 'tribonacci sequence' do
 
