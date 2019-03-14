@@ -1,0 +1,8 @@
+[package]
+name = "comp3013"
+version = "0.1.0"
+authors = ["lonelyhentai <master@evernightfireworks.com>"]
+edition = "2018"
+
+[dependencies]
+regex_engine = { path =  './regex_engine'}
