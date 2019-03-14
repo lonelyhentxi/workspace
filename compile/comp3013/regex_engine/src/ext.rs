@@ -1,6 +1,6 @@
 use std::rc::Rc;
 use std::collections::hash_set::HashSet;
-use super::core::{RegexExpr,EpsilonExpr,reg_match, MatchExpr,ConcatExpr, RepeatExpr};
+use super::core::{RegexExpr,EpsilonExpr,ConcatExpr, RepeatExpr};
 
 pub struct OptionalExpr {
     sub: Rc<dyn RegexExpr>
@@ -35,9 +35,9 @@ impl RegexExpr for StringMatchExpr {
     fn match_apply<'a>(&self,
                        target: &str, i: usize,
                        check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
-        let current_equal: bool = true;
-        for j in 1 as usize..self.sub.len() {
-            let current_equal = match target.chars().nth(i + j) {
+        let mut current_equal: bool = true;
+        for j in 0 as usize..self.sub.len() {
+            current_equal = match target.chars().nth(i + j) {
                 Some(ch) => ch == self.sub.chars().nth(j).unwrap(),
                 None => false
             };
@@ -116,6 +116,7 @@ impl RegexExpr for PlusExpr {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use super::super::core::{reg_match,MatchExpr};
 
     #[test]
     fn test_optional() {

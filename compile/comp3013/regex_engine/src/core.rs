@@ -15,9 +15,6 @@ pub trait RegexExpr {
             true
         })) || (target.len() > i && self.reg_search(target, i + 1))
     }
-    fn start_with(&self, target: &str, i: usize) -> {
-
-    }
 }
 
 pub struct MatchExpr {

@@ -33,7 +33,7 @@ pub fn gen_hex_digit_reg(digit_reg: Rc<RegexExpr>) -> Rc<AltExpr> {
     reg!(AltExpr, reg!(CharSetExpr,letter_set),digit_reg)
 }
 
-pub fn gen_exp_reg(digit_reg: Rc<RegexExpr>) -> Rc<ConcatExpr> {
+pub fn gen_exp_reg(digit_reg: Rc<RegexExpr>) -> Rc<SeqExpr> {
     reg!(SeqExpr,
         vec![
             reg!(AltExpr,
@@ -59,7 +59,7 @@ pub fn gen_is_expr() -> Rc<RepeatExpr> {
     reg!(RepeatExpr,reg!(CharSetExpr,is_sub_set))
 }
 
-pub fn gen_hex_const_expr(hex_digit_expr: Rc<RegexExpr>, is_expr: Rc<RegexExpr>) -> Rc<ConcatExpr> {
+pub fn gen_hex_const_expr(hex_digit_expr: Rc<RegexExpr>, is_expr: Rc<RegexExpr>) -> Rc<SeqExpr> {
     reg!(SeqExpr,
         vec![
             reg!(MatchExpr,'0'),
@@ -72,7 +72,7 @@ pub fn gen_hex_const_expr(hex_digit_expr: Rc<RegexExpr>, is_expr: Rc<RegexExpr>)
         ])
 }
 
-pub fn gen_oct_const_expr(digit_expr: Rc<RegexExpr>, is_expr: Rc<RegexExpr>) -> Rc<ConcatExpr> {
+pub fn gen_oct_const_expr(digit_expr: Rc<RegexExpr>, is_expr: Rc<RegexExpr>) -> Rc<SeqExpr> {
     reg!(SeqExpr,
         vec![
             reg!(MatchExpr,'0'),
@@ -83,12 +83,11 @@ pub fn gen_oct_const_expr(digit_expr: Rc<RegexExpr>, is_expr: Rc<RegexExpr>) -> 
 
 macro_rules! add_reg_return {
     ( $y:ident , $x: expr, $z: expr ) => {
-        ($y).push( ( $x , Rc::new(|_| { Some( ($z).to_string() ) } ) ) )
+        ($y).push( ( ($y).len(),  $x , Rc::new(|_| { Some( ($z).to_string() ) } ) ) )
     }
 }
 
-pub fn lex() -> Vec<(Rc<dyn RegexExpr>, Rc<Fn(&str) -> Option<String>>)> {
-    let a = vec![(1, 2, 3)];
+pub fn gen_patterns() -> Vec<(usize ,Rc<dyn RegexExpr>, Rc<Fn(&str) -> Option<String>>)> {
     // D: [0-9]
     let digit_expr: Rc<CharSetExpr> = gen_digit_reg();
     // L : [a-zA-Z_]
@@ -96,13 +95,13 @@ pub fn lex() -> Vec<(Rc<dyn RegexExpr>, Rc<Fn(&str) -> Option<String>>)> {
     // H : [a-fA-F0-9]
     let hex_digit_expr: Rc<AltExpr> = gen_hex_digit_reg(digit_expr.clone());
     // E : [Ee][+-]?{D}+
-    let exp_expr: Rc<ConcatExpr> = gen_exp_reg(digit_expr.clone());
+    let exp_expr: Rc<SeqExpr> = gen_exp_reg(digit_expr.clone());
     // FS : (f|F|l|L)
     let fs_expr: Rc<CharSetExpr> = gen_fs_expr();
     // IS : (u|U|l|L)*
     let is_expr: Rc<RepeatExpr> = gen_is_expr();
 
-    let mut res: Vec<(Rc<RegexExpr>, Rc<Fn(&str) -> Option<String>>)> = Vec::new();
+    let mut res: Vec<(usize, Rc<RegexExpr>, Rc<Fn(&str) -> Option<String>>)> = Vec::new();
 
     let kw_auto: Rc<StringMatchExpr> = reg!(StringMatchExpr,"auto");
     add_reg_return!(res,kw_auto,"auto");
@@ -208,12 +207,12 @@ pub fn lex() -> Vec<(Rc<dyn RegexExpr>, Rc<Fn(&str) -> Option<String>>)> {
     add_reg_return!(res,id_expr,"identifier");
 
     // 0[xX]{H}+{IS}?
-    let hex_const_expr: Rc<ConcatExpr> = gen_hex_const_expr(hex_digit_expr.clone(), is_expr.clone());
+    let hex_const_expr: Rc<SeqExpr> = gen_hex_const_expr(hex_digit_expr.clone(), is_expr.clone());
     add_reg_return!(res,hex_const_expr,"constant");
 
     // 0{D}+{IS}?
-    let oct_const_expr: Rc<ConcatExpr> = gen_oct_const_expr(digit_expr.clone(), is_expr.clone());
-    add_reg_return!(res,oct_const_expr,"constant");
+    let oct_const_expr: Rc<SeqExpr> = gen_oct_const_expr(digit_expr.clone(), is_expr.clone());
+    add_reg_return!(res,oct_const_expr.clone(),"constant");
 
     // {D}+{IS}?
     let dec_const_expr: Rc<ConcatExpr> = reg!(ConcatExpr,
@@ -226,7 +225,7 @@ pub fn lex() -> Vec<(Rc<dyn RegexExpr>, Rc<Fn(&str) -> Option<String>>)> {
     let defs_const_expr: Rc<SeqExpr> = reg!(SeqExpr,vec![
                                             reg!(PlusExpr,digit_expr.clone()),
                                             exp_expr.clone(),
-                                            reg!(OptionalExpr,fs_expr)]);
+                                            reg!(OptionalExpr,fs_expr.clone())]);
     add_reg_return!(res,defs_const_expr,"constant");
 
     // {D}*.{D}+({E})?{FS}?
@@ -277,7 +276,7 @@ pub fn lex() -> Vec<(Rc<dyn RegexExpr>, Rc<Fn(&str) -> Option<String>>)> {
                 ),
                 reg!(MatchExpr,'"')
             ]);
-    add_reg_return!(res,oct_const_expr,"string_literal");
+    add_reg_return!(res,string_literal.clone(),"string_literal");
 
     let op_ellipsis: Rc<StringMatchExpr> = reg!(StringMatchExpr,"...");
     add_reg_return!(res,op_ellipsis,"ellipsis");
@@ -369,10 +368,10 @@ pub fn lex() -> Vec<(Rc<dyn RegexExpr>, Rc<Fn(&str) -> Option<String>>)> {
     let op_right_brace: Rc<MatchExpr> = reg!(MatchExpr,')');
     add_reg_return!(res,op_right_brace,"right_brace");
 
-    let op_left_square_bracket: Rc<MatchExpr> = reg!(AltExpr,reg!(MatchExpr,'['),reg!(StringMatchExpr,"<:"));
+    let op_left_square_bracket: Rc<AltExpr> = reg!(AltExpr,reg!(MatchExpr,'['),reg!(StringMatchExpr,"<:"));
     add_reg_return!(res,op_left_square_bracket,"left_square_bracket");
 
-    let op_left_square_bracket: Rc<MatchExpr> = reg!(AltExpr,reg!(MatchExpr,']'),reg!(StringMatchExpr,":>"));
+    let op_left_square_bracket: Rc<AltExpr> = reg!(AltExpr,reg!(MatchExpr,']'),reg!(StringMatchExpr,":>"));
     add_reg_return!(res,op_left_square_bracket,"left_square_bracket");
 
     let op_point: Rc<MatchExpr> = reg!(MatchExpr,'.');
@@ -420,10 +419,10 @@ pub fn lex() -> Vec<(Rc<dyn RegexExpr>, Rc<Fn(&str) -> Option<String>>)> {
     let op_question: Rc<MatchExpr> = reg!(MatchExpr,'-');
     add_reg_return!(res,op_question,"question");
 
-    let space: Rc<CharSetExpr> = reg!(CharSetExpr,HashSet::from_iter(['\t', '\n','\r'].iter().cloned()));
-    res.push((space, Rc::new(|_| None)));
+    let space: Rc<CharSetExpr> = reg!(CharSetExpr,HashSet::from_iter(['\t', '\n','\r',' '].iter().cloned()));
+    res.push((res.len(), space, Rc::new(|_| None)));
 
-    return res;
+    res
 }
 
 #[cfg(test)]
@@ -436,5 +435,19 @@ mod tests {
         for i in 0..10 {
             assert_eq!(reg_match(digit_reg.clone(), &format!("{}", i)), true);
         }
+    }
+
+    #[test]
+    fn test_string_literal() {
+        let string_literal_reg = reg!(SeqExpr,
+            vec![
+                reg!(OptionalExpr,gen_letter_reg().clone()),
+                reg!(MatchExpr,'"'),
+                reg!(RepeatExpr,
+                    reg!(NotMatchExpr,'"')
+                ),
+                reg!(MatchExpr,'"')
+            ]);
+        assert_eq!(reg_match(string_literal_reg,"\"hello, world!\""),true);
     }
 }

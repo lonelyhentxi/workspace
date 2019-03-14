@@ -1,10 +1,8 @@
 [package]
-name = "naive_compiler"
+name = "clex"
 version = "0.1.0"
 authors = ["lonelyhentai <master@evernightfireworks.com>"]
 edition = "2018"
 
 [dependencies]
-regex_engine = { path =  './regex_engine'}
-clex = { path = './clex' }
-clap = "^2.32.0"
+regex_engine = { path = "../regex_engine" }
