@@ -69,6 +69,28 @@ impl RegexExpr for CharSetExpr {
     }
 }
 
+pub struct NotInCharSetExpr {
+    set: HashSet<char>
+}
+
+impl NotInCharSetExpr {
+    pub fn new(set: HashSet<char>) -> NotInCharSetExpr {
+        NotInCharSetExpr{set}
+    }
+}
+
+impl RegexExpr for NotInCharSetExpr {
+    fn match_apply<'a>(&self,
+                       target: &str, i: usize,
+                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
+        let current_equal = match target.chars().nth(i) {
+            Some(ref ch) => !self.set.contains(ch) ,
+            None => false
+        };
+        current_equal && check(target, i + 1)
+    }
+}
+
 pub struct SeqExpr {
     seq: Vec<Rc<dyn RegexExpr>>
 }
@@ -113,6 +135,8 @@ impl RegexExpr for PlusExpr {
     }
 }
 
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -150,5 +174,15 @@ mod tests {
     #[test]
     fn test_plus() {
         assert_eq!(reg_match(reg!(PlusExpr,reg!(MatchExpr,'a')),"aaaa"),true);
+    }
+
+    #[test]
+    fn test_not_in_charset() {
+        let mut set = HashSet::new();
+        for i in 0..8 {
+            set.insert((i + ('0' as i32)) as u8 as char);
+        }
+        let charset_reg = reg!(NotInCharSetExpr, set );
+        assert_eq!(reg_match(charset_reg,"9"), true);
     }
 }

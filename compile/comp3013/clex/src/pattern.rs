@@ -259,20 +259,26 @@ pub fn gen_patterns() -> Vec<(usize ,Rc<dyn RegexExpr>, Rc<Fn(&str) -> Option<St
                 reg!(OptionalExpr,letter_expr.clone()),
                 reg!(MatchExpr,'\''),
                 reg!(RepeatExpr,
-                    reg!(NotMatchExpr,'\'')
+                  reg!(AltExpr,
+                    reg!(ConcatExpr,reg!(StringMatchExpr,"\\"),reg!(AnyExpr)),
+                    reg!(NotInCharSetExpr,HashSet::from_iter(['\'','\\'].iter().cloned()))
+                    )
                 ),
                 reg!(MatchExpr,'\'')
             ]);
     add_reg_return!(res,char_literal,"constant");
 
-    // L?"(\\.|[^"])*"
+    // L?"(\\.|[^"\\])*"
     let string_literal: Rc<SeqExpr> =
         reg!(SeqExpr,
             vec![
                 reg!(OptionalExpr,letter_expr.clone()),
                 reg!(MatchExpr,'"'),
                 reg!(RepeatExpr,
-                    reg!(NotMatchExpr,'"')
+                  reg!(AltExpr,
+                    reg!(ConcatExpr,reg!(StringMatchExpr,"\\"),reg!(AnyExpr)),
+                    reg!(NotInCharSetExpr,HashSet::from_iter(['"','\\'].iter().cloned()))
+                    )
                 ),
                 reg!(MatchExpr,'"')
             ]);
@@ -395,8 +401,8 @@ pub fn gen_patterns() -> Vec<(usize ,Rc<dyn RegexExpr>, Rc<Fn(&str) -> Option<St
     let op_add: Rc<MatchExpr> = reg!(MatchExpr,'+');
     add_reg_return!(res,op_add,"add");
 
-    let op_mut: Rc<MatchExpr> = reg!(MatchExpr,'~');
-    add_reg_return!(res,op_mut,"mut");
+    let op_star: Rc<MatchExpr> = reg!(MatchExpr,'*');
+    add_reg_return!(res,op_star,"star");
 
     let op_left_slash: Rc<MatchExpr> = reg!(MatchExpr,'/');
     add_reg_return!(res,op_left_slash,"left_slash");
@@ -416,7 +422,7 @@ pub fn gen_patterns() -> Vec<(usize ,Rc<dyn RegexExpr>, Rc<Fn(&str) -> Option<St
     let op_split: Rc<MatchExpr> = reg!(MatchExpr,'|');
     add_reg_return!(res,op_split,"split");
 
-    let op_question: Rc<MatchExpr> = reg!(MatchExpr,'-');
+    let op_question: Rc<MatchExpr> = reg!(MatchExpr,'?');
     add_reg_return!(res,op_question,"question");
 
     let space: Rc<CharSetExpr> = reg!(CharSetExpr,HashSet::from_iter(['\t', '\n','\r',' '].iter().cloned()));
@@ -439,15 +445,19 @@ mod tests {
 
     #[test]
     fn test_string_literal() {
-        let string_literal_reg = reg!(SeqExpr,
+        let string_literal_reg: Rc<SeqExpr> =
+            reg!(SeqExpr,
             vec![
                 reg!(OptionalExpr,gen_letter_reg().clone()),
                 reg!(MatchExpr,'"'),
                 reg!(RepeatExpr,
-                    reg!(NotMatchExpr,'"')
+                  reg!(AltExpr,
+                    reg!(ConcatExpr,reg!(StringMatchExpr,"\\"),reg!(AnyExpr)),
+                    reg!(NotInCharSetExpr,HashSet::from_iter(['"','\\'].iter().cloned()))
+                    )
                 ),
                 reg!(MatchExpr,'"')
             ]);
-        assert_eq!(reg_match(string_literal_reg,"\"hello, world!\""),true);
+        assert_eq!(reg_match(string_literal_reg,"\"hello, \\\"world!\""),true);
     }
 }

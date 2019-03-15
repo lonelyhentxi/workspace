@@ -143,6 +143,26 @@ impl RegexExpr for RepeatExpr {
     }
 }
 
+pub struct AnyExpr {}
+
+impl AnyExpr {
+    pub fn new() -> AnyExpr {
+        AnyExpr{}
+    }
+}
+
+impl RegexExpr for AnyExpr {
+    fn match_apply<'a>(&self,
+                       target: &str, i: usize,
+                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
+        let current_equal = match target.chars().nth(i) {
+            Some(_) => true,
+            None => false
+        };
+        current_equal && check(target, i + 1)
+    }
+}
+
 #[macro_export]
 macro_rules! reg {
     ( $y:ident $(,$x:expr)*) => {
@@ -188,7 +208,7 @@ mod tests {
     #[test]
     fn test_macro_and_reg_match() {
         assert_eq!(reg_match_static(reg_static!(MatchExpr,'a'), "a"), true);
-        assert_eq!(reg_match(reg!(MatchExpr,'a'), "a"), true);
+        assert_eq!(reg_match(reg!(MatchExpr, 'a'), "a"), true);
     }
 
     #[test]
@@ -204,29 +224,35 @@ mod tests {
     #[test]
     fn test_concat() {
         assert_eq!(reg_match(reg!(ConcatExpr,
-        reg!(MatchExpr,'a'),
-        reg!(MatchExpr, 'b')), "ab"), true);
+    reg ! (MatchExpr, 'a'),
+    reg !(MatchExpr, 'b')), "ab"), true);
     }
 
     #[test]
     fn test_alt() {
-        let alt_reg = reg!(AltExpr, reg!(MatchExpr, 'a'), reg!(MatchExpr, 'b'));
+        let alt_reg = reg!(AltExpr, reg !(MatchExpr, 'a'), reg ! (MatchExpr, 'b'));
         assert_eq!(reg_match(alt_reg.clone(), "a"), true);
         assert_eq!(reg_match(alt_reg.clone(), "b"), true);
     }
 
     #[test]
     fn test_repeat() {
-        assert_eq!(reg_match(reg!(RepeatExpr,reg!(MatchExpr,'a')), "aaaaaa"), true);
+        assert_eq!(reg_match(reg!(RepeatExpr,reg ! (MatchExpr, 'a')), "aaaaaa"), true);
     }
 
     #[test]
     fn test_not_match() {
-        assert_eq!(reg_match(reg!(NotMatchExpr,'d'),"a"),true);
+        assert_eq!(reg_match(reg!(NotMatchExpr,'d'), "a"), true);
     }
 
     #[test]
     fn test_search() {
-        assert_eq!(reg_search(reg!(MatchExpr,'a'),"aba",1),true);
+        assert_eq!(reg_search(reg!(MatchExpr,'a'), "aba", 1), true);
+    }
+
+    #[test]
+    fn test_any() {
+        assert_eq!(reg_match(reg!(AnyExpr), "a"), true);
+        assert_eq!(reg_match(reg!(AnyExpr), "b"), true);
     }
 }
