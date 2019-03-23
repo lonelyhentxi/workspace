@@ -1,0 +1,2087 @@
+{
+  "ngx_pcalloc": [
+    347,
+    "ngx_pcalloc",
+    "identifier"
+  ],
+  "string_literal": [
+    39,
+    "string_literal",
+    "constant"
+  ],
+  "path": [
+    312,
+    "path",
+    "identifier"
+  ],
+  "debug_points": [
+    143,
+    "debug_points",
+    "identifier"
+  ],
+  "pw_uid": [
+    376,
+    "pw_uid",
+    "identifier"
+  ],
+  "NGX_PROCESS_SINGLE": [
+    234,
+    "NGX_PROCESS_SINGLE",
+    "identifier"
+  ],
+  "NGX_CONF_1MORE": [
+    145,
+    "NGX_CONF_1MORE",
+    "identifier"
+  ],
+  "conf_param": [
+    344,
+    "conf_param",
+    "identifier"
+  ],
+  "uid_t": [
+    367,
+    "uid_t",
+    "identifier"
+  ],
+  "NGINX_VER_BUILD": [
+    255,
+    "NGINX_VER_BUILD",
+    "identifier"
+  ],
+  "handlers": [
+    197,
+    "handlers",
+    "identifier"
+  ],
+  "ngx_log_error": [
+    247,
+    "ngx_log_error",
+    "identifier"
+  ],
+  "ngx_parent": [
+    190,
+    "ngx_parent",
+    "identifier"
+  ],
+  "conf": [
+    108,
+    "conf",
+    "identifier"
+  ],
+  "&": [
+    46,
+    "&",
+    "operator"
+  ],
+  "ngx_cycle": [
+    200,
+    "ngx_cycle",
+    "identifier"
+  ],
+  "ngx_regex_init": [
+    187,
+    "ngx_regex_init",
+    "identifier"
+  ],
+  "fd": [
+    243,
+    "fd",
+    "identifier"
+  ],
+  "ngx_pnalloc": [
+    334,
+    "ngx_pnalloc",
+    "identifier"
+  ],
+  "<:": [
+    41,
+    "<:",
+    "operator"
+  ],
+  "{": [
+    75,
+    "{",
+    "operator"
+  ],
+  "ngx_time_init": [
+    186,
+    "ngx_time_init",
+    "identifier"
+  ],
+  "else": [
+    5,
+    "else",
+    "keyword"
+  ],
+  "NGX_OLDPID_EXT": [
+    366,
+    "NGX_OLDPID_EXT",
+    "identifier"
+  ],
+  "ngx_stdout": [
+    222,
+    "ngx_stdout",
+    "identifier"
+  ],
+  "<<": [
+    65,
+    "<<",
+    "operator"
+  ],
+  "cpu_affinity_auto": [
+    350,
+    "cpu_affinity_auto",
+    "identifier"
+  ],
+  "!": [
+    53,
+    "!",
+    "operator"
+  ],
+  "NGX_LOG_INFO": [
+    346,
+    "NGX_LOG_INFO",
+    "identifier"
+  ],
+  "oct": [
+    33,
+    "oct",
+    "constant"
+  ],
+  "CPU_ZERO": [
+    392,
+    "CPU_ZERO",
+    "identifier"
+  ],
+  "%=": [
+    77,
+    "%=",
+    "operator"
+  ],
+  "getpwnam": [
+    373,
+    "getpwnam",
+    "identifier"
+  ],
+  "envp": [
+    320,
+    "envp",
+    "identifier"
+  ],
+  "v": [
+    265,
+    "v",
+    "identifier"
+  ],
+  "break": [
+    12,
+    "break",
+    "keyword"
+  ],
+  "?": [
+    48,
+    "?",
+    "operator"
+  ],
+  "union": [
+    26,
+    "union",
+    "keyword"
+  ],
+  "ngx_process_options": [
+    104,
+    "ngx_process_options",
+    "identifier"
+  ],
+  "if": [
+    1,
+    "if",
+    "keyword"
+  ],
+  "pos": [
+    227,
+    "pos",
+    "identifier"
+  ],
+  "required": [
+    195,
+    "required",
+    "identifier"
+  ],
+  "as": [
+    298,
+    "as",
+    "identifier"
+  ],
+  "OPENSSL_VERSION_TEXT": [
+    261,
+    "OPENSSL_VERSION_TEXT",
+    "identifier"
+  ],
+  "ngx_show_help": [
+    161,
+    "ngx_show_help",
+    "identifier"
+  ],
+  "ngx_show_version_info": [
+    94,
+    "ngx_show_version_info",
+    "identifier"
+  ],
+  "log_level": [
+    345,
+    "log_level",
+    "identifier"
+  ],
+  "ngx_quiet_mode": [
+    215,
+    "ngx_quiet_mode",
+    "identifier"
+  ],
+  "NGX_PREFIX": [
+    256,
+    "NGX_PREFIX",
+    "identifier"
+  ],
+  "ngx_dlsym_n": [
+    411,
+    "ngx_dlsym_n",
+    "identifier"
+  ],
+  "float": [
+    21,
+    "float",
+    "keyword"
+  ],
+  "enum": [
+    13,
+    "enum",
+    "keyword"
+  ],
+  "ngx_pool_cleanup_t": [
+    286,
+    "ngx_pool_cleanup_t",
+    "identifier"
+  ],
+  "config_dump": [
+    217,
+    "config_dump",
+    "identifier"
+  ],
+  "/=": [
+    60,
+    "/=",
+    "operator"
+  ],
+  "passwd": [
+    370,
+    "passwd",
+    "identifier"
+  ],
+  "NGX_LOCK_PATH": [
+    380,
+    "NGX_LOCK_PATH",
+    "identifier"
+  ],
+  "option": [
+    304,
+    "option",
+    "identifier"
+  ],
+  "NGX_LOG_WARN": [
+    363,
+    "NGX_LOG_WARN",
+    "identifier"
+  ],
+  "NGINX_VAR": [
+    271,
+    "NGINX_VAR",
+    "identifier"
+  ],
+  "-=": [
+    81,
+    "-=",
+    "operator"
+  ],
+  "ngx_cpuset_t": [
+    389,
+    "ngx_cpuset_t",
+    "identifier"
+  ],
+  "NGX_PROCESS_MASTER": [
+    235,
+    "NGX_PROCESS_MASTER",
+    "identifier"
+  ],
+  "ngx_conf_set_msec_slot": [
+    137,
+    "ngx_conf_set_msec_slot",
+    "identifier"
+  ],
+  "ngx_daemon": [
+    238,
+    "ngx_daemon",
+    "identifier"
+  ],
+  "only": [
+    303,
+    "only",
+    "identifier"
+  ],
+  "i": [
+    176,
+    "i",
+    "identifier"
+  ],
+  "ngx_log_stderr": [
+    213,
+    "ngx_log_stderr",
+    "identifier"
+  ],
+  "sizeof": [
+    4,
+    "sizeof",
+    "keyword"
+  ],
+  "nelts": [
+    219,
+    "nelts",
+    "identifier"
+  ],
+  "struct": [
+    30,
+    "struct",
+    "keyword"
+  ],
+  "ngx_palloc": [
+    391,
+    "ngx_palloc",
+    "identifier"
+  ],
+  "\r": [
+    92,
+    "\r",
+    "keyword"
+  ],
+  "the": [
+    295,
+    "the",
+    "identifier"
+  ],
+  "and": [
+    198,
+    "and",
+    "identifier"
+  ],
+  "argc": [
+    102,
+    "argc",
+    "identifier"
+  ],
+  "register": [
+    15,
+    "register",
+    "keyword"
+  ],
+  "args": [
+    386,
+    "args",
+    "identifier"
+  ],
+  ">=": [
+    78,
+    ">=",
+    "operator"
+  ],
+  "ngx_save_argv": [
+    105,
+    "ngx_save_argv",
+    "identifier"
+  ],
+  "NGX_LOG_NOTICE": [
+    272,
+    "NGX_LOG_NOTICE",
+    "identifier"
+  ],
+  ":>": [
+    80,
+    ":>",
+    "operator"
+  ],
+  "j": [
+    398,
+    "j",
+    "identifier"
+  ],
+  "order": [
+    403,
+    "order",
+    "identifier"
+  ],
+  "NULL": [
+    134,
+    "NULL",
+    "identifier"
+  ],
+  "ngx_set_worker_processes": [
+    117,
+    "ngx_set_worker_processes",
+    "identifier"
+  ],
+  "ngx_dlclose": [
+    415,
+    "ngx_dlclose",
+    "identifier"
+  ],
+  "NGX_CONF_OK": [
+    383,
+    "NGX_CONF_OK",
+    "identifier"
+  ],
+  "continue": [
+    22,
+    "continue",
+    "keyword"
+  ],
+  "ngx_os_status": [
+    230,
+    "ngx_os_status",
+    "identifier"
+  ],
+  "ngx_single_process_cycle": [
+    252,
+    "ngx_single_process_cycle",
+    "identifier"
+  ],
+  "prefix": [
+    337,
+    "prefix",
+    "identifier"
+  ],
+  "ngx_core_module": [
+    156,
+    "ngx_core_module",
+    "identifier"
+  ],
+  "ngx_get_cpu_affinity": [
+    397,
+    "ngx_get_cpu_affinity",
+    "identifier"
+  ],
+  "ngx_pool_cleanup_add": [
+    292,
+    "ngx_pool_cleanup_add",
+    "identifier"
+  ],
+  "ngx_cycle_t": [
+    97,
+    "ngx_cycle_t",
+    "identifier"
+  ],
+  "ngx_errno": [
+    249,
+    "ngx_errno",
+    "identifier"
+  ],
+  "ngx_dlclose_n": [
+    416,
+    "ngx_dlclose_n",
+    "identifier"
+  ],
+  "ngx_cpymem": [
+    315,
+    "ngx_cpymem",
+    "identifier"
+  ],
+  ")": [
+    64,
+    ")",
+    "operator"
+  ],
+  "ngx_uid_t": [
+    357,
+    "ngx_uid_t",
+    "identifier"
+  ],
+  "ngx_log_debug2": [
+    413,
+    "ngx_log_debug2",
+    "identifier"
+  ],
+  "ngx_dlsym": [
+    410,
+    "ngx_dlsym",
+    "identifier"
+  ],
+  "listening": [
+    274,
+    "listening",
+    "identifier"
+  ],
+  "while": [
+    29,
+    "while",
+    "keyword"
+  ],
+  "ngx_atoi": [
+    276,
+    "ngx_atoi",
+    "identifier"
+  ],
+  "ngx_get_conf": [
+    231,
+    "ngx_get_conf",
+    "identifier"
+  ],
+  "%>": [
+    62,
+    "%>",
+    "operator"
+  ],
+  "...": [
+    49,
+    "...",
+    "operator"
+  ],
+  "u_char": [
+    164,
+    "u_char",
+    "identifier"
+  ],
+  "ngx_sprintf": [
+    316,
+    "ngx_sprintf",
+    "identifier"
+  ],
+  "-": [
+    58,
+    "-",
+    "operator"
+  ],
+  "shutdown_timeout": [
+    150,
+    "shutdown_timeout",
+    "identifier"
+  ],
+  "ngx_unload_module": [
+    119,
+    "ngx_unload_module",
+    "identifier"
+  ],
+  "ngx_conf_params": [
+    167,
+    "ngx_conf_params",
+    "identifier"
+  ],
+  "data": [
+    100,
+    "data",
+    "identifier"
+  ],
+  "ngx_os_init": [
+    203,
+    "ngx_os_init",
+    "identifier"
+  ],
+  "cycle": [
+    98,
+    "cycle",
+    "identifier"
+  ],
+  "ngx_write_stdout": [
+    220,
+    "ngx_write_stdout",
+    "identifier"
+  ],
+  "<%": [
+    69,
+    "<%",
+    "operator"
+  ],
+  "NGX_MODULE_V1_PADDING": [
+    159,
+    "NGX_MODULE_V1_PADDING",
+    "identifier"
+  ],
+  "ngx_os_argv": [
+    327,
+    "ngx_os_argv",
+    "identifier"
+  ],
+  "ngx_get_options": [
+    101,
+    "ngx_get_options",
+    "identifier"
+  ],
+  "set": [
+    207,
+    "set",
+    "identifier"
+  ],
+  "n": [
+    285,
+    "n",
+    "identifier"
+  ],
+  "ngx_init_signals": [
+    236,
+    "ngx_init_signals",
+    "identifier"
+  ],
+  "NGX_CONF_ERROR": [
+    365,
+    "NGX_CONF_ERROR",
+    "identifier"
+  ],
+  "ngx_conf_set_num_slot": [
+    146,
+    "ngx_conf_set_num_slot",
+    "identifier"
+  ],
+  "NGX_CONF_UNSET_UINT": [
+    358,
+    "NGX_CONF_UNSET_UINT",
+    "identifier"
+  ],
+  "==": [
+    74,
+    "==",
+    "operator"
+  ],
+  "ngx_conf_log_error": [
+    384,
+    "ngx_conf_log_error",
+    "identifier"
+  ],
+  "ngx_core_module_create_conf": [
+    106,
+    "ngx_core_module_create_conf",
+    "identifier"
+  ],
+  "conf_file": [
+    214,
+    "conf_file",
+    "identifier"
+  ],
+  "var": [
+    284,
+    "var",
+    "identifier"
+  ],
+  "ngx_conf_t": [
+    110,
+    "ngx_conf_t",
+    "identifier"
+  ],
+  "NGX_CONF_UNSET": [
+    353,
+    "NGX_CONF_UNSET",
+    "identifier"
+  ],
+  "still": [
+    296,
+    "still",
+    "identifier"
+  ],
+  "ngx_getcwd": [
+    339,
+    "ngx_getcwd",
+    "identifier"
+  ],
+  "working_directory": [
+    151,
+    "working_directory",
+    "identifier"
+  ],
+  "ngx_write_stderr": [
+    254,
+    "ngx_write_stderr",
+    "identifier"
+  ],
+  "ngx_core_conf_t": [
+    132,
+    "ngx_core_conf_t",
+    "identifier"
+  ],
+  "^": [
+    86,
+    "^",
+    "operator"
+  ],
+  ".": [
+    82,
+    ".",
+    "operator"
+  ],
+  "ngx_stderr": [
+    244,
+    "ngx_stderr",
+    "identifier"
+  ],
+  "ngx_array_push": [
+    278,
+    "ngx_array_push",
+    "identifier"
+  ],
+  "user": [
+    356,
+    "user",
+    "identifier"
+  ],
+  "ngx_dlerror": [
+    409,
+    "ngx_dlerror",
+    "identifier"
+  ],
+  "NGX_LINEFEED": [
+    225,
+    "NGX_LINEFEED",
+    "identifier"
+  ],
+  "--": [
+    50,
+    "--",
+    "operator"
+  ],
+  "dec": [
+    34,
+    "dec",
+    "constant"
+  ],
+  "ngx_ssl_version": [
+    260,
+    "ngx_ssl_version",
+    "identifier"
+  ],
+  "ngx_argv": [
+    329,
+    "ngx_argv",
+    "identifier"
+  ],
+  "NGX_FILE_ERROR": [
+    246,
+    "NGX_FILE_ERROR",
+    "identifier"
+  ],
+  ">": [
+    55,
+    ">",
+    "operator"
+  ],
+  "ngx_test_config": [
+    184,
+    "ngx_test_config",
+    "identifier"
+  ],
+  "ngx_exec_ctx_t": [
+    310,
+    "ngx_exec_ctx_t",
+    "identifier"
+  ],
+  "NGX_MODULE_V1": [
+    157,
+    "NGX_MODULE_V1",
+    "identifier"
+  ],
+  "value": [
+    385,
+    "value",
+    "identifier"
+  ],
+  "ngx_close_file": [
+    245,
+    "ngx_close_file",
+    "identifier"
+  ],
+  "!=": [
+    73,
+    "!=",
+    "operator"
+  ],
+  "ch": [
+    388,
+    "ch",
+    "identifier"
+  ],
+  "return": [
+    9,
+    "return",
+    "keyword"
+  ],
+  "NGX_PID_PATH": [
+    364,
+    "NGX_PID_PATH",
+    "identifier"
+  ],
+  "module": [
+    404,
+    "module",
+    "identifier"
+  ],
+  "names": [
+    402,
+    "names",
+    "identifier"
+  ],
+  "ngx_core_module_init_conf": [
+    107,
+    "ngx_core_module_init_conf",
+    "identifier"
+  ],
+  "ngx_add_inherited_sockets": [
+    96,
+    "ngx_add_inherited_sockets",
+    "identifier"
+  ],
+  "ngx_null_string": [
+    125,
+    "ngx_null_string",
+    "identifier"
+  ],
+  "ngx_conf_dump_t": [
+    178,
+    "ngx_conf_dump_t",
+    "identifier"
+  ],
+  "is": [
+    194,
+    "is",
+    "identifier"
+  ],
+  "lock_file": [
+    141,
+    "lock_file",
+    "identifier"
+  ],
+  "ngx_string": [
+    122,
+    "ngx_string",
+    "identifier"
+  ],
+  "ngx_show_version": [
+    162,
+    "ngx_show_version",
+    "identifier"
+  ],
+  "}": [
+    66,
+    "}",
+    "operator"
+  ],
+  "modules": [
+    405,
+    "modules",
+    "identifier"
+  ],
+  "ngx_add_module": [
+    412,
+    "ngx_add_module",
+    "identifier"
+  ],
+  "ngx_gid_t": [
+    360,
+    "ngx_gid_t",
+    "identifier"
+  ],
+  "ngx_ssl_init": [
+    193,
+    "ngx_ssl_init",
+    "identifier"
+  ],
+  "long": [
+    10,
+    "long",
+    "keyword"
+  ],
+  "NGX_CONF_PREFIX": [
+    342,
+    "NGX_CONF_PREFIX",
+    "identifier"
+  ],
+  "&&": [
+    83,
+    "&&",
+    "operator"
+  ],
+  "conf_ctx": [
+    232,
+    "conf_ctx",
+    "identifier"
+  ],
+  "*=": [
+    72,
+    "*=",
+    "operator"
+  ],
+  "ngx_conf_init_value": [
+    361,
+    "ngx_conf_init_value",
+    "identifier"
+  ],
+  "size_t": [
+    330,
+    "size_t",
+    "identifier"
+  ],
+  "ngx_buf_t": [
+    172,
+    "ngx_buf_t",
+    "identifier"
+  ],
+  "ngx_close_file_n": [
+    250,
+    "ngx_close_file_n",
+    "identifier"
+  ],
+  "NGX_ERROR": [
+    275,
+    "NGX_ERROR",
+    "identifier"
+  ],
+  "pool": [
+    201,
+    "pool",
+    "identifier"
+  ],
+  "]": [
+    59,
+    "]",
+    "operator"
+  ],
+  ">>=": [
+    79,
+    ">>=",
+    "operator"
+  ],
+  "timer_resolution": [
+    138,
+    "timer_resolution",
+    "identifier"
+  ],
+  "NGX_MAIN_CONF": [
+    127,
+    "NGX_MAIN_CONF",
+    "identifier"
+  ],
+  "for": [
+    7,
+    "for",
+    "keyword"
+  ],
+  "exit": [
+    302,
+    "exit",
+    "identifier"
+  ],
+  "ngx_dump_config": [
+    216,
+    "ngx_dump_config",
+    "identifier"
+  ],
+  "grp": [
+    369,
+    "grp",
+    "identifier"
+  ],
+  "NGX_CONF_UNSET_MSEC": [
+    354,
+    "NGX_CONF_UNSET_MSEC",
+    "identifier"
+  ],
+  "ngx_set_user": [
+    109,
+    "ngx_set_user",
+    "identifier"
+  ],
+  "\n": [
+    91,
+    "\n",
+    "keyword"
+  ],
+  "ngx_debug_init": [
+    181,
+    "ngx_debug_init",
+    "identifier"
+  ],
+  "ngx_str_set": [
+    341,
+    "ngx_str_set",
+    "identifier"
+  ],
+  "default": [
+    31,
+    "default",
+    "keyword"
+  ],
+  "ngx_conf_set_str_slot": [
+    139,
+    "ngx_conf_set_str_slot",
+    "identifier"
+  ],
+  "pid": [
+    140,
+    "pid",
+    "identifier"
+  ],
+  "ngx_pid_t": [
+    308,
+    "ngx_pid_t",
+    "identifier"
+  ],
+  "ngx_set_errno": [
+    372,
+    "ngx_set_errno",
+    "identifier"
+  ],
+  "case": [
+    11,
+    "case",
+    "keyword"
+  ],
+  "NGX_CONF_TAKE1": [
+    136,
+    "NGX_CONF_TAKE1",
+    "identifier"
+  ],
+  "ngx_conf_file": [
+    166,
+    "ngx_conf_file",
+    "identifier"
+  ],
+  "ngx_getppid": [
+    191,
+    "ngx_getppid",
+    "identifier"
+  ],
+  "file": [
+    242,
+    "file",
+    "identifier"
+  ],
+  "int": [
+    23,
+    "int",
+    "keyword"
+  ],
+  "ngx_command_t": [
+    112,
+    "ngx_command_t",
+    "identifier"
+  ],
+  "cpu_affinity": [
+    352,
+    "cpu_affinity",
+    "identifier"
+  ],
+  "ngx_core_module_ctx": [
+    154,
+    "ngx_core_module_ctx",
+    "identifier"
+  ],
+  "ngx_module_t": [
+    155,
+    "ngx_module_t",
+    "identifier"
+  ],
+  "getenv": [
+    270,
+    "getenv",
+    "identifier"
+  ],
+  "NGX_DIRECT_CONF": [
+    128,
+    "NGX_DIRECT_CONF",
+    "identifier"
+  ],
+  "ngx_debug_points": [
+    121,
+    "ngx_debug_points",
+    "identifier"
+  ],
+  "buffer": [
+    226,
+    "buffer",
+    "identifier"
+  ],
+  "ngx_strncmp": [
+    289,
+    "ngx_strncmp",
+    "identifier"
+  ],
+  "in": [
+    208,
+    "in",
+    "identifier"
+  ],
+  "inherited": [
+    266,
+    "inherited",
+    "identifier"
+  ],
+  ">>": [
+    45,
+    ">>",
+    "operator"
+  ],
+  "|=": [
+    57,
+    "|=",
+    "operator"
+  ],
+  "NGX_CORE_MODULE": [
+    158,
+    "NGX_CORE_MODULE",
+    "identifier"
+  ],
+  "by": [
+    348,
+    "by",
+    "identifier"
+  ],
+  "cln": [
+    287,
+    "cln",
+    "identifier"
+  ],
+  "argv": [
+    103,
+    "argv",
+    "identifier"
+  ],
+  "ngx_os_environ": [
+    169,
+    "ngx_os_environ",
+    "identifier"
+  ],
+  "handler": [
+    293,
+    "handler",
+    "identifier"
+  ],
+  "ngx_exec_new_binary": [
+    309,
+    "ngx_exec_new_binary",
+    "identifier"
+  ],
+  "extern": [
+    28,
+    "extern",
+    "keyword"
+  ],
+  "ngx_ncpu": [
+    394,
+    "ngx_ncpu",
+    "identifier"
+  ],
+  "ngx_socket_t": [
+    279,
+    "ngx_socket_t",
+    "identifier"
+  ],
+  "signal": [
+    196,
+    "signal",
+    "identifier"
+  ],
+  "minus": [
+    387,
+    "minus",
+    "identifier"
+  ],
+  "auto": [
+    6,
+    "auto",
+    "keyword"
+  ],
+  "ngx_uint_t": [
+    160,
+    "ngx_uint_t",
+    "identifier"
+  ],
+  "ngx_log_redirect_stderr": [
+    241,
+    "ngx_log_redirect_stderr",
+    "identifier"
+  ],
+  "++": [
+    40,
+    "++",
+    "operator"
+  ],
+  "ngx_path_separator": [
+    333,
+    "ngx_path_separator",
+    "identifier"
+  ],
+  "leak": [
+    306,
+    "leak",
+    "identifier"
+  ],
+  "+=": [
+    47,
+    "+=",
+    "operator"
+  ],
+  "NGX_MAX_PATH": [
+    338,
+    "NGX_MAX_PATH",
+    "identifier"
+  ],
+  "ngx_set_environment": [
+    281,
+    "ngx_set_environment",
+    "identifier"
+  ],
+  "rdefs": [
+    37,
+    "rdefs",
+    "constant"
+  ],
+  "hex": [
+    32,
+    "hex",
+    "constant"
+  ],
+  "ngx_pagesize": [
+    210,
+    "ngx_pagesize",
+    "identifier"
+  ],
+  "ngx_set_inherited_sockets": [
+    280,
+    "ngx_set_inherited_sockets",
+    "identifier"
+  ],
+  "result": [
+    399,
+    "result",
+    "identifier"
+  ],
+  "CPU_SET": [
+    396,
+    "CPU_SET",
+    "identifier"
+  ],
+  "ngx_array_init": [
+    273,
+    "ngx_array_init",
+    "identifier"
+  ],
+  "ngx_load_module": [
+    118,
+    "ngx_load_module",
+    "identifier"
+  ],
+  "ctx": [
+    311,
+    "ctx",
+    "identifier"
+  ],
+  "mask": [
+    390,
+    "mask",
+    "identifier"
+  ],
+  "void": [
+    18,
+    "void",
+    "keyword"
+  ],
+  "&=": [
+    70,
+    "&=",
+    "operator"
+  ],
+  "environment": [
+    288,
+    "environment",
+    "identifier"
+  ],
+  "short": [
+    3,
+    "short",
+    "keyword"
+  ],
+  "ngx_null_command": [
+    152,
+    "ngx_null_command",
+    "identifier"
+  ],
+  "old_cycle": [
+    381,
+    "old_cycle",
+    "identifier"
+  ],
+  "ngx_cpystrn": [
+    332,
+    "ngx_cpystrn",
+    "identifier"
+  ],
+  "do": [
+    14,
+    "do",
+    "keyword"
+  ],
+  "%": [
+    67,
+    "%",
+    "operator"
+  ],
+  "<<=": [
+    85,
+    "<<=",
+    "operator"
+  ],
+  ";": [
+    87,
+    ";",
+    "operator"
+  ],
+  "/": [
+    84,
+    "/",
+    "operator"
+  ],
+  "NGX_COMPILER": [
+    258,
+    "NGX_COMPILER",
+    "identifier"
+  ],
+  "ngx_cleanup_environment": [
+    99,
+    "ngx_cleanup_environment",
+    "identifier"
+  ],
+  "ngx_log_t": [
+    174,
+    "ngx_log_t",
+    "identifier"
+  ],
+  "double": [
+    0,
+    "double",
+    "keyword"
+  ],
+  "volatile": [
+    27,
+    "volatile",
+    "keyword"
+  ],
+  "cpu_affinity_n": [
+    351,
+    "cpu_affinity_n",
+    "identifier"
+  ],
+  "log": [
+    175,
+    "log",
+    "identifier"
+  ],
+  "ngx_cdecl": [
+    170,
+    "ngx_cdecl",
+    "identifier"
+  ],
+  "typedef": [
+    8,
+    "typedef",
+    "keyword"
+  ],
+  "char_literal": [
+    38,
+    "char_literal",
+    "constant"
+  ],
+  "ngx_execute": [
+    324,
+    "ngx_execute",
+    "identifier"
+  ],
+  "tz_found": [
+    290,
+    "tz_found",
+    "identifier"
+  ],
+  "<": [
+    61,
+    "<",
+    "operator"
+  ],
+  "init_cycle": [
+    177,
+    "init_cycle",
+    "identifier"
+  ],
+  "NGX_LOG_ALERT": [
+    248,
+    "NGX_LOG_ALERT",
+    "identifier"
+  ],
+  "ngx_init_cycle": [
+    212,
+    "ngx_init_cycle",
+    "identifier"
+  ],
+  "cd": [
+    179,
+    "cd",
+    "identifier"
+  ],
+  "geteuid": [
+    368,
+    "geteuid",
+    "identifier"
+  ],
+  "ngx_signal": [
+    168,
+    "ngx_signal",
+    "identifier"
+  ],
+  "||": [
+    42,
+    "||",
+    "operator"
+  ],
+  "modules_used": [
+    406,
+    "modules_used",
+    "identifier"
+  ],
+  "NGX_CONF_TAKE12": [
+    144,
+    "NGX_CONF_TAKE12",
+    "identifier"
+  ],
+  "ngx_core_module_t": [
+    153,
+    "ngx_core_module_t",
+    "identifier"
+  ],
+  "environ": [
+    294,
+    "environ",
+    "identifier"
+  ],
+  "ngx_strcmp": [
+    259,
+    "ngx_strcmp",
+    "identifier"
+  ],
+  "ngx_max_sockets": [
+    185,
+    "ngx_max_sockets",
+    "identifier"
+  ],
+  "ngx_memcpy": [
+    335,
+    "ngx_memcpy",
+    "identifier"
+  ],
+  "ngx_conf_enum_t": [
+    120,
+    "ngx_conf_enum_t",
+    "identifier"
+  ],
+  "ngx_conf_init_msec_value": [
+    362,
+    "ngx_conf_init_msec_value",
+    "identifier"
+  ],
+  "NGX_CONF_PATH": [
+    257,
+    "NGX_CONF_PATH",
+    "identifier"
+  ],
+  "ngx_dlopen": [
+    407,
+    "ngx_dlopen",
+    "identifier"
+  ],
+  "ngx_strlen": [
+    331,
+    "ngx_strlen",
+    "identifier"
+  ],
+  "ngx_min": [
+    393,
+    "ngx_min",
+    "identifier"
+  ],
+  "getgrnam": [
+    377,
+    "getgrnam",
+    "identifier"
+  ],
+  "NGX_GROUP": [
+    378,
+    "NGX_GROUP",
+    "identifier"
+  ],
+  "ngx_show_configure": [
+    163,
+    "ngx_show_configure",
+    "identifier"
+  ],
+  "daemon": [
+    133,
+    "daemon",
+    "identifier"
+  ],
+  "ngx_rename_file": [
+    321,
+    "ngx_rename_file",
+    "identifier"
+  ],
+  "ngx_process": [
+    233,
+    "ngx_process",
+    "identifier"
+  ],
+  "CPU_ISSET": [
+    400,
+    "CPU_ISSET",
+    "identifier"
+  ],
+  "ngx_daemonized": [
+    239,
+    "ngx_daemonized",
+    "identifier"
+  ],
+  "ls": [
+    269,
+    "ls",
+    "identifier"
+  ],
+  "~": [
+    54,
+    "~",
+    "operator"
+  ],
+  "ngx_conf_set_flag_slot": [
+    130,
+    "ngx_conf_set_flag_slot",
+    "identifier"
+  ],
+  "ngx_log_init": [
+    192,
+    "ngx_log_init",
+    "identifier"
+  ],
+  ",": [
+    51,
+    ",",
+    "operator"
+  ],
+  "ngx_inherited": [
+    237,
+    "ngx_inherited",
+    "identifier"
+  ],
+  "ngx_int_t": [
+    95,
+    "ngx_int_t",
+    "identifier"
+  ],
+  "*": [
+    56,
+    "*",
+    "operator"
+  ],
+  "ngx_preinit_modules": [
+    211,
+    "ngx_preinit_modules",
+    "identifier"
+  ],
+  "oldpid": [
+    322,
+    "oldpid",
+    "identifier"
+  ],
+  "ngx_cacheline_size": [
+    206,
+    "ngx_cacheline_size",
+    "identifier"
+  ],
+  "ngx_conf_set_enum_slot": [
+    142,
+    "ngx_conf_set_enum_slot",
+    "identifier"
+  ],
+  "ngx_strerror_init": [
+    182,
+    "ngx_strerror_init",
+    "identifier"
+  ],
+  "ngx_alloc": [
+    291,
+    "ngx_alloc",
+    "identifier"
+  ],
+  "handle": [
+    401,
+    "handle",
+    "identifier"
+  ],
+  "static": [
+    20,
+    "static",
+    "keyword"
+  ],
+  "ngx_getpid": [
+    189,
+    "ngx_getpid",
+    "identifier"
+  ],
+  "env": [
+    282,
+    "env",
+    "identifier"
+  ],
+  "ngx_conf_full_name": [
+    343,
+    "ngx_conf_full_name",
+    "identifier"
+  ],
+  "NGX_USER": [
+    374,
+    "NGX_USER",
+    "identifier"
+  ],
+  "NGX_LOG_DEBUG_CORE": [
+    319,
+    "NGX_LOG_DEBUG_CORE",
+    "identifier"
+  ],
+  "NGX_PROCESS_SIGNALLER": [
+    326,
+    "NGX_PROCESS_SIGNALLER",
+    "identifier"
+  ],
+  "(": [
+    44,
+    "(",
+    "operator"
+  ],
+  "ngx_master_process_cycle": [
+    253,
+    "ngx_master_process_cycle",
+    "identifier"
+  ],
+  "gr_gid": [
+    379,
+    "gr_gid",
+    "identifier"
+  ],
+  ":": [
+    76,
+    ":",
+    "operator"
+  ],
+  "goto": [
+    25,
+    "goto",
+    "keyword"
+  ],
+  "rlimit_nofile": [
+    147,
+    "rlimit_nofile",
+    "identifier"
+  ],
+  "^=": [
+    71,
+    "^=",
+    "operator"
+  ],
+  "ngx_conf_set_off_slot": [
+    148,
+    "ngx_conf_set_off_slot",
+    "identifier"
+  ],
+  "index": [
+    414,
+    "index",
+    "identifier"
+  ],
+  "pwd": [
+    371,
+    "pwd",
+    "identifier"
+  ],
+  "ngx_create_pool": [
+    202,
+    "ngx_create_pool",
+    "identifier"
+  ],
+  "|": [
+    89,
+    "|",
+    "operator"
+  ],
+  "ngx_slab_sizes_init": [
+    209,
+    "ngx_slab_sizes_init",
+    "identifier"
+  ],
+  "used": [
+    297,
+    "used",
+    "identifier"
+  ],
+  "ngx_core_commands": [
+    126,
+    "ngx_core_commands",
+    "identifier"
+  ],
+  "to": [
+    305,
+    "to",
+    "identifier"
+  ],
+  "defs": [
+    35,
+    "defs",
+    "constant"
+  ],
+  "ngx_set_priority": [
+    115,
+    "ngx_set_priority",
+    "identifier"
+  ],
+  "ccf": [
+    180,
+    "ccf",
+    "identifier"
+  ],
+  "ngx_argc": [
+    328,
+    "ngx_argc",
+    "identifier"
+  ],
+  "ngx_dlopen_n": [
+    408,
+    "ngx_dlopen_n",
+    "identifier"
+  ],
+  "switch": [
+    2,
+    "switch",
+    "keyword"
+  ],
+  "ngx_set_cpu_affinity": [
+    116,
+    "ngx_set_cpu_affinity",
+    "identifier"
+  ],
+  "->": [
+    63,
+    "->",
+    "operator"
+  ],
+  "offsetof": [
+    131,
+    "offsetof",
+    "identifier"
+  ],
+  "ngx_memzero": [
+    199,
+    "ngx_memzero",
+    "identifier"
+  ],
+  "name": [
+    223,
+    "name",
+    "identifier"
+  ],
+  "s": [
+    267,
+    "s",
+    "identifier"
+  ],
+  "NGX_DEBUG_POINTS_ABORT": [
+    124,
+    "NGX_DEBUG_POINTS_ABORT",
+    "identifier"
+  ],
+  "<=": [
+    68,
+    "<=",
+    "operator"
+  ],
+  "NGX_INVALID_PID": [
+    313,
+    "NGX_INVALID_PID",
+    "identifier"
+  ],
+  "rlimit_core": [
+    149,
+    "rlimit_core",
+    "identifier"
+  ],
+  "requires": [
+    205,
+    "requires",
+    "identifier"
+  ],
+  "ngx_pstrdup": [
+    382,
+    "ngx_pstrdup",
+    "identifier"
+  ],
+  "NGX_CONF_FLAG": [
+    129,
+    "NGX_CONF_FLAG",
+    "identifier"
+  ],
+  "len": [
+    224,
+    "len",
+    "identifier"
+  ],
+  "=": [
+    52,
+    "=",
+    "operator"
+  ],
+  "group": [
+    359,
+    "group",
+    "identifier"
+  ],
+  "char": [
+    16,
+    "char",
+    "keyword"
+  ],
+  "username": [
+    375,
+    "username",
+    "identifier"
+  ],
+  "p": [
+    264,
+    "p",
+    "identifier"
+  ],
+  "\t": [
+    93,
+    "\t",
+    "keyword"
+  ],
+  "it": [
+    299,
+    "it",
+    "identifier"
+  ],
+  "main": [
+    171,
+    "main",
+    "identifier"
+  ],
+  "pdefs": [
+    36,
+    "pdefs",
+    "constant"
+  ],
+  "ngx_free": [
+    307,
+    "ngx_free",
+    "identifier"
+  ],
+  "e": [
+    317,
+    "e",
+    "identifier"
+  ],
+  "next": [
+    325,
+    "next",
+    "identifier"
+  ],
+  "NGX_LOG_EMERG": [
+    277,
+    "NGX_LOG_EMERG",
+    "identifier"
+  ],
+  "on": [
+    301,
+    "on",
+    "identifier"
+  ],
+  "unsigned": [
+    17,
+    "unsigned",
+    "keyword"
+  ],
+  "uintptr_t": [
+    262,
+    "uintptr_t",
+    "identifier"
+  ],
+  "happens": [
+    300,
+    "happens",
+    "identifier"
+  ],
+  "signed": [
+    24,
+    "signed",
+    "keyword"
+  ],
+  "ngx_getcwd_n": [
+    340,
+    "ngx_getcwd_n",
+    "identifier"
+  ],
+  "ngx_set_env": [
+    114,
+    "ngx_set_env",
+    "identifier"
+  ],
+  "const": [
+    19,
+    "const",
+    "keyword"
+  ],
+  "ngx_crc32_table_init": [
+    204,
+    "ngx_crc32_table_init",
+    "identifier"
+  ],
+  "ngx_log_debug1": [
+    318,
+    "ngx_log_debug1",
+    "identifier"
+  ],
+  "ngx_rename_file_n": [
+    323,
+    "ngx_rename_file_n",
+    "identifier"
+  ],
+  "ngx_create_pidfile": [
+    240,
+    "ngx_create_pidfile",
+    "identifier"
+  ],
+  "CPU_SETSIZE": [
+    395,
+    "CPU_SETSIZE",
+    "identifier"
+  ],
+  "ngx_listening_t": [
+    268,
+    "ngx_listening_t",
+    "identifier"
+  ],
+  "NGX_DEBUG_POINTS_STOP": [
+    123,
+    "NGX_DEBUG_POINTS_STOP",
+    "identifier"
+  ],
+  "cmd": [
+    113,
+    "cmd",
+    "identifier"
+  ],
+  "elts": [
+    218,
+    "elts",
+    "identifier"
+  ],
+  "ngx_prefix": [
+    165,
+    "ngx_prefix",
+    "identifier"
+  ],
+  "worker_processes": [
+    355,
+    "worker_processes",
+    "identifier"
+  ],
+  "master": [
+    135,
+    "master",
+    "identifier"
+  ],
+  "conf_prefix": [
+    336,
+    "conf_prefix",
+    "identifier"
+  ],
+  "ngx_signal_process": [
+    229,
+    "ngx_signal_process",
+    "identifier"
+  ],
+  "ngx_pid": [
+    188,
+    "ngx_pid",
+    "identifier"
+  ],
+  "+": [
+    88,
+    "+",
+    "operator"
+  ],
+  "b": [
+    173,
+    "b",
+    "identifier"
+  ],
+  "priority": [
+    349,
+    "priority",
+    "identifier"
+  ],
+  "NGX_INT32_LEN": [
+    314,
+    "NGX_INT32_LEN",
+    "identifier"
+  ],
+  "ngx_write_fd": [
+    221,
+    "ngx_write_fd",
+    "identifier"
+  ],
+  " ": [
+    90,
+    " ",
+    "keyword"
+  ],
+  "NGX_CONFIGURE": [
+    263,
+    "NGX_CONFIGURE",
+    "identifier"
+  ],
+  "ngx_use_stderr": [
+    251,
+    "ngx_use_stderr",
+    "identifier"
+  ],
+  "NGX_OK": [
+    183,
+    "NGX_OK",
+    "identifier"
+  ],
+  "[": [
+    43,
+    "[",
+    "operator"
+  ],
+  "cf": [
+    111,
+    "cf",
+    "identifier"
+  ],
+  "last": [
+    228,
+    "last",
+    "identifier"
+  ],
+  "ngx_str_t": [
+    283,
+    "ngx_str_t",
+    "identifier"
+  ]
+}

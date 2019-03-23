@@ -1,6 +1,6 @@
 [package]
 name = "naive_compiler"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["lonelyhentai <master@evernightfireworks.com>"]
 edition = "2018"
 
@@ -8,3 +8,4 @@ edition = "2018"
 regex_engine = { path =  './regex_engine'}
 clex = { path = './clex' }
 clap = "^2.32.0"
+serde_json = "1.0.39"

@@ -1,3 +1,9 @@
+
+
+
+
+
+
 static void ngx_show_version_info(void);
 static ngx_int_t ngx_add_inherited_sockets(ngx_cycle_t *cycle);
 static void ngx_cleanup_environment(void *data);
@@ -228,7 +234,10 @@ main(int argc, char *const *argv)
     ngx_ssl_init(log);
 
 
-    
+    /*
+     * init_cycle->log is required for signal handlers and
+     * ngx_process_options()
+     */
 
     ngx_memzero(&init_cycle, sizeof(ngx_cycle_t));
     init_cycle.log = log;
@@ -251,13 +260,17 @@ main(int argc, char *const *argv)
         return 1;
     }
 
-    
+    /*
+     * ngx_crc32_table_init() requires ngx_cacheline_size set in ngx_os_init()
+     */
 
     if (ngx_crc32_table_init() != NGX_OK) {
         return 1;
     }
 
-    
+    /*
+     * ngx_slab_sizes_init() requires ngx_pagesize set in ngx_os_init()
+     */
 
     ngx_slab_sizes_init();
 
@@ -290,7 +303,7 @@ main(int argc, char *const *argv)
 
             for (i = 0; i < cycle->config_dump.nelts; i++) {
 
-                ngx_write_stdout(""
+                ngx_write_stdout("# configuration file ");
                 (void) ngx_write_fd(ngx_stdout, cd[i].name.data,
                                     cd[i].name.len);
                 ngx_write_stdout(":" NGX_LINEFEED);
@@ -443,7 +456,7 @@ ngx_add_inherited_sockets(ngx_cycle_t *cycle)
     }
 
     ngx_log_error(NGX_LOG_NOTICE, cycle->log, 0,
-                  "using inherited sockets from %s", inherited);
+                  "using inherited sockets from \"%s\"", inherited);
 
     if (ngx_array_init(&cycle->listening, cycle->pool, 10,
                        sizeof(ngx_listening_t))
@@ -457,7 +470,7 @@ ngx_add_inherited_sockets(ngx_cycle_t *cycle)
             s = ngx_atoi(v, p - v);
             if (s == NGX_ERROR) {
                 ngx_log_error(NGX_LOG_EMERG, cycle->log, 0,
-                              "invalid socket number %s in " NGINX_VAR
+                              "invalid socket number \"%s\" in " NGINX_VAR
                 " environment variable, ignoring the rest"
                 " of the variable", v);
                 break;
@@ -478,7 +491,7 @@ ngx_add_inherited_sockets(ngx_cycle_t *cycle)
 
     if (v != p) {
         ngx_log_error(NGX_LOG_EMERG, cycle->log, 0,
-                      "invalid socket number %s in " NGINX_VAR
+                      "invalid socket number \"%s\" in " NGINX_VAR
         " environment variable, ignoring", v);
     }
 
@@ -606,7 +619,10 @@ ngx_cleanup_environment(void *data)
 
     if (environ == env) {
 
-        
+        /*
+         * if the environment is still used, as it happens on exit,
+         * the only option is to leak it
+         */
 
         return;
     }
@@ -687,7 +703,7 @@ ngx_exec_new_binary(ngx_cycle_t *cycle, char *const *argv)
     if (ngx_rename_file(ccf->pid.data, ccf->oldpid.data) == NGX_FILE_ERROR) {
         ngx_log_error(NGX_LOG_ALERT, cycle->log, ngx_errno,
                       ngx_rename_file_n " %s to %s failed "
-                                        "before executing new binary process %s",
+                                        "before executing new binary process \"%s\"",
                 ccf->pid.data, ccf->oldpid.data, argv[0]);
 
         ngx_free(env);
@@ -704,7 +720,7 @@ ngx_exec_new_binary(ngx_cycle_t *cycle, char *const *argv)
         {
             ngx_log_error(NGX_LOG_ALERT, cycle->log, ngx_errno,
                           ngx_rename_file_n " %s back to %s failed after "
-                                            "an attempt to execute new binary process %s",
+                                            "an attempt to execute new binary process \"%s\"",
                     ccf->oldpid.data, ccf->pid.data, argv[0]);
         }
     }
@@ -727,7 +743,7 @@ ngx_get_options(int argc, char *const *argv)
         p = (u_char *) argv[i];
 
         if (*p++ != '-') {
-            ngx_log_stderr(0, "invalid option: %s", argv[i]);
+            ngx_log_stderr(0, "invalid option: \"%s\"", argv[i]);
             return NGX_ERROR;
         }
 
@@ -774,7 +790,7 @@ ngx_get_options(int argc, char *const *argv)
                         goto next;
                     }
 
-                    ngx_log_stderr(0, "option -p requires directory name");
+                    ngx_log_stderr(0, "option \"-p\" requires directory name");
                     return NGX_ERROR;
 
                 case 'c':
@@ -788,7 +804,7 @@ ngx_get_options(int argc, char *const *argv)
                         goto next;
                     }
 
-                    ngx_log_stderr(0, "option -c requires file name");
+                    ngx_log_stderr(0, "option \"-c\" requires file name");
                     return NGX_ERROR;
 
                 case 'g':
@@ -802,7 +818,7 @@ ngx_get_options(int argc, char *const *argv)
                         goto next;
                     }
 
-                    ngx_log_stderr(0, "option -g requires parameter");
+                    ngx_log_stderr(0, "option \"-g\" requires parameter");
                     return NGX_ERROR;
 
                 case 's':
@@ -813,7 +829,7 @@ ngx_get_options(int argc, char *const *argv)
                         ngx_signal = argv[i];
 
                     } else {
-                        ngx_log_stderr(0, "option -s requires parameter");
+                        ngx_log_stderr(0, "option \"-s\" requires parameter");
                         return NGX_ERROR;
                     }
 
@@ -826,11 +842,11 @@ ngx_get_options(int argc, char *const *argv)
                         goto next;
                     }
 
-                    ngx_log_stderr(0, "invalid option: -s %s", ngx_signal);
+                    ngx_log_stderr(0, "invalid option: \"-s %s\"", ngx_signal);
                     return NGX_ERROR;
 
                 default:
-                    ngx_log_stderr(0, "invalid option: %c", *(p - 1));
+                    ngx_log_stderr(0, "invalid option: \"%c\"", *(p - 1));
                     return NGX_ERROR;
             }
         }
@@ -936,7 +952,6 @@ ngx_process_options(ngx_cycle_t *cycle)
 
 
 
-        
         ngx_str_set(&cycle->conf_prefix, NGX_CONF_PREFIX);
 
         ngx_str_set(&cycle->conf_prefix, NGX_PREFIX);
@@ -992,7 +1007,16 @@ ngx_core_module_create_conf(ngx_cycle_t *cycle)
         return NULL;
     }
 
-    
+    /*
+     * set by ngx_pcalloc()
+     *
+     *     ccf->pid = NULL;
+     *     ccf->oldpid = NULL;
+     *     ccf->priority = 0;
+     *     ccf->cpu_affinity_auto = 0;
+     *     ccf->cpu_affinity_n = 0;
+     *     ccf->cpu_affinity = NULL;
+     */
 
     ccf->daemon = NGX_CONF_UNSET;
     ccf->master = NGX_CONF_UNSET;
@@ -1039,8 +1063,8 @@ ngx_core_module_init_conf(ngx_cycle_t *cycle, void *conf)
         && ccf->cpu_affinity_n != (ngx_uint_t) ccf->worker_processes)
     {
         ngx_log_error(NGX_LOG_WARN, cycle->log, 0,
-                      "the number of worker_processes is not equal to "
-                      "the number of worker_cpu_affinity masks, "
+                      "the number of \"worker_processes\" is not equal to "
+                      "the number of \"worker_cpu_affinity\" masks, "
                       "using last mask for remaining worker processes");
     }
 
@@ -1076,7 +1100,7 @@ ngx_core_module_init_conf(ngx_cycle_t *cycle, void *conf)
         pwd = getpwnam(NGX_USER);
         if (pwd == NULL) {
             ngx_log_error(NGX_LOG_EMERG, cycle->log, ngx_errno,
-                          "getpwnam(" NGX_USER ") failed");
+                          "getpwnam(\"" NGX_USER "\") failed");
             return NGX_CONF_ERROR;
         }
 
@@ -1087,7 +1111,7 @@ ngx_core_module_init_conf(ngx_cycle_t *cycle, void *conf)
         grp = getgrnam(NGX_GROUP);
         if (grp == NULL) {
             ngx_log_error(NGX_LOG_EMERG, cycle->log, ngx_errno,
-                          "getgrnam(" NGX_GROUP ") failed");
+                          "getgrnam(\"" NGX_GROUP "\") failed");
             return NGX_CONF_ERROR;
         }
 
@@ -1116,7 +1140,7 @@ ngx_core_module_init_conf(ngx_cycle_t *cycle, void *conf)
                    != 0)
             {
                 ngx_log_error(NGX_LOG_EMERG, cycle->log, 0,
-                              "lock_file could not be changed, ignored");
+                              "\"lock_file\" could not be changed, ignored");
             }
 
             cycle->lock_file.len = lock_file.len + 1;
@@ -1153,7 +1177,7 @@ ngx_set_user(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
 
     ngx_conf_log_error(NGX_LOG_WARN, cf, 0,
-                       "user is not supported, ignored");
+                       "\"user\" is not supported, ignored");
 
     return NGX_CONF_OK;
 
@@ -1172,7 +1196,7 @@ ngx_set_user(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     if (geteuid() != 0) {
         ngx_conf_log_error(NGX_LOG_WARN, cf, 0,
-                           "the user directive makes sense only "
+                           "the \"user\" directive makes sense only "
                            "if the master process runs "
                            "with super-user privileges, ignored");
         return NGX_CONF_OK;
@@ -1186,7 +1210,7 @@ ngx_set_user(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     pwd = getpwnam((const char *) value[1].data);
     if (pwd == NULL) {
         ngx_conf_log_error(NGX_LOG_EMERG, cf, ngx_errno,
-                           "getpwnam(%s) failed", value[1].data);
+                           "getpwnam(\"%s\") failed", value[1].data);
         return NGX_CONF_ERROR;
     }
 
@@ -1198,7 +1222,7 @@ ngx_set_user(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     grp = getgrnam(group);
     if (grp == NULL) {
         ngx_conf_log_error(NGX_LOG_EMERG, cf, ngx_errno,
-                           "getgrnam(%s) failed", group);
+                           "getgrnam(\"%s\") failed", group);
         return NGX_CONF_ERROR;
     }
 
@@ -1310,7 +1334,7 @@ ngx_set_cpu_affinity(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         if (cf->args->nelts > 3) {
             ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
                                "invalid number of arguments in "
-                               "worker_cpu_affinity directive");
+                               "\"worker_cpu_affinity\" directive");
             return NGX_CONF_ERROR;
         }
 
@@ -1331,7 +1355,7 @@ ngx_set_cpu_affinity(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
         if (value[n].len > CPU_SETSIZE) {
             ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-                         "worker_cpu_affinity supports up to %d CPUs only",
+                         "\"worker_cpu_affinity\" supports up to %d CPUs only",
                          CPU_SETSIZE);
             return NGX_CONF_ERROR;
         }
@@ -1361,7 +1385,7 @@ ngx_set_cpu_affinity(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
             }
 
             ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-                          "invalid character %c in worker_cpu_affinity",
+                          "invalid character \"%c\" in \"worker_cpu_affinity\"",
                           ch);
             return NGX_CONF_ERROR;
         }
@@ -1370,7 +1394,7 @@ ngx_set_cpu_affinity(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
 
     ngx_conf_log_error(NGX_LOG_WARN, cf, 0,
-                       "worker_cpu_affinity is not supported "
+                       "\"worker_cpu_affinity\" is not supported "
                        "on this platform, ignored");
 
 
@@ -1492,7 +1516,7 @@ ngx_load_module(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     handle = ngx_dlopen(file.data);
     if (handle == NULL) {
         ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-                           ngx_dlopen_n " %s failed (%s)",
+                           ngx_dlopen_n " \"%s\" failed (%s)",
                            file.data, ngx_dlerror());
         return NGX_CONF_ERROR;
     }
@@ -1503,7 +1527,7 @@ ngx_load_module(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     modules = ngx_dlsym(handle, "ngx_modules");
     if (modules == NULL) {
         ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-                           ngx_dlsym_n " %V, %s failed (%s)",
+                           ngx_dlsym_n " \"%V\", \"%s\" failed (%s)",
                            &value[1], "ngx_modules", ngx_dlerror());
         return NGX_CONF_ERROR;
     }
@@ -1511,7 +1535,7 @@ ngx_load_module(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     names = ngx_dlsym(handle, "ngx_module_names");
     if (names == NULL) {
         ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-                           ngx_dlsym_n " %V, %s failed (%s)",
+                           ngx_dlsym_n " \"%V\", \"%s\" failed (%s)",
                            &value[1], "ngx_module_names", ngx_dlerror());
         return NGX_CONF_ERROR;
     }
@@ -1535,7 +1559,7 @@ ngx_load_module(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
 
     ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-                       "load_module is not supported "
+                       "\"load_module\" is not supported "
                        "on this platform");
     return NGX_CONF_ERROR;
 

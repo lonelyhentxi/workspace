@@ -18,7 +18,7 @@ pub trait RegexExpr {
 }
 
 pub struct MatchExpr {
-    sub: char
+   pub sub: char
 }
 
 impl MatchExpr {
@@ -40,7 +40,7 @@ impl RegexExpr for MatchExpr {
 }
 
 pub struct NotMatchExpr {
-    sub: char
+   pub sub: char
 }
 
 impl NotMatchExpr {
@@ -78,8 +78,8 @@ impl RegexExpr for EpsilonExpr {
 }
 
 pub struct ConcatExpr {
-    left: Rc<dyn RegexExpr>,
-    right: Rc<dyn RegexExpr>,
+   pub left: Rc<dyn RegexExpr>,
+   pub right: Rc<dyn RegexExpr>,
 }
 
 impl ConcatExpr {
@@ -101,8 +101,8 @@ impl RegexExpr for ConcatExpr {
 }
 
 pub struct AltExpr {
-    left: Rc<dyn RegexExpr>,
-    right: Rc<dyn RegexExpr>,
+    pub left: Rc<dyn RegexExpr>,
+    pub right: Rc<dyn RegexExpr>,
 }
 
 impl AltExpr {
@@ -124,7 +124,7 @@ impl RegexExpr for AltExpr {
 }
 
 pub struct RepeatExpr {
-    sub: Rc<dyn RegexExpr>,
+    pub sub: Rc<dyn RegexExpr>,
 }
 
 impl RepeatExpr {
