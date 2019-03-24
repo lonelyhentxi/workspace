@@ -35,7 +35,7 @@ impl LexPattern for HexPattern {
         (self.min_len, self.max_len)
     }
 
-    fn hook(&self, table: &mut LexTable, _target: &str) -> usize {
+    fn hook(&self, table: &LexTable, _target: &str) -> usize {
         table.get("hex").0
     }
 
@@ -73,7 +73,7 @@ impl LexPattern for OctPattern {
         (self.min_len, self.max_len)
     }
 
-    fn hook(&self, table: &mut LexTable, _target: &str) -> usize {
+    fn hook(&self, table: &LexTable, _target: &str) -> usize {
         table.get("oct").0
     }
 
@@ -110,7 +110,7 @@ impl LexPattern for DecPattern {
         (self.min_len, self.max_len)
     }
 
-    fn hook(&self, table: &mut LexTable, _target: &str) -> usize {
+    fn hook(&self, table: &LexTable, _target: &str) -> usize {
         table.get("dec").0
     }
 
@@ -150,7 +150,7 @@ impl LexPattern for DefsPattern {
         (self.min_len, self.max_len)
     }
 
-    fn hook(&self, table: &mut LexTable, _target: &str) -> usize {
+    fn hook(&self, table: &LexTable, _target: &str) -> usize {
         table.get("defs").0
     }
 
@@ -197,7 +197,7 @@ impl LexPattern for PdefsPattern {
         (self.min_len, self.max_len)
     }
 
-    fn hook(&self, table: &mut LexTable, _target: &str) -> usize {
+    fn hook(&self, table: &LexTable, _target: &str) -> usize {
         table.get("pdefs").0
     }
 
@@ -244,7 +244,7 @@ impl LexPattern for RdefsPattern {
         (self.min_len, self.max_len)
     }
 
-    fn hook(&self, table: &mut LexTable, _target: &str) -> usize {
+    fn hook(&self, table: &LexTable, _target: &str) -> usize {
         table.get("rdefs").0
     }
 
@@ -295,7 +295,7 @@ impl LexPattern for CharLiteralPattern {
         (self.min_len, self.max_len)
     }
 
-    fn hook(&self, table: &mut LexTable, _target: &str) -> usize {
+    fn hook(&self, table: &LexTable, _target: &str) -> usize {
         table.get("char_literal").0
     }
 
@@ -346,7 +346,7 @@ impl LexPattern for StringLiteralPattern {
         (self.min_len, self.max_len)
     }
 
-    fn hook(&self, table: &mut LexTable, _target: &str) -> usize {
+    fn hook(&self, table: &LexTable, _target: &str) -> usize {
         table.get("string_literal").0
     }
 

@@ -1,4 +1,3 @@
-use crate::pattern::gen_patterns;
 use std::collections::HashSet;
 use crate::core::{LexTable, LexPattern};
 use std::collections::btree_map::BTreeMap;
@@ -42,17 +41,9 @@ pub fn merge_pattern(lex_patterns: &Vec<Rc<dyn LexPattern>>) -> BTreeMap<usize, 
 }
 
 
-pub fn lex(sstream: &str) -> Result<(Vec<(usize, &str)>, LexTable), String> {
-    let lex_patterns: Vec<Rc<dyn LexPattern>> = gen_patterns();
+pub fn lex(lex_patterns: Vec<Rc<dyn LexPattern>>, lex_table: &LexTable, sstream: &str) -> Result<Vec<(usize, String)>, String> {
     let patterns_seq = merge_pattern(&lex_patterns);
-
-    // register lex table
-    let mut lex_table = LexTable::new();
-    for pat in &lex_patterns {
-        pat.register(&mut lex_table);
-    }
-
-    let mut tokens: Vec<(usize, &str)> = vec!();
+    let mut tokens: Vec<(usize, String)> = vec!();
     let patterns_seq_iter: Vec<(&usize,&Vec<usize>)> = patterns_seq.iter().rev().collect();
     let mut start: usize = 0usize;
     while start < sstream.len() {
@@ -66,7 +57,7 @@ pub fn lex(sstream: &str) -> Result<(Vec<(usize, &str)>, LexTable), String> {
                     let pattern = lex_patterns.get(*pattern_index).unwrap();
                     let slice = &sstream[start..start + len];
                     if pattern.is_match(slice) {
-                        tokens.push((pattern.hook(&mut lex_table, slice), slice));
+                        tokens.push((pattern.hook(lex_table, slice), slice.to_string()));
                         matched = true;
                         break;
                     }
@@ -88,5 +79,6 @@ pub fn lex(sstream: &str) -> Result<(Vec<(usize, &str)>, LexTable), String> {
             return Err(sstream[start..usize::min(sstream.len(),start+64)].to_string());
         }
     }
-    Ok((tokens, lex_table))
+
+    Ok(tokens)
 }

@@ -45,7 +45,7 @@ impl LexPattern for OperatorPattern {
         (self.min_len, self.max_len)
     }
 
-    fn hook(&self, table: &mut LexTable, target: &str) -> usize {
+    fn hook(&self, table: &LexTable, target: &str) -> usize {
         let mut alias_source = target;
         if self.alias.contains_key(target) {
             alias_source = &self.alias[target];

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 pub trait LexPattern {
     fn get_boundary(&self) -> (usize, usize);
-    fn hook(&self, table: &mut LexTable, target: &str) -> usize;
+    fn hook(&self, table: &LexTable, target: &str) -> usize;
     fn register(&self,table: &mut LexTable);
     fn is_match(&self,target: &str) -> bool;
 }

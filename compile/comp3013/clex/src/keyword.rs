@@ -40,7 +40,7 @@ impl LexPattern for KeywordPattern {
         (self.min_len, self.max_len)
     }
 
-    fn hook(&self, table: &mut LexTable, target: &str) -> usize {
+    fn hook(&self, table: &LexTable, target: &str) -> usize {
         table.get(target).0
     }
 

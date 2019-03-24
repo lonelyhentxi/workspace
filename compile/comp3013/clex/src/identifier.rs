@@ -33,12 +33,13 @@ impl LexPattern for IdentifierPattern {
         (self.min_len, self.max_len)
     }
 
-    fn hook(&self, table: &mut LexTable, target: &str) -> usize {
-        table.try_insert(target,"identifier");
-        table.get(target).0
+    fn hook(&self, table: &LexTable, _target: &str) -> usize {
+        table.get("identifier").0
     }
 
-    fn register(&self, _: &mut LexTable) {}
+    fn register(&self, table: &mut LexTable) {
+        table.try_insert("identifier","identifier");
+    }
 
     fn is_match(&self, target: &str) -> bool {
         reg_match(self.expr.clone(), target)
