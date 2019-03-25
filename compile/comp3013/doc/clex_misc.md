@@ -117,7 +117,7 @@ digraph G {
     N5->N6[label="ε"]
     N1->N0[label="ε"]
     N6->B[label="ε"]
-    N0->N6[label="ε"]
-    B->N1[label="ε"]
+    N6->N0[label="ε"]
+    N1->B[label="ε"]
 }
 ```
