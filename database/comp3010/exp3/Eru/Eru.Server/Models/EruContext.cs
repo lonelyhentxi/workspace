@@ -6,8 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Eru.Server.Models
 {
-    public class Context : DbContext
+    public class EruContext : DbContext
     {
+        public EruContext(DbContextOptions<EruContext> options) : base(options)
+        {
+        }
+
         public DbSet<User> Users { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<Role> Roles { get; set; }
@@ -19,7 +23,7 @@ namespace Eru.Server.Models
         public DbSet<PostStatus> PostStatuses { get; set; }
         public DbSet<PostCategory> PostCategories { get; set; }
         public DbSet<CommentStatus> CommentStatuses { get; set; }
-        public DbSet<CommentType> CommentTypes { get; set; }
+        public DbSet<CommentCategory> CommentCategories { get; set; }
         public DbSet<PostTag> PostTags { get; set; }
         public DbSet<PostTagAssociation> PostTagAssociations { get; set; }
         public DbSet<Application> Applications { get; set; }
@@ -40,7 +44,7 @@ namespace Eru.Server.Models
                 .IsRequired(true)
                 .OnDelete(DeleteBehavior.Restrict);
             commentEntity
-                .HasOne(c => c.Type)
+                .HasOne(c => c.Category)
                 .WithMany(t => t.Comments)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);

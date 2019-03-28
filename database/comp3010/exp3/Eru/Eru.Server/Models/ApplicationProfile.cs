@@ -13,6 +13,7 @@ namespace Eru.Server.Models
         [Key]
         [StringLength(32)]
         public string Id { get; set; }
+        [Required]
         public string Misc { get; set; }
         public string Setting { get; set; }
         [ForeignKey("Id")]

@@ -9,9 +9,7 @@ namespace Eru.Server.Models
 {
     public class RolePermissionAssociation
     {
-        [Required]
         public int RoleId { get; set; }
-        [Required]
         public int PermissionId { get; set; }
         [ForeignKey("RoleId")]
         public Role Role { get; set; }

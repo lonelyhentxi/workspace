@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Eru.Server.Models
 {
-    public class CommentType
+    public class CommentCategory
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

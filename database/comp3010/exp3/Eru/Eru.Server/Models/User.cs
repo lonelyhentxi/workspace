@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using Eru.Server.Interfaces;
 
 namespace Eru.Server.Models
 {
-    public class User
+    public class User: ITimeEntity
     {
-        [Key] [StringLength(32)] public string ID { get; set; }
+        [Key] [StringLength(32)] public string Id { get; set; }
 
         [Required] [MaxLength(63)] public string Name { get; set; }
 
@@ -16,9 +18,13 @@ namespace Eru.Server.Models
 
         [Required] public string Avatar { get; set; }
 
-        [Required] public DateTime LastActiveTime { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Required]
+        public DateTime UpdateTime { get; set; }
 
-        [Required] public DateTime JoinedTime { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Required]
+        public DateTime CreateTime { get; set; }
 
         [Required] public bool Registered { get; set; }
 
