@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using Eru.Server.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace Eru.Server.Models
 {
@@ -16,7 +17,9 @@ namespace Eru.Server.Models
 
         [Required] [MaxLength(255)] public string Password { get; set; }
 
-        [Required] public string Avatar { get; set; }
+        [Required] [Url] public string Avatar { get; set; }
+
+        [Required] public string Token { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required]
@@ -28,7 +31,7 @@ namespace Eru.Server.Models
 
         [Required] public bool Registered { get; set; }
 
-        [Required] public string Url { get; set; }
+        [Required] [Url] public string Url { get; set; }
 
         [Required] public string Description { get; set; }
         public HashSet<UserRoleAssociation> UserRoleAssociations { get; set; }

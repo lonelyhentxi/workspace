@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Eru.Server.Models
 {
-    public class EruContext : DbContext
+    public class EruContext : IdentityDbContext<User>
     {
         public EruContext(DbContextOptions<EruContext> options) : base(options)
         {
         }
 
-        public DbSet<User> Users { get; set; }
+        public new DbSet<User> Users { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
-        public DbSet<Role> Roles { get; set; }
+        public new DbSet<Role> Roles { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<UserRoleAssociation> UserRoleAssociations { get; set; }
         public DbSet<RolePermissionAssociation> RolePermissionAssociations { get; set; }
@@ -114,6 +111,7 @@ namespace Eru.Server.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             OnAssociationKeyCreating(modelBuilder);
             OnSingleProfileCreating(modelBuilder);
             OnCommentEntityCreating(modelBuilder);

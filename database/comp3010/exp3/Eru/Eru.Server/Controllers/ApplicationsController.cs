@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Eru.Server.Dtos;
@@ -22,7 +23,7 @@ namespace Eru.Server.Controllers
             _context = context;
         }
 
-        // GET: api/Applications
+        // GET: api/applications
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Application>>> GetApplications(
             [FromQuery] ApplicationFilterInDto filterOptions)
@@ -41,11 +42,14 @@ namespace Eru.Server.Controllers
             }
         }
 
-        // GET: api/Applications/5
+        // GET: api/applications/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Application>> GetApplication(string id)
+        public async Task<ActionResult<Application>> GetApplication([StringLength(32)] string id)
         {
-            var application = await _context.Applications.FindAsync(id);
+            var application = await _context.Applications
+                .Include(a => a.Profile)
+                .Include(a => a.Enrollments)
+                .FirstAsync(a => a.Id == id);
 
             if (application == null)
             {
@@ -55,7 +59,8 @@ namespace Eru.Server.Controllers
             return application;
         }
 
-        // PUT: api/Applications/5
+        // PUT: api/applications/5
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> PutApplication(string id, Application application)
         {
