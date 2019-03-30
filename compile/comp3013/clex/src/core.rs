@@ -1,30 +1,38 @@
-use super::pattern::gen_patterns;
+use std::collections::HashMap;
 
-pub fn lex(sstream:&str) -> Option<Vec<(usize,Option<String>, &str)>> {
-    let lex_reg_action_pairs = gen_patterns();
-    let mut start: usize = 0u32 as usize;
-    let mut results = Vec::new();
-    while start < sstream.len() {
-        let mut len: usize = usize::min(64, sstream.len() - start);
-        while len > 0  {
-            let mut matched = false;
-            let slice = &sstream[start..start+len];
-            for pair in &lex_reg_action_pairs {
-                if (pair.1).reg_match(slice) {
-                    results.push((pair.0,pair.2(slice), slice));
-                    matched = true;
-                    break;
-                }
-            }
-            if matched==true {
-                start+=len;
-                break;
-            }
-            len-=1;
-        }
-        if len==0 {
-            return None;
+pub trait LexPattern {
+    fn get_boundary(&self) -> (usize, usize);
+    fn hook(&self, table: &LexTable, target: &str) -> usize;
+    fn register(&self,table: &mut LexTable);
+    fn is_match(&self,target: &str) -> bool;
+}
+
+pub struct LexTable(pub HashMap<String, (usize, String, String)>);
+
+impl LexTable {
+    pub fn new() -> LexTable {
+        LexTable(HashMap::new())
+    }
+
+    pub fn match_index<P: LexPattern>(&mut self, pattern: P, target: &str) -> Option<usize> {
+        if pattern.is_match(target) {
+            Some(pattern.hook(self, target))
+        } else {
+            None
         }
     }
-    Some(results)
+
+    pub fn try_insert(&mut self, type_name: &str, super_name: &str) -> bool {
+        if !self.0.contains_key(type_name) {
+            self.0.insert(type_name.to_string(),
+                          (self.0.len(), type_name.to_string(), super_name.to_string()));
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn get(&self,target: &str) -> &(usize,String,String) {
+        &self.0[target]
+    }
 }
