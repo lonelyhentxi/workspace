@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Eru.Server.Models
+namespace Eru.Server.Data
 {
     public class UserProfile
     {
         [Key]
-        [StringLength(32)]
-        public string Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public string Misc { get; set; }

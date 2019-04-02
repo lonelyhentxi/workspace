@@ -10,10 +10,9 @@ using log4net.Repository;
 using log4net;
 using log4net.Config;
 using System.IO;
+using Eru.Server.Data;
 
 #region CUSTOM_IMPORT
-
-using Eru.Server.Models;
 
 #endregion
 
@@ -33,13 +32,8 @@ namespace Eru.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
-            #region CACHE_INJECTION
-
-            services.AddScoped<ICaching,>
-
-            #endregion
             #region DB_CONTEXT_POOL_SERVICE
-
+            services.AddScoped<>
             services.AddDbContextPool<EruContext>(opt => { opt.UseInMemoryDatabase("eru"); });
 
             #endregion

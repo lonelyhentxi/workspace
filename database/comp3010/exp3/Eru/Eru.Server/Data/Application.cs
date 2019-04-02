@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 using Eru.Server.Interfaces;
 
-namespace Eru.Server.Models
+namespace Eru.Server.Data
 {
     public class Application: ITimeEntity
     {
-        [Key] [StringLength(32)] public string Id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
 
         [Required] [MaxLength(63)] public string Name { get; set; }
 

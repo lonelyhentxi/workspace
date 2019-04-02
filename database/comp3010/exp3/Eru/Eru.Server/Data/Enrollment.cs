@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Eru.Server.Models
+namespace Eru.Server.Data
 {
     public class Enrollment
     {
-        [StringLength(32)] public string UserId { get; set; }
-        [StringLength(32)] public string ApplicationId { get; set; }
+        public Guid UserId { get; set; }
+        public Guid ApplicationId { get; set; }
 
         [Required] public string Profile { get; set; }
 

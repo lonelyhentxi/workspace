@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 using Eru.Server.Interfaces;
 
-namespace Eru.Server.Models
+namespace Eru.Server.Data
 {
     public class Post: ITimeEntity
     {
-        [Key] [StringLength(32)] public string ID { get; set; }
-        [Required] [StringLength(32)] public string UserId { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
+        [Required] public Guid UserId { get; set; }
         [Required] public int StatusId { get; set; }
         public int? CategoryId { get; set; }
 
@@ -20,7 +20,7 @@ namespace Eru.Server.Models
         public DateTime CreateTime { get; set; }
 
         [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public DateTime UpdateTime { get; set; }
 
         [Required] [MaxLength(255)] public string Title { get; set; }

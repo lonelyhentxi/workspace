@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 using Eru.Server.Interfaces;
-using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 
-namespace Eru.Server.Models
+namespace Eru.Server.Data
 {
-    public class User: ITimeEntity
+    public class User : ITimeEntity
     {
-        [Key] [StringLength(32)] public string Id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
 
         [Required] [MaxLength(63)] public string Name { get; set; }
 
-        [Required] [MaxLength(255)] public string Password { get; set; }
+        [Required] [MaxLength(255)] [JsonIgnore] public string Password { get; set; }
 
         [Required] [Url] public string Avatar { get; set; }
 
@@ -35,6 +35,7 @@ namespace Eru.Server.Models
 
         [Required] public string Description { get; set; }
         public HashSet<UserRoleAssociation> UserRoleAssociations { get; set; }
+
         public List<Post> Posts { get; set; }
         public List<Comment> Comments { get; set; }
         public HashSet<Enrollment> Enrollments { get; set; }

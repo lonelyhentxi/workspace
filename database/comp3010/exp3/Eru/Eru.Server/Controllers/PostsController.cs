@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Eru.Server.Data;
 using Microsoft.AspNetCore.Mvc;
 using Eru.Server.Dtos;
-using Eru.Server.Models;
 using Eru.Server.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;

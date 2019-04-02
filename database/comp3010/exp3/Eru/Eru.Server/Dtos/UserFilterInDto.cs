@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Eru.Server.Annotations;
 using Eru.Server.Interfaces;
-using Eru.Server.Models;
 
 namespace Eru.Server.Dtos
 {
