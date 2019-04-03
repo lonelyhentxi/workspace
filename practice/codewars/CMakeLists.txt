@@ -1,11 +1,12 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.10)
+
 
 set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_HOME}/scripts/buildsystems/vcpkg.cmake)
 project(codewars)
 
 set(CMAKE_CXX_STANDARD 14)
 find_package(Catch2 CONFIG REQUIRED)
-SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/cmake-build)
+SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/cmake-build-debug)
 include_directories(
         src/fivekyu
         src/sixkyu
@@ -14,5 +15,5 @@ include_directories(
 		src/threekyu
         src/twokyu)
 file(GLOB_RECURSE SOURCES src/**/*.hpp src/**/*.cpp)
-add_executable(test src/test.cpp ${SOURCES})
-target_link_libraries(test Catch2::Catch2)
+add_executable(main src/test.cpp ${SOURCES})
+target_link_libraries(main Catch2::Catch2)

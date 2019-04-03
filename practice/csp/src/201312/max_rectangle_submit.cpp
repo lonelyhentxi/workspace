@@ -1,4 +1,3 @@
-#define NOW
 #ifdef NOW
 
 #include <cstdint>
@@ -31,4 +30,3 @@ int main()
 }
 
 #endif NOW
-#undef NOW
