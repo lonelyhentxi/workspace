@@ -4,14 +4,14 @@ use num::integer::{lcm, gcd};
 
 pub fn convert_fracts(l: Vec<(i64, i64)>) -> Vec<(i64, i64)> {
     let denom = l.iter().fold(1,|acc,&(n,d)| lcm(d/gcd(n,d),acc));
-    return l.iter().map(|&(n, d)| (n * denom / d, denom)).collect::<Vec<(i64, i64)>>();
+    l.iter().map(|&(n, d)| (n * denom / d, denom)).collect::<Vec<(i64, i64)>>()
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    fn testing(l: Vec<(i64, i64)>, exp: Vec<(i64, i64)>) -> () {
+    fn testing(l: Vec<(i64, i64)>, exp: Vec<(i64, i64)>) {
         assert_eq!(convert_fracts(l), exp)
     }
 

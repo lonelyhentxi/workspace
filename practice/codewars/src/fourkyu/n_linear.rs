@@ -32,8 +32,8 @@ pub fn n_linear(m: &[u32], n: usize) -> u32 {
     arr.reserve(n + 1 as usize);
     let mut m_indices = vec![0usize; m.len()];
     let mut m_current = BinaryHeap::new();
-    for i in 0..m.len() {
-        let value = arr[0] * m[i] + 1;
+    for (i,item) in m.iter().enumerate() {
+        let value = arr[0] * item + 1;
         m_current.push(
             MBox { index: i, value });
     }
@@ -70,6 +70,6 @@ mod tests {
 
     #[test]
     fn random_test() {
-        assert_eq!(n_linear(&vec![6, 16, 11, 2, 8, 3], 75), 144)
+        assert_eq!(n_linear(&[6, 16, 11, 2, 8, 3], 75), 144)
     }
 }

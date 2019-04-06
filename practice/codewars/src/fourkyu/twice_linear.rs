@@ -24,7 +24,7 @@ pub fn dbl_linear(n: u32) -> u32{
 mod tests {
     use super::*;
 
-    fn testing(n: u32, exp: u32) -> () {
+    fn testing(n: u32, exp: u32) {
         assert_eq!(dbl_linear(n), exp)
     }
 

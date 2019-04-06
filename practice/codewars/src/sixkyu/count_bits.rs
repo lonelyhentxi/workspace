@@ -3,7 +3,7 @@ pub fn count_bits(integer: i64) -> u32 {
     let mut count = 0u32;
     while n!=0 {
         count += n%2;
-        n = n/2;
+        n /= 2;
     }
     count
 }

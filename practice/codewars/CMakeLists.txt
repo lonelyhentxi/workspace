@@ -14,6 +14,6 @@ include_directories(
 		src/fourkyu
 		src/threekyu
         src/twokyu)
-file(GLOB_RECURSE SOURCES src/**/*.hpp src/**/*.cpp)
-add_executable(main src/test.cpp ${SOURCES})
+file(GLOB_RECURSE SOURCES src/**/*.hpp spec/**/*.cpp)
+add_executable(main spec/test.cpp ${SOURCES})
 target_link_libraries(main Catch2::Catch2)

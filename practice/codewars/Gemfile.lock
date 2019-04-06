@@ -1,5 +1,5 @@
 GEM
-  remote: https://rubygems.org/
+  remote: https://gems.ruby-china.com/
   specs:
     ast (2.4.0)
     axiom-types (0.1.1)
@@ -11,9 +11,6 @@ GEM
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
     colorize (0.8.1)
-    debase (0.2.2)
-      debase-ruby_core_source (>= 0.10.2)
-    debase-ruby_core_source (0.10.4)
     debride (1.8.1)
       path_expander (~> 1.0)
       ruby_parser (~> 3.6)
@@ -26,13 +23,17 @@ GEM
       colorize (~> 0.7)
       ruby_parser (~> 3.11.0)
     ice_nine (0.11.2)
+    jar-dependencies (0.4.0)
     jaro_winkler (1.5.2)
+    jaro_winkler (1.5.2-java)
     kwalify (0.7.2)
     parallel (1.13.0)
     parser (2.5.3.0)
       ast (~> 2.4.0)
     path_expander (1.0.3)
     powerpack (0.1.2)
+    psych (3.1.0-java)
+      jar-dependencies (>= 0.1.7)
     psych (3.1.0-x64-mingw32)
     rainbow (3.0.0)
     rake (12.3.2)
@@ -74,6 +75,7 @@ GEM
     sexp_processor (4.11.0)
     slop (3.6.0)
     thread_safe (0.3.6)
+    thread_safe (0.3.6-java)
     unicode-display_width (1.4.1)
     virtus (1.0.5)
       axiom-types (~> 0.1)
@@ -82,10 +84,10 @@ GEM
       equalizer (~> 0.0, >= 0.0.9)
 
 PLATFORMS
+  java
   x64-mingw32
 
 DEPENDENCIES
-  debase (~> 0.2.2)
   debride (~> 1.8)
   fasterer (~> 0.4.1)
   reek (~> 5.3)
