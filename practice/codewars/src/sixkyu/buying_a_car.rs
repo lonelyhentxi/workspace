@@ -3,10 +3,10 @@ pub fn nb_months(old: i32, new: i32, saving: i32, percent: f64) -> (i32, i32) {
     let mut loss_percent = 1f64;
     let mut month = 0;
     let remain =
-        |loss_percent:f64,month:i32| (month * saving) as f64 -(new - old) as f64 * loss_percent ;
+        |loss_percent:f64,month:i32| f64::from(month * saving) - f64::from(new - old) * loss_percent ;
     while (remain(loss_percent,month).floor() as i32) < 0i32 {
         month += 1;
-        loss_percent = loss_percent * (1f64 - loss_rate);
+        loss_percent *= 1f64 - loss_rate;
         if month % 2 == 1 {
             loss_rate += 0.5/100.0;
         }
@@ -18,8 +18,8 @@ pub fn nb_months(old: i32, new: i32, saving: i32, percent: f64) -> (i32, i32) {
 mod tests {
     use super::*;
 
-    fn testing(old: i32, new: i32, saving: i32, perc: f64, exp: (i32, i32)) -> () {
-        assert_eq!(nb_months(old, new, saving, perc), exp)
+    fn testing(old: i32, new: i32, saving: i32, perc: f64, exp: (i32, i32)) {
+        assert_eq!(nb_months(old, new, saving, perc), exp);
     }
 
     #[test]

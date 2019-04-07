@@ -31,9 +31,8 @@ pub fn is_squared_divisors_sum_num(n: u64) -> Option<(u64,u64)> {
 pub fn list_squared(m: u64, n: u64) -> Vec<(u64,u64)> {
     let mut res = vec![];
     for i in m..=n {
-        match is_squared_divisors_sum_num(i) {
-            Some(num) => {res.push(num);},
-            None => () ,
+        if let Some(num) = is_squared_divisors_sum_num(i) {
+            res.push(num);
         };
     }
     res
@@ -42,7 +41,7 @@ pub fn list_squared(m: u64, n: u64) -> Vec<(u64,u64)> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    fn testing(m: u64, n: u64, exp: Vec<(u64, u64)>) -> () {
+    fn testing(m: u64, n: u64, exp: Vec<(u64, u64)>) {
         assert_eq!(list_squared(m, n), exp)
     }
 

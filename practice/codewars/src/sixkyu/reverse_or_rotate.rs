@@ -1,5 +1,5 @@
 pub fn revrot(s: &str, c: usize) -> String {
-    if s.len() == 0 || c <= 0 {
+    if s.is_empty() || c == 0 {
         return "".to_string();
     }
     const MOD: i32 = 2;
@@ -19,13 +19,13 @@ pub fn revrot(s: &str, c: usize) -> String {
             res += &(ss.chars().rev().collect::<String>());
         }
     }
-    return res;
+    res
 }
 
 
 #[cfg(test)]
 mod tests {
-    fn testing(s: &str, c: usize, exp: &str) -> () {
+    fn testing(s: &str, c: usize, exp: &str) {
         assert_eq!(&super::revrot(s, c), exp);
     }
 

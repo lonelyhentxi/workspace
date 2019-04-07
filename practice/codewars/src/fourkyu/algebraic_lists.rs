@@ -1,7 +1,17 @@
+use std::iter::FromIterator;
+
 #[derive(Debug, PartialEq, Eq)]
 pub enum Cons<T> {
     Cons(T, Box<Cons<T>>),
     Null,
+}
+
+impl<T:Clone> FromIterator<T> for Cons<T> {
+    fn from_iter<I>(it: I) -> Self
+        where I: IntoIterator<Item=T>
+    {
+        Self::from_iter_recursively(it.into_iter())
+    }
 }
 
 impl<T: Clone> Cons<T> {
@@ -17,24 +27,18 @@ impl<T: Clone> Cons<T> {
         }
     }
 
-    pub fn from_iter<I>(it: I) -> Self
-        where I: IntoIterator<Item=T>
-    {
-        Self::from_iter_recursively(it.into_iter())
-    }
-
     pub fn filter<F>(&self, fun: F) -> Self
         where F: Fn(&T) -> bool
     {
         match self {
-            &Cons::Cons(ref item, ref tail) => {
+            Cons::Cons(ref item, ref tail) => {
                 if fun(item) {
                     Cons::new(item.clone(), Self::filter(tail, fun))
                 } else {
                     Self::filter(tail, fun)
                 }
             }
-            &Cons::Null => {
+            Cons::Null => {
                 Cons::Null
             }
         }
@@ -44,10 +48,10 @@ impl<T: Clone> Cons<T> {
         where F: Fn(T) -> S, S: Clone
     {
         match self {
-            &Cons::Cons(ref item, ref tail) => {
+            Cons::Cons(ref item, ref tail) => {
                 Cons::new(fun(item.clone()), Self::map(tail, fun))
             }
-            &Cons::Null => {
+            Cons::Null => {
                 Cons::Null
             }
         }
@@ -55,8 +59,8 @@ impl<T: Clone> Cons<T> {
 
     pub fn to_vec(&self) -> Vec<T> {
         match self {
-            &Cons::Null => vec![],
-            &Cons::Cons(ref head, ref tail) => {
+            Cons::Null => vec![],
+            Cons::Cons(ref head, ref tail) => {
                 let mut head = vec![head.clone()];
                 head.extend(tail.to_vec());
                 head
