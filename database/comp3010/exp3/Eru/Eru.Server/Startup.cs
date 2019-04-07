@@ -33,7 +33,6 @@ namespace Eru.Server
         public void ConfigureServices(IServiceCollection services)
         {
             #region DB_CONTEXT_POOL_SERVICE
-            services.AddScoped<>
             services.AddDbContextPool<EruContext>(opt => { opt.UseInMemoryDatabase("eru"); });
 
             #endregion

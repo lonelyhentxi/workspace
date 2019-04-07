@@ -1,4 +1,5 @@
 ﻿using System;
+using Eru.Server.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Eru.Server.Data

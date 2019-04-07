@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Eru.Server.Annotations;
-using Eru.Server.Interfaces;
+using Eru.Server.Dtos.Interfaces;
 
 namespace Eru.Server.Dtos
 {

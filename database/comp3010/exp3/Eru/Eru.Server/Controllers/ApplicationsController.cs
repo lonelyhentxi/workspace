@@ -4,11 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Eru.Server.Data;
+using Eru.Server.Data.Models;
+using Eru.Server.Data.Utils;
 using Eru.Server.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Eru.Server.Utils;
 
 namespace Eru.Server.Controllers
 {
