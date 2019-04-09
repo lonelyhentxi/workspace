@@ -64,7 +64,6 @@ namespace Eru.Server.Services
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
             return new
             {
-                success = true,
                 token = encodedJwt,
                 expires_in = ExpirationTime.TotalSeconds,
                 token_type = "Bearer"

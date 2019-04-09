@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Eru.Server.Dtos
 {
-    public class UserLoginInDto
+    public class SessionCreateInDto
     {
         [Required(ErrorMessage = "User name can not be empty.")]
         [MaxLength(63)]

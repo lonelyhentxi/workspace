@@ -1,19 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Eru.Server.Data;
 using Eru.Server.Data.Models;
-using Eru.Server.Data.Utils;
 using Eru.Server.Dtos;
 using Eru.Server.Exceptions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Eru.Server.Services;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Eru.Server.Controllers
 {
@@ -23,111 +16,88 @@ namespace Eru.Server.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly EruContext _context;
         private readonly UserService _userService;
 
         public UsersController(EruContext context, UserService userService)
         {
-            _context = context;
             _userService = userService;
         }
 
-        // GET: api/Users
+        // GET: api/users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers([FromQuery] UserFilterInDto filterOptions)
+        public async Task<ActionResult<ResultOutDto<IEnumerable<User>>>> GetUsers([FromQuery] UserFilterInDto filterOptions)
         {
-            var mid = _context.Users
-                .Include(u => u.UserRoleAssociations)
-                .Where(u => (
-                    (filterOptions.Registered == null)
-                    && (string.IsNullOrWhiteSpace(filterOptions.NameMatch) || u.Name.Contains(filterOptions.NameMatch))
-                    && (filterOptions.RoleId == null ||
-                        u.UserRoleAssociations.Any(r => r.RoleId == filterOptions.RoleId))
-                ))
-                .TimeRangeFilter(filterOptions);
-            if (filterOptions.CreateTimeDesc)
-            {
-                return await mid.OrderByDescending(u => u.CreateTime).SkipTakePaging(filterOptions).ToListAsync();
-            }
-
-            return await mid.OrderBy(u => u.CreateTime).SkipTakePaging(filterOptions).ToListAsync();
+            var filteredUsers = await _userService.Filter(filterOptions);
+            return Ok(ResultOutDtoBuilder.Success(filteredUsers));
         }
 
-        // GET: api/Users/5
+        // GET: api/users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(string id)
+        public async Task<ActionResult<ResultOutDto<User>>> GetUser(string id)
         {
-            var user = await _context.Users
-                .Include(u=>u.Profile)
-                .FirstAsync(u=>u.Id.ToString()==id);
-
-            if (user == null)
+            if (Guid.TryParse(id, out Guid guid))
             {
-                return NotFound();
+                return BadRequest(ResultOutDtoBuilder.Fail<User>(new FormatException(), "Error id format"));
             }
-
-            return user;
+            try
+            {
+                var user = await _userService.Get(guid, true);
+                return Ok(ResultOutDtoBuilder.Success(user));
+            }
+            catch (NotExistedException e)
+            {
+                return NotFound(
+                    ResultOutDtoBuilder.Fail<User>(
+                        e, "Not found the user."));
+            }
         }
 
-        // PUT: api/Users/5
+        // PUT: api/users/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(string id, User user)
         {
-            if (id != user.Id.ToString())
+            if (Guid.TryParse(id,out Guid guid)|| id != user.Id.ToString())
             {
-                return BadRequest();
+                return BadRequest(ResultOutDtoBuilder.Fail<User>(new FormatException(), "Error id format"));
             }
-
-            _context.Entry(user).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _userService.Update(user);
+                return NoContent();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (ExistedConflictException e)
             {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Conflict(ResultOutDtoBuilder.Fail<User>(e,"New name conflict with other existed user."))
             }
-
-            return NoContent();
         }
 
-        // POST: api/Users
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
-        {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
-        }
-
-        // DELETE: api/Users/5
+        // DELETE: api/users/1
         [HttpDelete("{id}")]
-        public async Task<ActionResult<User>> DeleteUser(string id)
+        public async Task<IActionResult> DeleteUser(string id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            if (Guid.TryParse(id, out Guid guid))
             {
-                return NotFound();
+                return BadRequest(ResultOutDtoBuilder.Fail<User>(new FormatException(), "Error id format"));
             }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return user;
-        }
-
-        private bool UserExists(string id)
-        {
-            return _context.Users.Any(e => e.Id.ToString() == id);
+            try
+            {
+                await _userService.Remove(guid);
+                return NoContent();
+            }
+            catch (NotExistedException e)
+            {
+                return NotFound(
+                    ResultOutDtoBuilder.Fail<User>(
+                        e, "Not found the user."));
+            }
+            catch (LeastOneAdminConflictException e)
+            {
+                return Conflict(
+                    ResultOutDtoBuilder.Fail<User>(
+                        e, "Can not delete, should at lease have one admin."
+                    ));
+            }
         }
     }
 }
