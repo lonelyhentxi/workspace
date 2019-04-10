@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eru.Server.Data;
 using Eru.Server.Data.Models;
-using Microsoft.AspNetCore.Http;
+using Eru.Server.Dtos;
+using Eru.Server.Exceptions;
+using Eru.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Eru.Server.Controllers
 {
@@ -14,93 +12,33 @@ namespace Eru.Server.Controllers
     [ApiController]
     public class PermissionsController : ControllerBase
     {
-        private readonly EruContext _context;
+        private readonly PermissionService _permissionService;
 
-        public PermissionsController(EruContext context)
+        public PermissionsController(PermissionService permissionService)
         {
-            _context = context;
+            _permissionService = permissionService;
         }
 
-        // GET: api/Permissions
+        // GET: api/permissions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Permission>>> GetPermissions()
+        public async Task<ActionResult<ResultOutDto<IEnumerable<Permission>>>> GetPermissions()
         {
-            return await _context.Permissions.ToListAsync();
+            return Ok(ResultOutDtoBuilder.Success(await _permissionService.GetAll()));
         }
 
-        // GET: api/Permissions/5
+        // GET: api/permissions/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Permission>> GetPermission(int id)
+        public async Task<ActionResult<ResultOutDto<Permission>>> GetPermission(int id)
         {
-            var permission = await _context.Permissions.FindAsync(id);
-
-            if (permission == null)
-            {
-                return NotFound();
-            }
-
-            return permission;
-        }
-
-        // PUT: api/Permissions/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPermission(int id, Permission permission)
-        {
-            if (id != permission.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(permission).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var permission = await _permissionService.Get(id);
+                return Ok(ResultOutDtoBuilder.Success(permission));
             }
-            catch (DbUpdateConcurrencyException)
+            catch (NotExistedException e)
             {
-                if (!PermissionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound(ResultOutDtoBuilder.Fail<Permission>(e, "Not exist."))
             }
-
-            return NoContent();
-        }
-
-        // POST: api/Permissions
-        [HttpPost]
-        public async Task<ActionResult<Permission>> PostPermission(Permission permission)
-        {
-            _context.Permissions.Add(permission);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPermission", new { id = permission.Id }, permission);
-        }
-
-        // DELETE: api/Permissions/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Permission>> DeletePermission(int id)
-        {
-            var permission = await _context.Permissions.FindAsync(id);
-            if (permission == null)
-            {
-                return NotFound();
-            }
-
-            _context.Permissions.Remove(permission);
-            await _context.SaveChangesAsync();
-
-            return permission;
-        }
-
-        private bool PermissionExists(int id)
-        {
-            return _context.Permissions.Any(e => e.Id == id);
         }
     }
 }

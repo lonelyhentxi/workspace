@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eru.Server.Data;
 using Eru.Server.Data.Models;
 using Eru.Server.Dtos;
 using Eru.Server.Exceptions;
@@ -18,7 +17,7 @@ namespace Eru.Server.Controllers
     {
         private readonly UserService _userService;
 
-        public UsersController(EruContext context, UserService userService)
+        public UsersController(UserService userService)
         {
             _userService = userService;
         }

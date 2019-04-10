@@ -92,6 +92,7 @@ namespace Eru.Server.Services
                 newUser.Profile = newUserProfile;
                 await _context.AddAsync(newUserProfile);
                 await _context.SaveChangesAsync();
+                await _roleService.AddRolePlayerWithoutCheck(newUser.Id, _roleService.GetDefaultId());
                 transaction.Commit();
                 return newUser;
             }
@@ -99,7 +100,7 @@ namespace Eru.Server.Services
             #endregion
         }
 
-        public async Task<dynamic> Login(SessionCreateInDto loginParams)
+        public async Task<SessionOutDto> Login(SessionCreateInDto loginParams)
         {
             #region login_user_if_existed_check
 
@@ -109,7 +110,7 @@ namespace Eru.Server.Services
                 .SingleAsync(u => u.Name == loginParams.Name);
             if (user == null)
             {
-                return await Task.FromException<User>(new NotExistedException());
+                throw new NotExistedException();
             }
 
             #endregion
@@ -118,7 +119,7 @@ namespace Eru.Server.Services
 
             if (ValidatePassword(user, loginParams.Password))
             {
-                return await Task.FromException<User>(new BadAuthenticationException());
+                throw new BadAuthenticationException();
             }
 
             #endregion
@@ -126,9 +127,8 @@ namespace Eru.Server.Services
             #region login_generate_jwt_bearer_token
 
             var roles = (from association in user.UserRoleAssociations select association.Role).ToList();
-            var permissions = await _permissionService.GetPermissions(new PermissionFilterInDto
+            var permissions = await _permissionService.Filter(new PermissionFilterInDto
             {
-                NameMatch = null,
                 RoleIds = roles.Select(r => r.Id).ToList(),
             });
             var claims = new List<Claim>
@@ -153,7 +153,7 @@ namespace Eru.Server.Services
 
             #endregion
 
-            return token;
+            return new SessionOutDto {User = user, Token = token};
         }
 
         public async Task<List<User>> Filter(UserFilterInDto filterOptions)
