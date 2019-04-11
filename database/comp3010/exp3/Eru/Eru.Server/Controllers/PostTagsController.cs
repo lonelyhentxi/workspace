@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Eru.Server.Data;
 using Eru.Server.Data.Models;
-using Microsoft.AspNetCore.Http;
+using Eru.Server.Dtos;
+using Eru.Server.Exceptions;
+using Eru.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Eru.Server.Controllers
 {
@@ -14,93 +13,75 @@ namespace Eru.Server.Controllers
     [ApiController]
     public class PostTagsController : ControllerBase
     {
-        private readonly EruContext _context;
+        private readonly PostTagService _postTagService;
 
-        public PostTagsController(EruContext context)
+        public PostTagsController(PostTagService postTagService)
         {
-            _context = context;
+            _postTagService = postTagService;
         }
 
         // GET: api/PostTags
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PostTag>>> GetPostTags()
+        public async Task<ActionResult<ResultOutDto<IEnumerable<PostTag>>>> GetPostTags()
         {
-            return await _context.PostTags.ToListAsync();
+            return Ok(ResultOutDtoBuilder.Success(await _postTagService.GetAll()));
         }
 
-        // GET: api/PostTags/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PostTag>> GetPostTag(int id)
+
+        [HttpPost]
+        public async Task<ActionResult<ResultOutDto<PostTag>>> PostPostTags(
+            [FromBody] TagCreateInDto createOptions)
         {
-            var postTag = await _context.PostTags.FindAsync(id);
-
-            if (postTag == null)
+            try
             {
-                return NotFound();
+                return Ok(ResultOutDtoBuilder.Success(await _postTagService.Create(createOptions)));
             }
-
-            return postTag;
+            catch (ExistedConflictException e)
+            {
+                return Conflict(ResultOutDtoBuilder.Fail<PostTag>(e, "Tag name existed."));
+            }
         }
 
-        // PUT: api/PostTags/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPostTag(int id, PostTag postTag)
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<ActionResult<ResultOutDto<object>>> PutPostTags(
+            [FromRoute] int id,[FromBody] PostTag tag
+            )
         {
-            if (id != postTag.Id)
+            if (id != tag.Id)
             {
-                return BadRequest();
+                return BadRequest(ResultOutDtoBuilder.Fail<object>(new FormatException(), "error id format"));
             }
-
-            _context.Entry(postTag).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _postTagService.Update(tag);
+                return NoContent();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (NotExistedException e)
             {
-                if (!PostTagExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound(ResultOutDtoBuilder.Fail<object>(e, "Not exist."));
             }
-
-            return NoContent();
-        }
-
-        // POST: api/PostTags
-        [HttpPost]
-        public async Task<ActionResult<PostTag>> PostPostTag(PostTag postTag)
-        {
-            _context.PostTags.Add(postTag);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPostTag", new { id = postTag.Id }, postTag);
-        }
-
-        // DELETE: api/PostTags/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<PostTag>> DeletePostTag(int id)
-        {
-            var postTag = await _context.PostTags.FindAsync(id);
-            if (postTag == null)
+            catch (ExistedConflictException e)
             {
-                return NotFound();
+                return Conflict(ResultOutDtoBuilder.Fail<object>(e, "Conflict name."));
             }
-
-            _context.PostTags.Remove(postTag);
-            await _context.SaveChangesAsync();
-
-            return postTag;
         }
 
-        private bool PostTagExists(int id)
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<ActionResult<ResultOutDto<object>>> DeletePostTags(
+            [FromRoute] int id)
         {
-            return _context.PostTags.Any(e => e.Id == id);
+            try
+            {
+                await _postTagService.Remove(id);
+                return NoContent();
+            }
+            catch (NotExistedException e)
+            {
+                return NotFound(ResultOutDtoBuilder.Fail<object>(e, "Not exist."));
+            }
         }
     }
 }

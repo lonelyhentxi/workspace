@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eru.Server.Data;
 using Eru.Server.Data.Models;
-using Eru.Server.Data.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Eru.Server.Dtos;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using Eru.Server.Exceptions;
+using Eru.Server.Services;
 
 namespace Eru.Server.Controllers
 {
@@ -15,62 +13,100 @@ namespace Eru.Server.Controllers
     [ApiController]
     public class PostsController : ControllerBase
     {
-        private readonly EruContext _context;
-
-        public PostsController(EruContext context)
+        private readonly PostService _postService;
+        public PostsController(PostService postService)
         {
-            _context = context;
+            _postService = postService;
         }
 
         // GET: api/post
         [HttpGet]
-        public async Task<ActionResult<List<Post>>> GetPosts([FromQuery] PostFilterInDto filterOptions)
+        public async Task<ActionResult<ResultOutDto< List<Post>>>> GetPosts([FromQuery] PostFilterInDto filterOptions)
         {
-            var mid = _context.Posts
-                .Include(p => p.User)
-                .Include(p => p.PostTagAssociations)
-                .TimeRangeFilter(filterOptions)
-                .Where(post =>
-                    ((string.IsNullOrWhiteSpace(filterOptions.TitleMatch) ||
-                      post.Title.Contains(filterOptions.TitleMatch))
-                     && (filterOptions.CategoryId == null || filterOptions.CategoryId == post.CategoryId)
-                     && (filterOptions.StatusId == null || filterOptions.StatusId == post.StatusId)
-                     && (filterOptions.TagIds == null ||
-                         post.PostTagAssociations.Any(a => filterOptions.TagIds.Contains(a.TagId)))
-                     && (filterOptions.UserId == null || filterOptions.UserId == post.UserId)));
-            if (filterOptions.CreateTimeDesc)
-            {
-                return await mid.OrderByDescending(c => c.CreateTime).SkipTakePaging(filterOptions).ToListAsync();
-            }
-            else
-            {
-                return await mid.OrderBy(c => c.CreateTime).SkipTakePaging(filterOptions).ToListAsync();
-            }
+            return Ok(ResultOutDtoBuilder.Success(await _postService.Filter(filterOptions)));
         }
 
         // GET: api/post/5
-        [HttpGet("{id}", Name = "Get")]
-        public string GetPost(int id)
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<ActionResult<ResultOutDto<Post>>> GetPost([FromRoute] string id)
         {
-            return "value";
+            if (Guid.TryParse(id, out Guid guid))
+            {
+                return BadRequest(ResultOutDtoBuilder
+                    .Fail<Post>(new FormatException(),"Error guid id format."));
+            }
+
+            try
+            {
+                return Ok(ResultOutDtoBuilder.Success(await _postService.Get(guid)));
+            }
+            catch (NotExistedException e)
+            {
+                return NotFound(ResultOutDtoBuilder
+                    .Fail<Post>(e, "Not exist."));
+            }
         }
 
         // POST: api/post
         [HttpPost]
-        public void PostPost([FromBody] string value)
+        public async Task<ActionResult<ResultOutDto<Post>>> PostPost([FromBody] PostCreateInDto createOptions)
         {
+            // TODO: add auth and change this 
+            var user = new User();
+            try
+            {
+                var post = await _postService.Create(createOptions, user);
+                return Ok(ResultOutDtoBuilder.Success(post));
+            }
+            catch (NotExistedException e)
+            {
+                return NotFound(ResultOutDtoBuilder.Fail<Post>(e, "Not exist"));
+            }
         }
 
         // PUT: api/post/5
         [HttpPut("{id}")]
-        public void PutPost(int id, [FromBody] string value)
+        public async Task<ActionResult<ResultOutDto<object>>> PutPost([FromRoute]string id, [FromBody] Post post)
         {
+            if (Guid.TryParse(id, out Guid guid)||guid!=post.Id)
+            {
+                return BadRequest(ResultOutDtoBuilder
+                    .Fail<Post>(new FormatException(), "Error id format."));
+            }
+
+            try
+            {
+                await _postService.Update(post);
+                return NoContent();
+            }
+            catch (NotExistedException e)
+            {
+                return NotFound(ResultOutDtoBuilder
+                    .Fail<Post>(e, "Not exist."));
+            }
         }
 
         // DELETE: api/post/5
         [HttpDelete("{id}")]
-        public void DeletePost(int id)
+        public async Task<ActionResult<ResultOutDto<object>>> DeletePost([FromRoute] string id)
         {
+            if (Guid.TryParse(id, out Guid guid))
+            {
+                return BadRequest(ResultOutDtoBuilder
+                    .Fail<Post>(new FormatException(), "Error id format."));
+            }
+
+            try
+            {
+                await _postService.Remove(guid);
+                return NoContent();
+            }
+            catch (NotExistedException e)
+            {
+                return NotFound(ResultOutDtoBuilder
+                    .Fail<Post>(e, "Not exist."));
+            }
         }
     }
 }

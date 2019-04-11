@@ -11,7 +11,7 @@ namespace Eru.Server.Dtos
 {
     public class CommentFilterInDto : ITimeRangeFilterInDto, IPaging
     {
-        [StringLength(32)] public string ParentId { get; set; }
+        public Guid? ParentId { get; set; }
         [StringLength(32)] public string PostId { get; set; }
         [StringLength(32)] public string UserId { get; set; }
         public int? StatusId { get; set; }

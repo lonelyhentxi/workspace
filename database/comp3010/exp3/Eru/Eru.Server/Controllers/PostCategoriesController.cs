@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Eru.Server.Data;
 using Eru.Server.Data.Models;
-using Microsoft.AspNetCore.Http;
+using Eru.Server.Dtos;
+using Eru.Server.Exceptions;
+using Eru.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Eru.Server.Controllers
 {
@@ -14,93 +13,74 @@ namespace Eru.Server.Controllers
     [ApiController]
     public class PostCategoriesController : ControllerBase
     {
-        private readonly EruContext _context;
+        private readonly PostCategoryService _categoryService;
 
-        public PostCategoriesController(EruContext context)
+        public PostCategoriesController(PostCategoryService categoryService)
         {
-            _context = context;
+            _categoryService = categoryService;
         }
 
-        // GET: api/PostCategories
+        // GET: api/postCategories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PostCategory>>> GetPostCategories()
+        public async Task<ActionResult<ResultOutDto<IEnumerable<PostCategory>>>> GetPostCategories()
         {
-            return await _context.PostCategories.ToListAsync();
+            return Ok(ResultOutDtoBuilder.Success(await _categoryService.GetAll()));
         }
 
-        // GET: api/PostCategories/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PostCategory>> GetPostCategory(int id)
+        [HttpPost]
+        public async Task<ActionResult<ResultOutDto<PostCategory>>> PostPostCategory(
+            [FromBody] TagCreateInDto createOptions)
         {
-            var postCategory = await _context.PostCategories.FindAsync(id);
-
-            if (postCategory == null)
+            try
             {
-                return NotFound();
+                return Ok(ResultOutDtoBuilder.Success(await _categoryService.Create(createOptions)));
             }
-
-            return postCategory;
+            catch (ExistedConflictException e)
+            {
+                return Conflict(ResultOutDtoBuilder.Fail<PostCategory>(e, "Category name existed."));
+            }
         }
 
-        // PUT: api/PostCategories/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPostCategory(int id, PostCategory postCategory)
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<ActionResult<ResultOutDto<object>>> PutPostCategories(
+            [FromRoute] int id, [FromBody] PostCategory category
+        )
         {
-            if (id != postCategory.Id)
+            if (id != category.Id)
             {
-                return BadRequest();
+                return BadRequest(ResultOutDtoBuilder.Fail<object>(new FormatException(), "error id format"));
             }
-
-            _context.Entry(postCategory).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _categoryService.Update(category);
+                return NoContent();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (NotExistedException e)
             {
-                if (!PostCategoryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound(ResultOutDtoBuilder.Fail<object>(e, "Not exist."));
             }
-
-            return NoContent();
-        }
-
-        // POST: api/PostCategories
-        [HttpPost]
-        public async Task<ActionResult<PostCategory>> PostPostCategory(PostCategory postCategory)
-        {
-            _context.PostCategories.Add(postCategory);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPostCategory", new { id = postCategory.Id }, postCategory);
-        }
-
-        // DELETE: api/PostCategories/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<PostCategory>> DeletePostCategory(int id)
-        {
-            var postCategory = await _context.PostCategories.FindAsync(id);
-            if (postCategory == null)
+            catch (ExistedConflictException e)
             {
-                return NotFound();
+                return Conflict(ResultOutDtoBuilder.Fail<object>(e, "Conflict name."));
             }
-
-            _context.PostCategories.Remove(postCategory);
-            await _context.SaveChangesAsync();
-
-            return postCategory;
         }
 
-        private bool PostCategoryExists(int id)
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<ActionResult<ResultOutDto<object>>> DeletePostCategory(
+            [FromRoute] int id)
         {
-            return _context.PostCategories.Any(e => e.Id == id);
+            try
+            {
+                await _categoryService.Remove(id);
+                return NoContent();
+            }
+            catch (NotExistedException e)
+            {
+                return NotFound(ResultOutDtoBuilder.Fail<object>(e, "Not exist."));
+            }
         }
     }
 }

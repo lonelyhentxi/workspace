@@ -22,15 +22,9 @@ namespace Eru.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<ResultOutDto<UserRoleAssociation>>> PostUserRole([FromBody] UserRoleCreateInDto options)
         {
-            if (Guid.TryParse(options.UserId, out Guid guid))
-            {
-                return BadRequest(ResultOutDtoBuilder
-                    .Fail<UserRoleAssociation>(new FormatException(), "Error user id format."));
-            }
-
             try
             {
-                var res = await _roleService.AddRolePlayer(guid, options.RoleId);
+                var res = await _roleService.AddRolePlayer(options.UserId, options.RoleId);
                 return Ok(ResultOutDtoBuilder.Success(res));
             }
             catch (NotExistedException e)

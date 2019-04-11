@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace Eru.Server.Dtos
 {
-    public class UserRoleCreateInDto
+    public class TagCreateInDto
     {
         [Required]
-        public Guid UserId { get; set; }
+        [MaxLength(63)]
+        public string Name { get; set; }
 
         [Required]
-        public int RoleId { get; set; }
+        public string Description { get; set; }
     }
 }

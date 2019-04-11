@@ -1,24 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
-using Eru.Server.Configurations;
 using Eru.Server.Data;
 using Eru.Server.Data.Models;
 using Eru.Server.Data.Utils;
 using Eru.Server.Dtos;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Eru.Server.Exceptions;
 using Eru.Server.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Newtonsoft.Json.Converters;
 
 namespace Eru.Server.Services
 {
@@ -207,6 +199,10 @@ namespace Eru.Server.Services
             }
             _context.Entry(user).State = EntityState.Modified;
             _context.Entry(user).Property(u => u.Password).IsModified = false;
+            if (user.Profile != null)
+            {
+                _context.Entry(user.Profile).State = EntityState.Modified;
+            }
             if (string.IsNullOrWhiteSpace(user.Password))
             {
                 user.Password = _passwordHasher.HashPassword(user.Id.ToString(), user.Password);

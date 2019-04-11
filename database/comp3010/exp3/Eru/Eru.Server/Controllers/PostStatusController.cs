@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eru.Server.Data;
 using Eru.Server.Data.Models;
-using Microsoft.AspNetCore.Http;
+using Eru.Server.Dtos;
+using Eru.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Eru.Server.Controllers
 {
@@ -14,93 +11,18 @@ namespace Eru.Server.Controllers
     [ApiController]
     public class PostStatusController : ControllerBase
     {
-        private readonly EruContext _context;
+        private readonly PostStatusService _statusService;
 
-        public PostStatusController(EruContext context)
+        public PostStatusController(PostStatusService statusService)
         {
-            _context = context;
+            _statusService = statusService;
         }
 
-        // GET: api/PostStatus
+        // GET: api/postStatus
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PostStatus>>> GetPostStatuses()
+        public async Task<ActionResult<ResultOutDto<IEnumerable<PostStatus>>>> GetPostStatuses()
         {
-            return await _context.PostStatuses.ToListAsync();
-        }
-
-        // GET: api/PostStatus/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PostStatus>> GetPostStatus(int id)
-        {
-            var postStatus = await _context.PostStatuses.FindAsync(id);
-
-            if (postStatus == null)
-            {
-                return NotFound();
-            }
-
-            return postStatus;
-        }
-
-        // PUT: api/PostStatus/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPostStatus(int id, PostStatus postStatus)
-        {
-            if (id != postStatus.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(postStatus).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PostStatusExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/PostStatus
-        [HttpPost]
-        public async Task<ActionResult<PostStatus>> PostPostStatus(PostStatus postStatus)
-        {
-            _context.PostStatuses.Add(postStatus);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPostStatus", new { id = postStatus.Id }, postStatus);
-        }
-
-        // DELETE: api/PostStatus/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<PostStatus>> DeletePostStatus(int id)
-        {
-            var postStatus = await _context.PostStatuses.FindAsync(id);
-            if (postStatus == null)
-            {
-                return NotFound();
-            }
-
-            _context.PostStatuses.Remove(postStatus);
-            await _context.SaveChangesAsync();
-
-            return postStatus;
-        }
-
-        private bool PostStatusExists(int id)
-        {
-            return _context.PostStatuses.Any(e => e.Id == id);
+            return Ok(ResultOutDtoBuilder.Success(await _statusService.GetAll()));
         }
     }
 }
