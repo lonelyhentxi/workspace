@@ -20,6 +20,7 @@ namespace Eru.Server.Controllers
 
         // GET: api/postStatus
         [HttpGet]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<ResultOutDto<IEnumerable<PostStatus>>>> GetPostStatuses()
         {
             return Ok(ResultOutDtoBuilder.Success(await _statusService.GetAll()));

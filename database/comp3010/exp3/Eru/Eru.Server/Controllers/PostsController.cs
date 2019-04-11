@@ -21,6 +21,7 @@ namespace Eru.Server.Controllers
 
         // GET: api/post
         [HttpGet]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<ResultOutDto< List<Post>>>> GetPosts([FromQuery] PostFilterInDto filterOptions)
         {
             return Ok(ResultOutDtoBuilder.Success(await _postService.Filter(filterOptions)));
@@ -28,6 +29,9 @@ namespace Eru.Server.Controllers
 
         // GET: api/post/5
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<ResultOutDto<Post>>> GetPost([FromRoute] string id)
         {
             if (!Guid.TryParse(id, out Guid guid))
@@ -49,6 +53,8 @@ namespace Eru.Server.Controllers
 
         // POST: api/post
         [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<ResultOutDto<Post>>> PostPost([FromBody] PostCreateInDto createOptions)
         {
             var user = new User();
@@ -65,6 +71,9 @@ namespace Eru.Server.Controllers
 
         // PUT: api/post/5
         [HttpPut("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<ResultOutDto<object>>> PutPost([FromRoute]string id, [FromBody] Post post)
         {
             if (!Guid.TryParse(id, out Guid guid)||guid!=post.Id)
@@ -87,6 +96,9 @@ namespace Eru.Server.Controllers
 
         // DELETE: api/post/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<ResultOutDto<object>>> DeletePost([FromRoute] string id)
         {
             if (!Guid.TryParse(id, out Guid guid))

@@ -22,6 +22,7 @@ namespace Eru.Server.Controllers
 
         // GET: api/PostTags
         [HttpGet]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<ResultOutDto<IEnumerable<PostTag>>>> GetPostTags()
         {
             return Ok(ResultOutDtoBuilder.Success(await _postTagService.GetAll()));
@@ -29,6 +30,8 @@ namespace Eru.Server.Controllers
 
 
         [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(409)]
         public async Task<ActionResult<ResultOutDto<PostTag>>> PostPostTags(
             [FromBody] TagCreateInDto createOptions)
         {
@@ -43,6 +46,10 @@ namespace Eru.Server.Controllers
         }
 
         [HttpPut("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
         public async Task<ActionResult<ResultOutDto<object>>> PutPostTags(
             [FromRoute] int id,[FromBody] PostTag tag
             )
@@ -68,6 +75,8 @@ namespace Eru.Server.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<ResultOutDto<object>>> DeletePostTags(
             [FromRoute] int id)
         {

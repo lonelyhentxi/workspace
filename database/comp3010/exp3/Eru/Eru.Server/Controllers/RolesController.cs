@@ -22,6 +22,7 @@ namespace Eru.Server.Controllers
 
         // GET: api/roles
         [HttpGet]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<ResultOutDto<IEnumerable<Role>>>> GetRoles()
         {
             return Ok(ResultOutDtoBuilder.Success(await _roleService.GetAll()));
@@ -29,6 +30,8 @@ namespace Eru.Server.Controllers
 
         // GET: api/roles/5
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<ResultOutDto<Role>>> GetRole(int id)
         {
             try

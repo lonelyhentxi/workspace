@@ -22,6 +22,7 @@ namespace Eru.Server.Controllers
 
         // GET: api/commentCategories
         [HttpGet]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<ResultOutDto<IEnumerable<CommentCategory>>>> GetCommentCategories()
         {
             return Ok(ResultOutDtoBuilder.Success(await _categoryService.GetAll()));

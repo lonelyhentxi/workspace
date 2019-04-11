@@ -16,8 +16,6 @@ using Eru.Server.Data;
 using Eru.Server.Services;
 using Eru.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace Eru.Server
 {
@@ -76,25 +74,32 @@ namespace Eru.Server
 
             #endregion
 
-            
+
             #region swagger_service
 
-            /*
-            services.AddSwaggerGen(c =>
+
+            services.AddSwaggerDocument(config =>
             {
-                c.SwaggerDoc("v1",new OpenApiInfo()
+                config.PostProcess = document =>
                 {
-                    Version = "v0.0.1",
-                    Title = "ERU API",
-                    Description = "Eru Api Docs",
-                    Contact = new OpenApiContact()
+                    document.Info.Version = "v1";
+                    document.Info.Title = "ERU API";
+                    document.Info.Description = "Eru blog framework api";
+                    document.Info.TermsOfService = "None";
+                    document.Info.Contact = new NSwag.SwaggerContact
                     {
-                        Name = "evernightfireworks",
+                        Name = "Zhou Yeheng",
                         Email = "master@evernightfireworks.com",
-                    }
-                });
+                        Url = "https://github.com/lonelyhentai"
+                    };
+                    document.Info.License = new NSwag.SwaggerLicense
+                    {
+                        Name = "CC3.0",
+                        Url = "https://creativecommons.org/licenses/by/3.0/"
+                    };
+                };
             });
-            */
+
             #endregion
 
             #region cors_services
@@ -140,14 +145,10 @@ namespace Eru.Server
                 app.UseHsts();
             }
 
-            /*
+
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json","Api V1");
-                c.RoutePrefix = "";
-            });
-            */
+            app.UseSwaggerUi3();
+
             // app.UseAuthentication();
             // app.UseCors("AllRequests");
             //app.UseHttpsRedirection();

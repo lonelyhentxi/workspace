@@ -22,6 +22,7 @@ namespace Eru.Server.Controllers
 
         // GET: api/applications
         [HttpGet]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<ResultOutDto<IEnumerable<Application>>>> GetApplications(
             [FromQuery] ApplicationFilterInDto filterOptions)
         {
@@ -31,6 +32,9 @@ namespace Eru.Server.Controllers
 
         // GET: api/applications/5
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<ResultOutDto<Application>>> GetApplication(string id)
         {
             if (!Guid.TryParse(id, out Guid guid))
@@ -55,6 +59,10 @@ namespace Eru.Server.Controllers
         // PUT: api/applications/5
 
         [HttpPut("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
         public async Task<ActionResult<ResultOutDto<object>>> PutApplication(string id, Application application)
         {
             if (!Guid.TryParse(id, out Guid guid) || guid != application.Id)
@@ -80,6 +88,8 @@ namespace Eru.Server.Controllers
 
         // POST: api/Applications
         [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(409)]
         public async Task<ActionResult<ResultOutDto<Application>>> PostApplication(ApplicationCreateInDto createOptions)
         {
             try
@@ -96,6 +106,9 @@ namespace Eru.Server.Controllers
 
         // DELETE: api/Applications/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<ResultOutDto<object>>> DeleteApplication(string id)
         {
             if (!Guid.TryParse(id, out Guid guid))

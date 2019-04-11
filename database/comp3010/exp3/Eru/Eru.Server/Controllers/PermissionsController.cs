@@ -21,6 +21,7 @@ namespace Eru.Server.Controllers
 
         // GET: api/permissions
         [HttpGet]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<ResultOutDto<IEnumerable<Permission>>>> GetPermissions()
         {
             return Ok(ResultOutDtoBuilder.Success(await _permissionService.GetAll()));
@@ -28,6 +29,8 @@ namespace Eru.Server.Controllers
 
         // GET: api/permissions/5
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<ResultOutDto<Permission>>> GetPermission(int id)
         {
             try

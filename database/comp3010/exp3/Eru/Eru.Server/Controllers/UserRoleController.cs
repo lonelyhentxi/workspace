@@ -20,6 +20,8 @@ namespace Eru.Server.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<ResultOutDto<UserRoleAssociation>>> PostUserRole([FromBody] UserRoleCreateInDto options)
         {
             try
@@ -35,6 +37,10 @@ namespace Eru.Server.Controllers
         }
 
         [HttpDelete("{userId}:{roleId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
         public async Task<ActionResult<ResultOutDto<object>>> DeleteUserRole([FromRoute] string userId,[FromRoute] int roleId)
         {
             if (Guid.TryParse(userId, out Guid guid))

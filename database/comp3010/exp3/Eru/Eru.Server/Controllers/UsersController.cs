@@ -24,6 +24,7 @@ namespace Eru.Server.Controllers
 
         // GET: api/users
         [HttpGet]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<ResultOutDto<IEnumerable<User>>>> GetUsers([FromQuery] UserFilterInDto filterOptions)
         {
             var filteredUsers = await _userService.Filter(filterOptions);
@@ -32,6 +33,9 @@ namespace Eru.Server.Controllers
 
         // GET: api/users/5
         [HttpGet("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<ResultOutDto<User>>> GetUser(string id)
         {
             if (!Guid.TryParse(id, out Guid guid))
@@ -53,7 +57,11 @@ namespace Eru.Server.Controllers
 
         // PUT: api/users/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(string id, User user)
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
+        public async Task<ActionResult<ResultOutDto<User>>> PutUser(string id, User user)
         {
             if (Guid.TryParse(id,out Guid guid)|| guid!=user.Id)
             {
@@ -77,7 +85,11 @@ namespace Eru.Server.Controllers
 
         // DELETE: api/users/1
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(string id)
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
+        public async Task<ActionResult<ResultOutDto<User>>> DeleteUser(string id)
         {
             if (!Guid.TryParse(id, out Guid guid))
             {

@@ -23,6 +23,7 @@ namespace Eru.Server.Controllers
 
         // GET: api/commentStatus
         [HttpGet]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<ResultOutDto<IEnumerable<CommentStatus>>>> GetCommentStatuses()
         {
             return Ok(ResultOutDtoBuilder.Success(await _commentStatusService.GetAll()));

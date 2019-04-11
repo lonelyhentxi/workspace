@@ -22,12 +22,15 @@ namespace Eru.Server.Controllers
 
         // GET: api/postCategories
         [HttpGet]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<ResultOutDto<IEnumerable<PostCategory>>>> GetPostCategories()
         {
             return Ok(ResultOutDtoBuilder.Success(await _categoryService.GetAll()));
         }
 
         [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(409)]
         public async Task<ActionResult<ResultOutDto<PostCategory>>> PostPostCategory(
             [FromBody] TagCreateInDto createOptions)
         {
@@ -42,6 +45,10 @@ namespace Eru.Server.Controllers
         }
 
         [HttpPut("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
         public async Task<ActionResult<ResultOutDto<object>>> PutPostCategories(
             [FromRoute] int id, [FromBody] PostCategory category
         )
@@ -67,6 +74,8 @@ namespace Eru.Server.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<ResultOutDto<object>>> DeletePostCategory(
             [FromRoute] int id)
         {

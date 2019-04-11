@@ -22,6 +22,7 @@ namespace Eru.Server.Controllers
 
         // GET: api/Comments
         [HttpGet]
+        [ProducesResponseType(200)]
         public async Task<ActionResult<ResultOutDto<IEnumerable<Comment>>>> GetComments([FromQuery] CommentFilterInDto filterOptions)
         {
             return Ok(ResultOutDtoBuilder
@@ -30,6 +31,9 @@ namespace Eru.Server.Controllers
 
         // GET: api/comments/5
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<Comment>> GetComment(string id)
         {
             if (!Guid.TryParse(id, out Guid guid))
@@ -52,6 +56,9 @@ namespace Eru.Server.Controllers
 
         // PUT: api/comments/5
         [HttpPut("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<ResultOutDto<object>>> PutComment(string id,Comment comment)
         {
             if (!Guid.TryParse(id, out Guid guid)||guid!=comment.Id)
@@ -74,15 +81,29 @@ namespace Eru.Server.Controllers
 
         // POST: api/comments
         [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         public async Task<ActionResult<ResultOutDto<Comment>>> PostComment(CommentCreateInDto createOptions)
         {
            var user = new User();
+           try
+           {
            var comment = await _commentService.Create(createOptions, user);
            return Ok(ResultOutDtoBuilder.Success(comment));
+           }
+           catch (NotExistedException e)
+           {
+               return BadRequest(ResultOutDtoBuilder.Fail<Comment>(e,"No that post."));
+           }
+
+
         }
 
         // DELETE: api/Comments/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<ResultOutDto<object>>> DeleteComment(string id)
         {
             if (!Guid.TryParse(id, out Guid guid))
