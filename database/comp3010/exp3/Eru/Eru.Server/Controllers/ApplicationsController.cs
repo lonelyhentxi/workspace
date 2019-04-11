@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading.Tasks;
-using Eru.Server.Data;
 using Eru.Server.Data.Models;
-using Eru.Server.Data.Utils;
 using Eru.Server.Dtos;
-using Microsoft.AspNetCore.Http;
+using Eru.Server.Exceptions;
+using Eru.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Eru.Server.Controllers
 {
@@ -17,109 +13,108 @@ namespace Eru.Server.Controllers
     [ApiController]
     public class ApplicationsController : ControllerBase
     {
-        private readonly EruContext _context;
+        private readonly ApplicationService _applicationService;
 
-        public ApplicationsController(EruContext context)
+        public ApplicationsController(ApplicationService applicationService)
         {
-            _context = context;
+            _applicationService = applicationService;
         }
 
         // GET: api/applications
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Application>>> GetApplications(
+        public async Task<ActionResult<ResultOutDto<IEnumerable<Application>>>> GetApplications(
             [FromQuery] ApplicationFilterInDto filterOptions)
         {
-            var mid = _context.Applications
-                .TimeRangeFilter(filterOptions)
-                .Where(app =>
-                    (string.IsNullOrWhiteSpace(filterOptions.NameMatch) || app.Name.Contains(filterOptions.NameMatch)));
-            if (filterOptions.CreateTimeDesc)
-            {
-                return await mid.OrderByDescending(c => c.CreateTime).SkipTakePaging(filterOptions).ToListAsync();
-            }
-            else
-            {
-                return await mid.OrderBy(c => c.CreateTime).SkipTakePaging(filterOptions).ToListAsync();
-            }
+            return Ok(ResultOutDtoBuilder
+                .Success(await _applicationService.Filter(filterOptions)));
         }
 
         // GET: api/applications/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Application>> GetApplication([StringLength(32)] string id)
+        public async Task<ActionResult<ResultOutDto<Application>>> GetApplication(string id)
         {
-            var application = await _context.Applications
-                .Include(a => a.Profile)
-                .Include(a => a.Enrollments)
-                .FirstAsync(a => a.Id == id);
-
-            if (application == null)
+            if (Guid.TryParse(id, out Guid guid))
             {
-                return NotFound();
+                return BadRequest(ResultOutDtoBuilder
+                    .Fail<Application>(new FormatException(), "Error guid format."));
             }
-
-            return application;
-        }
-
-        // PUT: api/applications/5
-        
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutApplication(string id, Application application)
-        {
-            if (id != application.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(application).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                var application = await _applicationService.Get(guid, true);
+                return Ok(ResultOutDtoBuilder.Success(application));
             }
-            catch (DbUpdateConcurrencyException)
+            catch (NotExistedException e)
             {
-                if (!ApplicationExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound(
+                    ResultOutDtoBuilder.Fail<Application>(
+                        e, "Not exist."));
+            }
+        }
+
+        // PUT: api/applications/5
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ResultOutDto<object>>> PutApplication(string id, Application application)
+        {
+            if (Guid.TryParse(id, out Guid guid) || guid != application.Id)
+            {
+                return BadRequest(ResultOutDtoBuilder.Fail<User>(new FormatException(), "Error id format"));
             }
 
-            return NoContent();
+            try
+            {
+                await _applicationService.Update(application);
+                return NoContent();
+            }
+            catch (NotExistedException e)
+            {
+                return NotFound(ResultOutDtoBuilder.Fail<Application>(e, "Not exist."));
+            }
+            catch (ExistedConflictException e)
+            {
+                return Conflict(
+                    ResultOutDtoBuilder.Fail<Application>(e, "New name conflict with other existed application."));
+            }
         }
 
         // POST: api/Applications
         [HttpPost]
-        public async Task<ActionResult<Application>> PostApplication(Application application)
+        public async Task<ActionResult<ResultOutDto<Application>>> PostApplication(ApplicationCreateInDto createOptions)
         {
-            _context.Applications.Add(application);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetApplication", new {id = application.Id}, application);
+            try
+            {
+                var applications = await _applicationService.Create(createOptions);
+                return Ok(ResultOutDtoBuilder.Success(applications));
+            }
+            catch (ExistedConflictException e)
+            {
+                return Conflict(
+                    ResultOutDtoBuilder.Fail<Application>(e, "New name conflict with other existed application."));
+            }
         }
 
         // DELETE: api/Applications/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Application>> DeleteApplication(string id)
+        public async Task<ActionResult<ResultOutDto<object>>> DeleteApplication(string id)
         {
-            var application = await _context.Applications.FindAsync(id);
-            if (application == null)
+            if (Guid.TryParse(id, out Guid guid))
             {
-                return NotFound();
+                return BadRequest(ResultOutDtoBuilder
+                    .Fail<Application>(new FormatException(), "Error guid format."));
             }
 
-            _context.Applications.Remove(application);
-            await _context.SaveChangesAsync();
-
-            return application;
-        }
-
-        private bool ApplicationExists(string id)
-        {
-            return _context.Applications.Any(e => e.Id == id);
+            try
+            {
+                await _applicationService.Remove(guid);
+                return NoContent();
+            }
+            catch (NotExistedException e)
+            {
+                return NotFound(
+                    ResultOutDtoBuilder.Fail<Application>(
+                        e, "Not exist."));
+            }
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Eru.Server.Data.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        public Guid ParentId { get; set; }
+        public Guid? ParentId { get; set; }
         [Required] public Guid PostId { get; set; }
         [Required] public Guid UserId { get; set; }
         [Required] public int StatusId { get; set; }

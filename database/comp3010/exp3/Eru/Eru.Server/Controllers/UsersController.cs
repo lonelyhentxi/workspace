@@ -55,7 +55,7 @@ namespace Eru.Server.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(string id, User user)
         {
-            if (Guid.TryParse(id,out Guid guid)|| id != user.Id.ToString())
+            if (Guid.TryParse(id,out Guid guid)|| guid!=user.Id)
             {
                 return BadRequest(ResultOutDtoBuilder.Fail<User>(new FormatException(), "Error id format"));
             }
@@ -65,9 +65,13 @@ namespace Eru.Server.Controllers
                 await _userService.Update(user);
                 return NoContent();
             }
+            catch (NotExistedException e)
+            {
+                return NotFound(ResultOutDtoBuilder.Fail<User>(e,"Not exist."));
+            }
             catch (ExistedConflictException e)
             {
-                return Conflict(ResultOutDtoBuilder.Fail<User>(e,"New name conflict with other existed user."))
+                return Conflict(ResultOutDtoBuilder.Fail<User>(e, "New name conflict with other existed user."));
             }
         }
 

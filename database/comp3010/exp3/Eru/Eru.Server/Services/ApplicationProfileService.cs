@@ -4,12 +4,12 @@ namespace Eru.Server.Services
 {
     public class ApplicationProfileService
     {
-        public string GetDefaultMisc(User user)
+        public string GetDefaultMisc(Application application)
         {
             return "{}";
         }
 
-        public string GetDefaultSetting(User user)
+        public string GetDefaultSetting(Application application)
         {
             return "{}";
         }

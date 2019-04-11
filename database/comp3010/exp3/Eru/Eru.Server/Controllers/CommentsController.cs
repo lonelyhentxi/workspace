@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Eru.Server.Data;
 using Eru.Server.Data.Models;
 using Eru.Server.Dtos;
-using Microsoft.AspNetCore.Http;
+using Eru.Server.Exceptions;
+using Eru.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Eru.Server.Controllers
 {
@@ -15,110 +13,94 @@ namespace Eru.Server.Controllers
     [ApiController]
     public class CommentsController : ControllerBase
     {
-        private readonly EruContext _context;
+        private readonly CommentService _commentService;
 
-        public CommentsController(EruContext context)
+        public CommentsController(CommentService commentService)
         {
-            _context = context;
+            _commentService = commentService;
         }
 
         // GET: api/Comments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Comment>>> GetComments([FromQuery] CommentFilterInDto filterOptions)
+        public async Task<ActionResult<ResultOutDto<IEnumerable<Comment>>>> GetComments([FromQuery] CommentFilterInDto filterOptions)
         {
-            var mid = _context.Comments
-                .Include(c => c.Post)
-                .Include(c => c.User)
-                .Where(c => (
-                    (filterOptions.ParentId == null || filterOptions.ParentId == c.ParentId)
-                    && (filterOptions.PostId == null || filterOptions.PostId == c.PostId)
-                    && (filterOptions.UserId == null || filterOptions.UserId == c.UserId)
-                    && (filterOptions.StatusId == null || filterOptions.StatusId == c.StatusId)
-                    && (filterOptions.CategoryId == null || filterOptions.CategoryId == c.CategoryId)
-                ));
-            if (filterOptions.CreateTimeDesc)
-            {
-                return await mid.OrderByDescending(c => c.CreateTime).SkipTakePaging(filterOptions).ToListAsync();
-            }
-            else
-            {
-                return await mid.OrderBy(c => c.CreateTime).SkipTakePaging(filterOptions).ToListAsync();
-            }
+            return Ok(ResultOutDtoBuilder
+                .Success(await _commentService.Filter(filterOptions)));
         }
 
-        // GET: api/Comments/5
+        // GET: api/comments/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Comment>> GetComment(string id)
         {
-            var comment = await _context.Comments.FindAsync(id);
-
-            if (comment == null)
+            if (Guid.TryParse(id, out Guid guid))
             {
-                return NotFound();
+                return BadRequest(ResultOutDtoBuilder
+                    .Fail<Comment>(new FormatException(), "Error guid format."));
             }
-
-            return comment;
-        }
-
-        // PUT: api/Comments/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutComment(string id, Comment comment)
-        {
-            if (id != comment.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(comment).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                return Ok(ResultOutDtoBuilder
+                    .Success(await _commentService.Get(guid)));
             }
-            catch (DbUpdateConcurrencyException)
+            catch (NotExistedException e)
             {
-                if (!CommentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound(ResultOutDtoBuilder
+                    .Fail<Comment>(e, "Not exist."));
             }
-
-            return NoContent();
         }
 
-        // POST: api/Comments
-        [HttpPost]
-        public async Task<ActionResult<Comment>> PostComment(Comment comment)
+        // PUT: api/comments/5
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ResultOutDto<object>>> PutComment(string id,Comment comment)
         {
-            _context.Comments.Add(comment);
-            await _context.SaveChangesAsync();
+            if (Guid.TryParse(id, out Guid guid)||guid!=comment.Id)
+            {
+                return BadRequest(ResultOutDtoBuilder
+                    .Fail<Comment>(new FormatException(), "Error guid format."));
+            }
 
-            return CreatedAtAction("GetComment", new {id = comment.Id}, comment);
+            try
+            {
+                await _commentService.Update(comment);
+                return NoContent();
+            }
+            catch (NotExistedException e)
+            {
+                return NotFound(ResultOutDtoBuilder
+                    .Fail<Comment>(e, "Not exist."));
+            }
+        }
+
+        // POST: api/comments
+        [HttpPost]
+        public async Task<ActionResult<ResultOutDto<Comment>>> PostComment(CommentCreateInDto createOptions)
+        {
+           // TODO: add auth and fix here
+           var user = new User();
+           var comment = await _commentService.Create(createOptions, user);
+           return Ok(ResultOutDtoBuilder.Success(comment));
         }
 
         // DELETE: api/Comments/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Comment>> DeleteComment(string id)
+        public async Task<ActionResult<ResultOutDto<object>>> DeleteComment(string id)
         {
-            var comment = await _context.Comments.FindAsync(id);
-            if (comment == null)
+            if (Guid.TryParse(id, out Guid guid))
             {
-                return NotFound();
+                return BadRequest(ResultOutDtoBuilder
+                    .Fail<Comment>(new FormatException(), "Error guid format."));
             }
-
-            _context.Comments.Remove(comment);
-            await _context.SaveChangesAsync();
-
-            return comment;
-        }
-
-        private bool CommentExists(string id)
-        {
-            return _context.Comments.Any(e => e.Id == id);
+            try
+            {
+                await _commentService.Remove(guid);
+                return NoContent();
+            }
+            catch (NotExistedException e)
+            {
+                return NotFound(ResultOutDtoBuilder
+                    .Fail<Comment>(e, "Not exist."));
+            }
         }
     }
 }
