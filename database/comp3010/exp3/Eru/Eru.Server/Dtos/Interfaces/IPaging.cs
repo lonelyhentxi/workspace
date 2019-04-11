@@ -2,9 +2,9 @@
 {
     public interface IPaging
     {
-        int Page { get; set; }
+        int Page { get; }
 
 
-        int PerPage { get; set; }
+        int PerPage { get; }
     }
 }

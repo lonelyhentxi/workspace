@@ -20,9 +20,10 @@ namespace Eru.Server.Dtos
         public DateTime? UpdateTimeFrom { get; set; }
         public DateTime? UpdateTimeTo { get; set; }
 
-        [DefaultValue(true)]
-        public bool CreateTimeDesc { get; set; }
-        [DefaultValue(1)] [PageRange] public int Page { get; set; }
-        [DefaultValue(20)] [PerPageRange] public int PerPage { get; set; }
+        [DefaultValue(true)] public bool CreateTimeDesc { get; set; }
+        [PerPageRange]
+        public int PerPage { get; set; } = 10;
+        [PageRange]
+        public int Page { get; set; } = 1;
     }
 }

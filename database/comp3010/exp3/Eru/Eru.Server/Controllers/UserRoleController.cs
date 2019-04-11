@@ -34,8 +34,7 @@ namespace Eru.Server.Controllers
             }
         }
 
-        [HttpDelete]
-        [Route("{userId}:{roleId}")]
+        [HttpDelete("{userId}:{roleId}")]
         public async Task<ActionResult<ResultOutDto<object>>> DeleteUserRole([FromRoute] string userId,[FromRoute] int roleId)
         {
             if (Guid.TryParse(userId, out Guid guid))

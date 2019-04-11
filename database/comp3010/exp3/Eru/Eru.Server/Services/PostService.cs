@@ -47,7 +47,7 @@ namespace Eru.Server.Services
                     .ThenInclude(c=>c.User)
                 .Include(p => p.User)
                 .Include(p => p.PostTagAssociations)
-                .FirstAsync(p => p.Id == id);
+                .FirstOrDefaultAsync(p => p.Id == id);
             if (post == null)
             {
                 throw new NotExistedException();

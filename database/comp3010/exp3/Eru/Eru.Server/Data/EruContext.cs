@@ -1,15 +1,18 @@
 ﻿using System;
+using System.Linq;
 using Eru.Server.Data.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Eru.Server.Data
 {
-    public class EruContext: DbContext
+    public class EruContext : DbContext
     {
-
         public EruContext(DbContextOptions<EruContext> options) : base(options)
         {
         }
+
+        #region dbset_declare
 
         public DbSet<User> Users { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
@@ -29,6 +32,8 @@ namespace Eru.Server.Data
         public DbSet<ApplicationProfile> ApplicationProfiles { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
 
+        #endregion
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -39,35 +44,33 @@ namespace Eru.Server.Data
             var applicationEntity = modelBuilder.Entity<Application>();
             var commentEntity = modelBuilder.Entity<Comment>();
             var postEntity = modelBuilder.Entity<Post>();
+            var userProfileEntity = modelBuilder.Entity<UserProfile>();
+            var roleEntity = modelBuilder.Entity<Role>();
+            var permissionEntity = modelBuilder.Entity<Permission>();
+            var rolePermissionEntity = modelBuilder.Entity<RolePermissionAssociation>();
+            var userRoleEntity = modelBuilder.Entity<UserRoleAssociation>();
+
             modelBuilder.Entity<Enrollment>()
                 .HasKey(e => new {e.ApplicationId, e.UserId});
 
             modelBuilder.Entity<PostTagAssociation>()
                 .HasKey(a => new {a.PostId, a.TagId});
 
-            modelBuilder.Entity<UserRoleAssociation>()
+            userRoleEntity
                 .HasKey(a => new {a.UserId, a.RoleId});
 
-            modelBuilder.Entity<RolePermissionAssociation>()
+            rolePermissionEntity
                 .HasKey(a => new {a.RoleId, a.PermissionId});
 
             #endregion
-            #region USER_CONFIG
+
+            #region enitities_relationship
 
             userEntity
                 .HasOne(u => u.Profile)
                 .WithOne(up => up.User)
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired(true);
-            userEntity
-                .HasData(new User()
-                {
-                    Id = new Guid(),
-                    Name = "master",
-                    Password = "master"
-                });
-
-            #endregion
 
             applicationEntity
                 .HasOne(a => a.Profile)
@@ -83,7 +86,7 @@ namespace Eru.Server.Data
             postEntity
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Posts)
-                .IsRequired(true)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
             postEntity
                 .HasOne(p => p.User)
@@ -93,7 +96,7 @@ namespace Eru.Server.Data
             commentEntity
                 .HasOne(c => c.Parent)
                 .WithMany(c => c.Children)
-                .OnDelete(DeleteBehavior.SetNull)
+                .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
             commentEntity
                 .HasOne(c => c.Status)
@@ -115,6 +118,8 @@ namespace Eru.Server.Data
                 .WithMany(p => p.Comments)
                 .IsRequired(true)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            #endregion
         }
     }
 }

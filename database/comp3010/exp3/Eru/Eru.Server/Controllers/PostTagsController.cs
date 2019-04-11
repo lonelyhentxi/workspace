@@ -42,8 +42,7 @@ namespace Eru.Server.Controllers
             }
         }
 
-        [HttpPut]
-        [Route("{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<ResultOutDto<object>>> PutPostTags(
             [FromRoute] int id,[FromBody] PostTag tag
             )
@@ -68,8 +67,7 @@ namespace Eru.Server.Controllers
             }
         }
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<ResultOutDto<object>>> DeletePostTags(
             [FromRoute] int id)
         {

@@ -4,8 +4,7 @@ namespace Eru.Server.Configurations
 {
     public class AppConfig
     {
-        [Required]
-        public int Port { get; set; }
+        public int? Port { get; set; }
 
         [Required]
         [RegularExpression(@"^http|https$",

@@ -40,6 +40,8 @@ namespace Eru.Server.Services
             {
                 throw new NotExistedException();
             }
+
+            return permission;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Eru.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ResultOutDto<object>>> createSession([FromBody] SessionCreateInDto createOptions)
+        public async Task<ActionResult<ResultOutDto<object>>> CreateSession([FromBody] SessionCreateInDto createOptions)
         {
             try
             {

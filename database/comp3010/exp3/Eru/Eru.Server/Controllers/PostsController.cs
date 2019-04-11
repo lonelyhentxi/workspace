@@ -27,11 +27,10 @@ namespace Eru.Server.Controllers
         }
 
         // GET: api/post/5
-        [HttpGet]
-        [Route("{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<ResultOutDto<Post>>> GetPost([FromRoute] string id)
         {
-            if (Guid.TryParse(id, out Guid guid))
+            if (!Guid.TryParse(id, out Guid guid))
             {
                 return BadRequest(ResultOutDtoBuilder
                     .Fail<Post>(new FormatException(),"Error guid id format."));
@@ -52,7 +51,6 @@ namespace Eru.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<ResultOutDto<Post>>> PostPost([FromBody] PostCreateInDto createOptions)
         {
-            // TODO: add auth and change this 
             var user = new User();
             try
             {
@@ -69,7 +67,7 @@ namespace Eru.Server.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ResultOutDto<object>>> PutPost([FromRoute]string id, [FromBody] Post post)
         {
-            if (Guid.TryParse(id, out Guid guid)||guid!=post.Id)
+            if (!Guid.TryParse(id, out Guid guid)||guid!=post.Id)
             {
                 return BadRequest(ResultOutDtoBuilder
                     .Fail<Post>(new FormatException(), "Error id format."));
@@ -91,7 +89,7 @@ namespace Eru.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ResultOutDto<object>>> DeletePost([FromRoute] string id)
         {
-            if (Guid.TryParse(id, out Guid guid))
+            if (!Guid.TryParse(id, out Guid guid))
             {
                 return BadRequest(ResultOutDtoBuilder
                     .Fail<Post>(new FormatException(), "Error id format."));

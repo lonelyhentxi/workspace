@@ -34,7 +34,7 @@ namespace Eru.Server.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ResultOutDto<User>>> GetUser(string id)
         {
-            if (Guid.TryParse(id, out Guid guid))
+            if (!Guid.TryParse(id, out Guid guid))
             {
                 return BadRequest(ResultOutDtoBuilder.Fail<User>(new FormatException(), "Error id format"));
             }
@@ -79,7 +79,7 @@ namespace Eru.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            if (Guid.TryParse(id, out Guid guid))
+            if (!Guid.TryParse(id, out Guid guid))
             {
                 return BadRequest(ResultOutDtoBuilder.Fail<User>(new FormatException(), "Error id format"));
             }

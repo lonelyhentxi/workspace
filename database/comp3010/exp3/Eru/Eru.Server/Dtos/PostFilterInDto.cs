@@ -23,8 +23,9 @@ namespace Eru.Server.Dtos
         [DefaultValue(true)]
         public bool CreateTimeDesc { get; set; }
         public Guid UserId { get; set; }
-        [DefaultValue(1)] [PageRange] public int Page { get; set; }
-
-        [DefaultValue(10)] [PerPageRange] public int PerPage { get; set; }
+        [PerPageRange]
+        public int PerPage { get; set; } = 10;
+        [PageRange]
+        public int Page { get; set; } = 1;
     }
 }

@@ -170,7 +170,7 @@ namespace Eru.Server.Services
         {
             var user = await (_context.Users
                 .Include(u => u.UserRoleAssociations)
-                .FirstAsync(u => u.Id == id));
+                .FirstOrDefaultAsync(u => u.Id == id));
             if (user == null)
             {
                 return await Task.FromException<User>(new NotExistedException());
@@ -185,7 +185,7 @@ namespace Eru.Server.Services
                await (from p in _context.UserProfiles
                     where p.Id == user.Id
                     select p)
-                .FirstAsync();
+                .FirstOrDefaultAsync();
             user.Profile = profile;
             return user;
 

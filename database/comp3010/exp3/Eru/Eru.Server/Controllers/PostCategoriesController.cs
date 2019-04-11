@@ -41,8 +41,7 @@ namespace Eru.Server.Controllers
             }
         }
 
-        [HttpPut]
-        [Route("{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<ResultOutDto<object>>> PutPostCategories(
             [FromRoute] int id, [FromBody] PostCategory category
         )
@@ -67,8 +66,7 @@ namespace Eru.Server.Controllers
             }
         }
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<ResultOutDto<object>>> DeletePostCategory(
             [FromRoute] int id)
         {

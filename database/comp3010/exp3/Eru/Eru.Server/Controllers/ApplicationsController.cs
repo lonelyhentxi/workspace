@@ -33,7 +33,7 @@ namespace Eru.Server.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ResultOutDto<Application>>> GetApplication(string id)
         {
-            if (Guid.TryParse(id, out Guid guid))
+            if (!Guid.TryParse(id, out Guid guid))
             {
                 return BadRequest(ResultOutDtoBuilder
                     .Fail<Application>(new FormatException(), "Error guid format."));
@@ -57,7 +57,7 @@ namespace Eru.Server.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ResultOutDto<object>>> PutApplication(string id, Application application)
         {
-            if (Guid.TryParse(id, out Guid guid) || guid != application.Id)
+            if (!Guid.TryParse(id, out Guid guid) || guid != application.Id)
             {
                 return BadRequest(ResultOutDtoBuilder.Fail<User>(new FormatException(), "Error id format"));
             }
@@ -98,7 +98,7 @@ namespace Eru.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ResultOutDto<object>>> DeleteApplication(string id)
         {
-            if (Guid.TryParse(id, out Guid guid))
+            if (!Guid.TryParse(id, out Guid guid))
             {
                 return BadRequest(ResultOutDtoBuilder
                     .Fail<Application>(new FormatException(), "Error guid format."));

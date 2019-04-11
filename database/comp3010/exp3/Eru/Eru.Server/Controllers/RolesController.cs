@@ -38,7 +38,7 @@ namespace Eru.Server.Controllers
             }
             catch (NotExistedException e)
             {
-                return NotFound(ResultOutDtoBuilder.Fail<Role>(e, "Not exist."))
+                return NotFound(ResultOutDtoBuilder.Fail<Role>(e, "Not exist."));
             }
         }
     }

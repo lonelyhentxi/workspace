@@ -32,7 +32,7 @@ namespace Eru.Server.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Comment>> GetComment(string id)
         {
-            if (Guid.TryParse(id, out Guid guid))
+            if (!Guid.TryParse(id, out Guid guid))
             {
                 return BadRequest(ResultOutDtoBuilder
                     .Fail<Comment>(new FormatException(), "Error guid format."));
@@ -54,7 +54,7 @@ namespace Eru.Server.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ResultOutDto<object>>> PutComment(string id,Comment comment)
         {
-            if (Guid.TryParse(id, out Guid guid)||guid!=comment.Id)
+            if (!Guid.TryParse(id, out Guid guid)||guid!=comment.Id)
             {
                 return BadRequest(ResultOutDtoBuilder
                     .Fail<Comment>(new FormatException(), "Error guid format."));
@@ -76,7 +76,6 @@ namespace Eru.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<ResultOutDto<Comment>>> PostComment(CommentCreateInDto createOptions)
         {
-           // TODO: add auth and fix here
            var user = new User();
            var comment = await _commentService.Create(createOptions, user);
            return Ok(ResultOutDtoBuilder.Success(comment));
@@ -86,7 +85,7 @@ namespace Eru.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ResultOutDto<object>>> DeleteComment(string id)
         {
-            if (Guid.TryParse(id, out Guid guid))
+            if (!Guid.TryParse(id, out Guid guid))
             {
                 return BadRequest(ResultOutDtoBuilder
                     .Fail<Comment>(new FormatException(), "Error guid format."));

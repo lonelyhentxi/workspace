@@ -12,14 +12,14 @@ namespace Eru.Server.Services
     public class RoleService
     {
         private readonly EruContext _context;
-        private readonly int _adminId;
-        private readonly int _defaultId;
+        private int? _adminId { get; set; }
+        private int? _defaultId { get; set; }
 
         public RoleService(EruContext context)
         {
             _context = context;
-            _adminId = context.Roles.First(r => r.Name == "admin").Id;
-            _defaultId = context.Roles.First(r => r.Name == "user").Id;
+            _adminId = null;
+            _defaultId = null;
         }
 
         public async Task<List<Role>> GetAll()
@@ -32,7 +32,7 @@ namespace Eru.Server.Services
             var role = await _context.Roles
                 .Include(r => r.RolePermissionAssociations)
                 .Include(r => r.UserRoleAssociations)
-                .FirstAsync(r => r.Id == id);
+                .FirstOrDefaultAsync(r => r.Id == id);
             if (role == null)
             {
                 throw new NotExistedException();
@@ -71,7 +71,7 @@ namespace Eru.Server.Services
         public async Task<UserRoleAssociation> RemoveRolePlayer(Guid userId, int roleId)
         {
             var userRoleAssociation = await _context.UserRoleAssociations
-                .FirstAsync(a => a.UserId == userId && a.RoleId == roleId);
+                .FirstOrDefaultAsync(a => a.UserId == userId && a.RoleId == roleId);
             if (userRoleAssociation == null)
             {
                 throw new NotExistedException();
@@ -90,12 +90,20 @@ namespace Eru.Server.Services
 
         public int GetDefaultId()
         {
-            return _defaultId;
+            if (_defaultId == null)
+            {
+                _defaultId = _context.Roles.First(r => r.Name == "user").Id;
+            }
+            return (int)_defaultId;
         }
 
         public int GetAdminId()
         {
-            return _adminId;
+            if (_adminId == null)
+            {
+                _adminId = _context.Roles.First(r => r.Name == "user").Id;
+            }
+            return (int)_adminId;
         }
 
         public bool HasRole(IEnumerable<UserRoleAssociation> roles, int roleId)

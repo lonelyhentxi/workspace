@@ -37,7 +37,7 @@ namespace Eru.Server.Controllers
             }
             catch (NotExistedException e)
             {
-                return NotFound(ResultOutDtoBuilder.Fail<Permission>(e, "Not exist."))
+                return NotFound(ResultOutDtoBuilder.Fail<Permission>(e, "Not exist."));
             }
         }
     }
