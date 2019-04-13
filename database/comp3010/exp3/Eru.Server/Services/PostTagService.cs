@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Eru.Server.Data;
 using Eru.Server.Data.Models;
@@ -62,6 +63,14 @@ namespace Eru.Server.Services
             _context.PostTags.Remove(tag);
             await _context.SaveChangesAsync();
             return tag;
+        }
+
+        public async Task<List<GroupCountOutDto<int?>>> Group()
+        {
+            return await _context.PostTags
+                .Include(pt=>pt.PostTagAssociations)
+                .GroupBy(p => p.Id)
+                .Select(g => new GroupCountOutDto<int?> { Count = g.Count(), Id = g.Key }).ToListAsync();
         }
     }
 }

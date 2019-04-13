@@ -90,5 +90,12 @@ namespace Eru.Server.Controllers
                 return NotFound(ResultOutDtoBuilder.Fail<object>(e, "Not exist."));
             }
         }
+
+        [HttpGet("groupCount")]
+        [ProducesResponseType(200)]
+        public async Task<ActionResult<ResultOutDto<List<GroupCountOutDto<int?>>>>> GroupCount()
+        {
+            return Ok(ResultOutDtoBuilder.Success(await _postTagService.Group()));
+        }
     }
 }

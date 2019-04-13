@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 
 namespace Eru.Server.Dtos
 {
-    public class UserUpdateDto
+    public class GroupCountOutDto<TKey>
     {
+        public TKey Id { get; set; }
+        public int Count { get; set; }
     }
 }

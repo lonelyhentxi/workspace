@@ -11,21 +11,28 @@ namespace Eru.Server.Dtos
 {
     public class PostFilterInDto : ITimeRangeFilterInDto, IPaging
     {
-        [MaxLength(255)] public string TitleMatch { get; set; }
-        public int? StatusId { get; set; }
-        public int? CategoryId { get; set; }
-        public List<int> TagIds { get; set; }
-        public DateTime? CreateTimeFrom { get; set; }
-        public DateTime? CreateTimeTo { get; set; }
-        public DateTime? UpdateTimeFrom { get; set; }
-        public DateTime? UpdateTimeTo { get; set; }
+        [DefaultValue(null)] [MaxLength(255)] public string TitleMatch { get; set; } = null;
+        [DefaultValue(null)] public int? StatusId { get; set; } = null;
+        [DefaultValue(null)] public int? CategoryId { get; set; } = null;
 
-        [DefaultValue(true)]
-        public bool CreateTimeDesc { get; set; }
-        public Guid UserId { get; set; }
+        [DefaultValue(null)] public List<int> TagIds { get; set; } = null;
+
+        [DefaultValue(null)] public DateTime? CreateTimeFrom { get; set; } = null;
+
+        [DefaultValue(null)] public DateTime? CreateTimeTo { get; set; } = null;
+
+        [DefaultValue(null)] public DateTime? UpdateTimeFrom { get; set; } = null;
+
+        [DefaultValue(null)] public DateTime? UpdateTimeTo { get; set; } = null;
+
+        [DefaultValue(true)] public bool CreateTimeDesc { get; set; } = true;
+
+        [DefaultValue(null)] public Guid? UserId { get; set; } = null;
         [PerPageRange]
+        [DefaultValue(10)]
         public int PerPage { get; set; } = 10;
         [PageRange]
+        [DefaultValue(1)]
         public int Page { get; set; } = 1;
     }
 }

@@ -45,22 +45,54 @@ namespace Eru.Server.Data
             var commentEntity = modelBuilder.Entity<Comment>();
             var postEntity = modelBuilder.Entity<Post>();
             var userProfileEntity = modelBuilder.Entity<UserProfile>();
+            var applicationProfileEntity = modelBuilder.Entity<ApplicationProfile>();
             var roleEntity = modelBuilder.Entity<Role>();
             var permissionEntity = modelBuilder.Entity<Permission>();
             var rolePermissionEntity = modelBuilder.Entity<RolePermissionAssociation>();
             var userRoleEntity = modelBuilder.Entity<UserRoleAssociation>();
+            var postCategoryEntity = modelBuilder.Entity<PostCategory>();
+            var postStatusEntity = modelBuilder.Entity<PostStatus>();
+            var postTagEntity = modelBuilder.Entity<PostTag>();
+            var commentCategoryEntity = modelBuilder.Entity<CommentCategory>();
+            var commentStatusEntity = modelBuilder.Entity<CommentStatus>();
+            var enrollmentEntity = modelBuilder.Entity<Enrollment>();
+            var postTagAssociationEntity = modelBuilder.Entity<PostTagAssociation>();
 
-            modelBuilder.Entity<Enrollment>()
-                .HasKey(e => new {e.ApplicationId, e.UserId});
+            #endregion
 
-            modelBuilder.Entity<PostTagAssociation>()
-                .HasKey(a => new {a.PostId, a.TagId});
+            #region multi_primary_key
+                
+            enrollmentEntity.HasKey(e => new { e.ApplicationId, e.UserId });
+            postTagAssociationEntity.HasKey(a => new { a.PostId, a.TagId });
+            userRoleEntity.HasKey(a => new { a.UserId, a.RoleId });
+            rolePermissionEntity.HasKey(a => new { a.RoleId, a.PermissionId });
 
-            userRoleEntity
-                .HasKey(a => new {a.UserId, a.RoleId});
+            #endregion
 
-            rolePermissionEntity
-                .HasKey(a => new {a.RoleId, a.PermissionId});
+            #region unique_index
+
+            permissionEntity.HasAlternateKey(p => p.Name);
+            roleEntity.HasAlternateKey(r => r.Name);
+            userEntity.HasAlternateKey(r => r.Name);
+            applicationEntity.HasAlternateKey(a => a.Name);
+            postTagEntity.HasAlternateKey(p => p.Name);
+            postCategoryEntity.HasAlternateKey(p => p.Name);
+            postStatusEntity.HasAlternateKey(p => p.Name);
+            commentCategoryEntity.HasAlternateKey(c => c.Name);
+            commentStatusEntity.HasAlternateKey(c => c.Name);
+
+            #endregion
+
+            #region common_index
+
+            userEntity.HasIndex(u => u.CreateTime);
+            userEntity.HasIndex(u => u.UpdateTime);
+            applicationEntity.HasIndex(a => a.CreateTime);
+            applicationEntity.HasIndex(a => a.UpdateTime);
+            postEntity.HasIndex(p => p.CreateTime);
+            postEntity.HasIndex(p => p.UpdateTime);
+            commentEntity.HasIndex(c => c.CreateTime);
+            commentEntity.HasIndex(c => c.UpdateTime);
 
             #endregion
 
@@ -77,7 +109,6 @@ namespace Eru.Server.Data
                 .WithOne(ap => ap.Application)
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired(true);
-
             postEntity
                 .HasOne(p => p.Status)
                 .WithMany(s => s.Posts)
@@ -91,8 +122,8 @@ namespace Eru.Server.Data
             postEntity
                 .HasOne(p => p.User)
                 .WithMany(u => u.Posts)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.SetNull);
+                .IsRequired(true)
+                .OnDelete(DeleteBehavior.Restrict);
             commentEntity
                 .HasOne(c => c.Parent)
                 .WithMany(c => c.Children)
@@ -111,14 +142,14 @@ namespace Eru.Server.Data
             commentEntity
                 .HasOne(c => c.User)
                 .WithMany(u => u.Comments)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.SetNull);
+                .IsRequired(true)
+                .OnDelete(DeleteBehavior.Restrict);
             commentEntity
                 .HasOne(c => c.Post)
                 .WithMany(p => p.Comments)
                 .IsRequired(true)
-                .OnDelete(DeleteBehavior.Cascade);
-
+                .OnDelete(DeleteBehavior.Restrict);
+            
             #endregion
         }
     }

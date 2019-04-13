@@ -6,18 +6,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./passport.component.less'],
 })
 export class LayoutPassportComponent {
+  now = new Date();
   links = [
     {
-      title: '帮助',
-      href: '',
+      title: '项目主页',
+      href: 'https://github.com/lonelyhentai/impls',
     },
     {
-      title: '隐私',
-      href: '',
-    },
-    {
-      title: '条款',
-      href: '',
+      title: 'API 文档',
+      href: 'https://eru.evernightfireworks.com/swagger',
     },
   ];
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Eru.Server.Data;
 using Microsoft.AspNetCore;
@@ -27,8 +28,9 @@ namespace Eru.Server
                 {
                     var context = services.
                         GetRequiredService<EruContext>();
+                    // context.Database.EnsureDeleted();
                     context.Database.EnsureCreated();
-                    SeedData.Initialize(services);
+                    SeedData.Initialize(services,"SqlServer");
                 }
                 catch (Exception ex)
                 {
@@ -36,7 +38,6 @@ namespace Eru.Server
                     logger.LogError(ex, "An error occurred seeding the DB.");
                 }
             }
-
             host.Run();
 
         }

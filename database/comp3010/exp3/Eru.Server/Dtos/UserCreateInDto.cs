@@ -8,7 +8,7 @@ namespace Eru.Server.Dtos
 {
     public class UserCreateInDto
     {
-        [MaxLength(63)] public string Name { get; set; }
-        [MaxLength(255)] public string Password { get; set; }
+        [MaxLength(63)] [Required] public string Name { get; set; }
+        [MaxLength(255)] [Required] public string Password { get; set; }
     }
 }

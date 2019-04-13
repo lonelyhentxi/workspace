@@ -1,5 +1,7 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { SettingsService } from '@delon/theme';
+import { Router } from '@angular/router';
+import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 
 @Component({
   selector: 'layout-sidebar',
@@ -7,5 +9,14 @@ import { SettingsService } from '@delon/theme';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SidebarComponent {
-  constructor(public settings: SettingsService) {}
+  constructor(
+    public settings: SettingsService,
+    private router: Router,
+    @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
+  ) {}
+
+  logout() {
+    this.tokenService.clear();
+    this.router.navigateByUrl(this.tokenService.login_url);
+  }
 }

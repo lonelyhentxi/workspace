@@ -34,7 +34,7 @@ export class UserRegisterComponent implements OnDestroy {
     public msg: NzMessageService,
   ) {
     this.form = fb.group({
-      mail: [null, [Validators.required, Validators.email]],
+      userName: [null, [Validators.required]],
       password: [
         null,
         [
@@ -51,9 +51,6 @@ export class UserRegisterComponent implements OnDestroy {
           UserRegisterComponent.passwordEquar,
         ],
       ],
-      mobilePrefix: ['+86'],
-      mobile: [null, [Validators.required, Validators.pattern(/^1\d{10}$/)]],
-      captcha: [null, [Validators.required]],
     });
   }
 
@@ -87,40 +84,14 @@ export class UserRegisterComponent implements OnDestroy {
 
   // #region fields
 
-  get mail() {
-    return this.form.controls.mail;
+  get userName() {
+    return this.form.controls.userName;
   }
   get password() {
     return this.form.controls.password;
   }
   get confirm() {
     return this.form.controls.confirm;
-  }
-  get mobile() {
-    return this.form.controls.mobile;
-  }
-  get captcha() {
-    return this.form.controls.captcha;
-  }
-
-  // #endregion
-
-  // #region get captcha
-
-  count = 0;
-  interval$: any;
-
-  getCaptcha() {
-    if (this.mobile.invalid) {
-      this.mobile.markAsDirty({ onlySelf: true });
-      this.mobile.updateValueAndValidity({ onlySelf: true });
-      return;
-    }
-    this.count = 59;
-    this.interval$ = setInterval(() => {
-      this.count -= 1;
-      if (this.count <= 0) clearInterval(this.interval$);
-    }, 1000);
   }
 
   // #endregion
@@ -137,13 +108,12 @@ export class UserRegisterComponent implements OnDestroy {
 
     const data = this.form.value;
     this.http.post('/register', data).subscribe(() => {
-      this.router.navigateByUrl('/passport/register-result', {
+      this.router.navigateByUrl('/passport/login', {
         queryParams: { email: data.mail },
       });
     });
   }
 
-  ngOnDestroy(): void {
-    if (this.interval$) clearInterval(this.interval$);
-  }
+  ngOnDestroy(): void {}
+
 }

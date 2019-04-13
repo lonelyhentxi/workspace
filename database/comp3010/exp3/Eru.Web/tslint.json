@@ -72,6 +72,9 @@
     "component-class-suffix": true,
     "directive-class-suffix": true,
     "curly": false,
+    "no-trailing-whitespace": false,
+    "whitespace": false,
+    "one-line": false,
     "directive-selector": [
       true,
       "attribute",

@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { SharedModule } from '@shared';
 
 import { LayoutDefaultComponent } from './default/default.component';
-import { LayoutFullScreenComponent } from './fullscreen/fullscreen.component';
 import { HeaderComponent } from './default/header/header.component';
 import { SidebarComponent } from './default/sidebar/sidebar.component';
 import { HeaderSearchComponent } from './default/header/components/search.component';
@@ -21,7 +20,6 @@ const SETTINGDRAWER = [SettingDrawerComponent, SettingDrawerItemComponent];
 
 const COMPONENTS = [
   LayoutDefaultComponent,
-  LayoutFullScreenComponent,
   HeaderComponent,
   SidebarComponent,
   ...SETTINGDRAWER
@@ -32,7 +30,6 @@ const HEADERCOMPONENTS = [
   HeaderNotifyComponent,
   HeaderTaskComponent,
   HeaderIconComponent,
-  HeaderFullScreenComponent,
   HeaderI18nComponent,
   HeaderStorageComponent,
   HeaderUserComponent

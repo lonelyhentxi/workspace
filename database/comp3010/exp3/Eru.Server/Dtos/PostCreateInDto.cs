@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Eru.Server.Dtos
@@ -7,7 +8,7 @@ namespace Eru.Server.Dtos
     {
         [Required] public int StatusId { get; set; }
 
-        public int? CategoryId { get; set; }
+        [DefaultValue(null)] public int? CategoryId { get; set; } = null;
 
         [Required] public List<int> TagIds { get; set; }
 

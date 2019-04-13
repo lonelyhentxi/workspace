@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Eru.Server.Data;
 using Eru.Server.Data.Models;
@@ -62,6 +63,12 @@ namespace Eru.Server.Services
             _context.Entry(category).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return category;
+        }
+
+        public async Task<List<GroupCountOutDto<int?>>> Group()
+        {
+            return await _context.Posts.GroupBy(p => p.CategoryId)
+                .Select(g => new GroupCountOutDto<int?> {Count = g.Count(), Id = g.Key}).ToListAsync();
         }
     }
 }

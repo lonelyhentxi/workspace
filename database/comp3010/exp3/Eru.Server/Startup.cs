@@ -58,6 +58,12 @@ namespace Eru.Server
             #region db_repository
             services.AddDbContext<EruContext>(opt => { opt.UseSqlServer(Configuration.GetConnectionString("SqlServerLocalDB")); });
 
+            /*services.AddEntityFrameworkNpgsql()
+            .AddDbContext<EruContext>(opt =>
+            {
+                opt.UseNpgsql(Configuration.GetConnectionString("PostgreSQL"));
+            });
+            */
             #endregion
 
             #region mvc_service
@@ -105,17 +111,17 @@ namespace Eru.Server
             #region cors_services
 
             // TODO: when release change it
-            /* services.AddCors(c =>
+            services.AddCors(c =>
             {
                 c.AddPolicy("AllRequests", policy =>
                 {
                     policy
                         .AllowAnyHeader()
                         .AllowAnyMethod()
-                        .AllowCredentials()
+                        // .AllowCredentials()
                         .AllowAnyOrigin();
                 });
-            });*/
+            });
 
             #endregion
 
@@ -142,7 +148,7 @@ namespace Eru.Server
             }
             else
             {
-                app.UseHsts();
+                // app.UseHsts();
             }
 
 
@@ -150,8 +156,8 @@ namespace Eru.Server
             app.UseSwaggerUi3();
 
             // app.UseAuthentication();
-            // app.UseCors("AllRequests");
-            //app.UseHttpsRedirection();
+            app.UseCors("AllRequests");
+            // app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseStatusCodePages();

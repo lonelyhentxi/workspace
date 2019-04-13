@@ -1,63 +1,54 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ApiService } from '@core/eru/api.service';
+import { HttpClient } from '@angular/common/http';
+import { ApplicationDto } from '@core/eru/dtos/application.dto';
 
 @Component({
   selector: 'header-icon',
   template: `
-  <nz-dropdown nzTrigger="click" nzPlacement="bottomRight" (nzVisibleChange)="change()">
-    <div class="alain-default__nav-item" nz-dropdown>
-      <i class="anticon anticon-appstore"></i>
-    </div>
-    <div nz-menu class="wd-xl animated jello">
-      <nz-spin [nzSpinning]="loading" [nzTip]="'正在读取数据...'">
-        <div nz-row [nzType]="'flex'" [nzJustify]="'center'" [nzAlign]="'middle'" class="app-icons">
-          <div nz-col [nzSpan]="6">
-            <i class="anticon anticon-calendar bg-error text-white"></i>
-            <small>Calendar</small>
+    <nz-dropdown nzTrigger="click" nzPlacement="bottomRight" (nzVisibleChange)="change()">
+      <div class="alain-default__nav-item" nz-dropdown>
+        <i class="anticon anticon-appstore" style="color: gray"></i>
+      </div>
+      <div nz-menu class="wd-xl animated jello">
+        <nz-spin [nzSpinning]="loading" [nzTip]="'正在读取数据...'">
+          <div nz-row [nzType]="'flex'" [nzJustify]="'center'" [nzAlign]="'middle'"
+               class="app-icons">
+            <div *ngFor="let application of applications" nz-col [nzSpan]="6">
+              <i nz-icon [nzType]="application.nzType" [ngClass]="application.classNames"></i>
+              <small>{{application.name}}</small>
+            </div>
           </div>
-          <div nz-col [nzSpan]="6">
-            <i class="anticon anticon-file bg-geekblue text-white"></i>
-            <small>Files</small>
-          </div>
-          <div nz-col [nzSpan]="6">
-            <i class="anticon anticon-cloud bg-success text-white"></i>
-            <small>Cloud</small>
-          </div>
-          <div nz-col [nzSpan]="6">
-            <i class="anticon anticon-star-o bg-magenta text-white"></i>
-            <small>Star</small>
-          </div>
-          <div nz-col [nzSpan]="6">
-            <i class="anticon anticon-team bg-purple text-white"></i>
-            <small>Team</small>
-          </div>
-          <div nz-col [nzSpan]="6">
-            <i class="anticon anticon-scan bg-warning text-white"></i>
-            <small>QR</small>
-          </div>
-          <div nz-col [nzSpan]="6">
-            <i class="anticon anticon-pay-circle-o bg-cyan text-white"></i>
-            <small>Pay</small>
-          </div>
-          <div nz-col [nzSpan]="6">
-            <i class="anticon anticon-printer bg-grey text-white"></i>
-            <small>Print</small>
-          </div>
-        </div>
-      </nz-spin>
-    </div>
-  </nz-dropdown>
+        </nz-spin>
+      </div>
+    </nz-dropdown>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderIconComponent {
   loading = true;
+  public applications: { name: string, classNames: string[], nzType: string, isOutline: boolean } [] = [];
 
-  constructor(private cdr: ChangeDetectorRef) { }
+  constructor(private cdr: ChangeDetectorRef,
+              private apiService: ApiService,
+              private httpClient: HttpClient) {
+  }
 
   change() {
-    setTimeout(() => {
+    this.load();
+    setTimeout(()=>{
       this.loading = false;
       this.cdr.detectChanges();
-    }, 500);
+    },500);
+  }
+
+  load() {
+    this.applications = (this.apiService.apiCache.applications as ApplicationDto[])
+      .map(i=>{
+        const avatarProps = i.Avatar.split(' ');
+        return { name: i.Name, classNames: avatarProps.slice(0,2), nzType: avatarProps[2] , isOutline: avatarProps.length===4 };
+      });
   }
 }
+
+
