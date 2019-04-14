@@ -1,0 +1,60 @@
+<h3>{{ 'app.register.register' | translate }}</h3>
+<form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
+  <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
+  <nz-form-item>
+    <nz-form-control>
+      <nz-input-group nzSize="large" nzAddonBeforeIcon="anticon anticon-user">
+        <input nz-input formControlName="userName" placeholder="用户名">
+      </nz-input-group>
+      <ng-container *ngIf="userName.dirty && userName.errors">
+        <nz-form-explain *ngIf="userName .errors?.required">{{ "请输入您的用户名" }}</nz-form-explain>
+      </ng-container>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control>
+      <nz-popover [nzPlacement]="'right'" [nzTrigger]="'focus'" [(nzVisible)]="visible" nzOverlayClassName="register-password-cdk"
+        [nzOverlayStyle]="{'width.px': 240}">
+        <nz-input-group nzSize="large" nz-popover nzAddonBeforeIcon="anticon anticon-lock">
+          <input nz-input type="password" formControlName="password" placeholder="密码">
+        </nz-input-group>
+        <nz-form-explain *ngIf="password.dirty && password.errors">{{ 'validation.password.required' | translate }}</nz-form-explain>
+        <ng-template #nzTemplate>
+          <div style="padding: 4px 0;">
+            <ng-container [ngSwitch]="status">
+              <div *ngSwitchCase="'ok'" class="success">{{ 'validation.password.strength.strong' | translate }}</div>
+              <div *ngSwitchCase="'pass'" class="warning">{{ 'validation.password.strength.medium' | translate }}</div>
+              <div *ngSwitchDefault class="error">{{ 'validation.password.strength.short' | translate }}</div>
+            </ng-container>
+            <div class="progress-{{status}}">
+              <nz-progress [nzPercent]="progress" [nzStatus]="passwordProgressMap[status]" [nzStrokeWidth]="6"
+                [nzShowInfo]="false"></nz-progress>
+            </div>
+            <p class="mt-sm">{{ 'validation.password.strength.msg' | translate }}</p>
+          </div>
+        </ng-template>
+      </nz-popover>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control>
+      <nz-input-group nzSize="large" nzAddonBeforeIcon="anticon anticon-lock">
+        <input nz-input type="password" formControlName="confirm" placeholder="确认">
+      </nz-input-group>
+      <nz-form-explain *ngIf="confirm.dirty && confirm.errors">
+        <ng-container *ngIf="confirm.errors.required">
+          {{ 'validation.confirm-password.required' | translate }}
+        </ng-container>
+        <ng-container *ngIf="confirm.errors.equar">
+          {{ 'validation.password.twice' | translate }}
+        </ng-container>
+      </nz-form-explain>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <button nz-button nzType="primary" nzSize="large" type="submit" [nzLoading]="http.loading" class="submit">
+      {{ 'app.register.register' | translate }}
+    </button>
+    <a class="login" routerLink="/passport/login">{{ 'app.register.sign-in' | translate }}</a>
+  </nz-form-item>
+</form>
