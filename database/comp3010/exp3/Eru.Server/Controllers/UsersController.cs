@@ -31,6 +31,25 @@ namespace Eru.Server.Controllers
             return Ok(ResultOutDtoBuilder.Success(filteredUsers));
         }
 
+
+        // POST: api/users
+        [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(409)]
+        public async Task<ActionResult<ResultOutDto<User>>> PostUser([FromBody] UserCreateInDto createOptions)
+        {
+            try
+            {
+                var user = await _userService.Create(createOptions);
+                return Ok(ResultOutDtoBuilder.Success(user));
+            }
+            catch (ExistedConflictException e)
+            {
+                return Conflict(ResultOutDtoBuilder.Fail<User>(e, "New name conflict with other existed user."));
+            }
+        }
+
+
         // GET: api/users/5
         [HttpGet("{id}")]
         [ProducesResponseType(204)]

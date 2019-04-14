@@ -61,7 +61,7 @@ namespace Eru.Server.Services
 
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                var createTime = new DateTime();
+                var createTime = DateTime.Now;
                 var newUser = new User
                 {
                     Name = createParams.Name,
