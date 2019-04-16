@@ -38,7 +38,7 @@ namespace Eru.Server.Services
             return await ordered.SkipTakePaging(filterOptions).ToListAsync();
         }
 
-        public async Task<Comment> Create(CommentCreateInDto createOptions, User user)
+        public async Task<Comment> Create(CommentCreateInDto createOptions)
         {
             if (!await _context.Posts.AnyAsync(p => p.Id == createOptions.PostId))
             {
@@ -50,7 +50,7 @@ namespace Eru.Server.Services
                 ParentId = createOptions.ParentId,
                 CategoryId = createOptions.CategoryId,
                 PostId = createOptions.PostId,
-                UserId = user.Id,
+                UserId = createOptions.UserId,
                 StatusId = createOptions.StatusId,
                 Content = createOptions.Content,
                 CreateTime = now,

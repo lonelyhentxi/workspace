@@ -8,6 +8,9 @@ import {
 } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
+import { HttpClient } from '@angular/common/http';
+import { ApiService } from '@core/eru/api.service';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'passport-register',
@@ -32,6 +35,7 @@ export class UserRegisterComponent implements OnDestroy {
     private router: Router,
     public http: _HttpClient,
     public msg: NzMessageService,
+    private apiService: ApiService,
   ) {
     this.form = fb.group({
       userName: [null, [Validators.required]],
@@ -87,9 +91,11 @@ export class UserRegisterComponent implements OnDestroy {
   get userName() {
     return this.form.controls.userName;
   }
+
   get password() {
     return this.form.controls.password;
   }
+
   get confirm() {
     return this.form.controls.confirm;
   }
@@ -107,13 +113,15 @@ export class UserRegisterComponent implements OnDestroy {
     }
 
     const data = this.form.value;
-    this.http.post('/register', data).subscribe(() => {
-      this.router.navigateByUrl('/passport/login', {
-        queryParams: { email: data.mail },
+    this.http.post(this.apiService.apiJoin('users'), { Name: data.userName, Password: data.password })
+      .subscribe((res) => {
+        console.log(res);
+        this.msg.success('注册成功请登录');
+        this.router.navigateByUrl('/passport/login');
       });
-    });
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+  }
 
 }

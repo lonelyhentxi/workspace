@@ -10,6 +10,7 @@ import { UserRegisterComponent } from './passport/register/register.component';
 // single pages
 import { CallbackComponent } from './callback/callback.component';
 import { PostComponent } from './post/post.component';
+import { NzCommentActionHostDirective, NzCommentModule } from 'ng-zorro-antd';
 
 const COMPONENTS = [
   DashboardComponent,
@@ -22,7 +23,7 @@ const COMPONENTS = [
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({
-  imports: [ SharedModule, RouteRoutingModule],
+  imports: [ SharedModule, RouteRoutingModule,NzCommentModule],
   declarations: [
     ...COMPONENTS,
     ...COMPONENTS_NOROUNT,

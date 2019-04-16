@@ -30,8 +30,7 @@ export class HeaderIconComponent {
   public applications: { name: string, classNames: string[], nzType: string, isOutline: boolean } [] = [];
 
   constructor(private cdr: ChangeDetectorRef,
-              private apiService: ApiService,
-              private httpClient: HttpClient) {
+              private apiService: ApiService) {
   }
 
   change() {

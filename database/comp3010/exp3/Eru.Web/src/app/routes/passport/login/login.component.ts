@@ -5,13 +5,14 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import {
   SocialService,
-  SocialOpenType,
   ITokenService,
   DA_SERVICE_TOKEN,
 } from '@delon/auth';
 import { ReuseTabService } from '@delon/abc';
-import { environment } from '@env/environment';
 import { StartupService } from '@core';
+import { ApiService } from '@core/eru/api.service';
+import { ACLService } from '@delon/acl';
+import { UserDto } from '@core/eru/dtos/user.dto';
 
 @Component({
   selector: 'passport-login',
@@ -23,6 +24,7 @@ export class UserLoginComponent implements OnDestroy {
   form: FormGroup;
   error = '';
   type = 0;
+
 
   constructor(
     fb: FormBuilder,
@@ -37,13 +39,12 @@ export class UserLoginComponent implements OnDestroy {
     private startupSrv: StartupService,
     public http: _HttpClient,
     public msg: NzMessageService,
+    private apiService: ApiService,
+    private aclService: ACLService
   ) {
     this.form = fb.group({
       userName: [null, [Validators.required, Validators.minLength(4)]],
       password: [null, Validators.required],
-      mobile: [null, [Validators.required, Validators.pattern(/^1\d{10}$/)]],
-      captcha: [null, [Validators.required]],
-      remember: [true],
     });
     modalSrv.closeAll();
   }
@@ -58,39 +59,9 @@ export class UserLoginComponent implements OnDestroy {
     return this.form.controls.password;
   }
 
-  get mobile() {
-    return this.form.controls.mobile;
-  }
-
-  get captcha() {
-    return this.form.controls.captcha;
-  }
-
-  // #endregion
-
   switch(ret: any) {
     this.type = ret.index;
   }
-
-  // #region get captcha
-
-  count = 0;
-  interval$: any;
-
-  getCaptcha() {
-    if (this.mobile.invalid) {
-      this.mobile.markAsDirty({ onlySelf: true });
-      this.mobile.updateValueAndValidity({ onlySelf: true });
-      return;
-    }
-    this.count = 59;
-    this.interval$ = setInterval(() => {
-      this.count -= 1;
-      if (this.count <= 0) clearInterval(this.interval$);
-    }, 1000);
-  }
-
-  // #endregion
 
   submit() {
     this.error = '';
@@ -100,26 +71,30 @@ export class UserLoginComponent implements OnDestroy {
     this.password.updateValueAndValidity();
     if (this.userName.invalid || this.password.invalid) return;
 
-    // 默认配置中对所有HTTP请求都会强制 [校验](https://ng-alain.com/auth/getting-started) 用户 Token
-    // 然一般来说登录请求不需要校验，因此可以在请求URL加上：`/login?_allow_anonymous=true` 表示不触发用户 Token 校验
     this.http
-      .post('/login/account?_allow_anonymous=true', {
-        userName: this.userName.value,
-        password: this.password.value,
+      .post(this.apiService.apiJoin('sessions'), {
+        Name: this.userName.value,
+        Password: this.password.value,
       })
       .subscribe((res: any) => {
-        if (res.msg !== 'ok') {
-          this.error = res.msg;
-          return;
-        }
+        const user = res.body.User as UserDto;
+        const token = res.body.Token as {  token: string,
+          expires_in: number,
+          token_type: string};
         // 清空路由复用信息
         this.reuseTabService.clear();
+        this.apiService.apiCache.user = user;
         // 设置用户Token信息
-        this.tokenService.set(res.user);
+        this.tokenService.set(token);
+        // 用户信息：包括姓名、头像
+        this.settingsService.setUser({name:user.Name,avatar:user.Avatar,id: user.Id });
+        // ACL：设置权限为全量
+        this.aclService.setFull(true);
         // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
+        this.msg.success('登录成功，跳转中');
         this.startupSrv.load().then(() => {
-          let url = this.tokenService.referrer.url || '/';
-          if (url.includes('/passport')) url = '/';
+          let url = this.tokenService.referrer.url || '/dashboard';
+          if (url.includes('/passport')) url = '/dashboard';
           this.router.navigateByUrl(url);
         });
       });
