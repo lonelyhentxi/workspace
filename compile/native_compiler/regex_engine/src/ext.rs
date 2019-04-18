@@ -1,55 +1,65 @@
-use std::rc::Rc;
+use super::core::{ConcatExpr, EpsilonExpr, RegexExpr, RepeatExpr};
 use std::collections::hash_set::HashSet;
-use super::core::{RegexExpr, EpsilonExpr, ConcatExpr, RepeatExpr};
+use std::sync::Arc;
 use std::usize;
 
 pub struct OptionalExpr {
-    pub sub: Rc<dyn RegexExpr>
+    pub sub: Arc<dyn RegexExpr>,
 }
 
 impl OptionalExpr {
-    pub fn new(sub: Rc<dyn RegexExpr>) -> OptionalExpr {
+    pub fn new(sub: Arc<dyn RegexExpr>) -> OptionalExpr {
         OptionalExpr { sub }
     }
 }
 
 impl RegexExpr for OptionalExpr {
-    fn match_apply<'a>(&self,
-                       target: &str, i: usize,
-                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
+    fn match_apply<'a>(
+        &self,
+        target: &str,
+        i: usize,
+        check: Arc<'a + Fn(&str, usize) -> bool>,
+    ) -> bool {
         self.sub.match_apply(target, i, check.clone())
             || EpsilonExpr::new().match_apply(target, i, check)
     }
 }
 
 pub struct StringMatchExpr {
-    pub sub: String
+    pub sub: String,
 }
 
 impl StringMatchExpr {
     pub fn new(sub: &str) -> StringMatchExpr {
-        StringMatchExpr { sub: sub.to_owned() }
+        StringMatchExpr {
+            sub: sub.to_owned(),
+        }
     }
 }
 
 impl RegexExpr for StringMatchExpr {
-    fn match_apply<'a>(&self,
-                       target: &str, i: usize,
-                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
+    fn match_apply<'a>(
+        &self,
+        target: &str,
+        i: usize,
+        check: Arc<'a + Fn(&str, usize) -> bool>,
+    ) -> bool {
         let mut current_equal: bool = true;
         for j in 0 as usize..self.sub.len() {
             current_equal = match target.chars().nth(i + j) {
                 Some(ch) => ch == self.sub.chars().nth(j).unwrap(),
-                None => false
+                None => false,
             };
-            if current_equal == false { break; }
+            if current_equal == false {
+                break;
+            }
         }
         current_equal && check(target, i + self.sub.len())
     }
 }
 
 pub struct CharSetExpr {
-    pub set: HashSet<char>
+    pub set: HashSet<char>,
 }
 
 impl CharSetExpr {
@@ -59,19 +69,22 @@ impl CharSetExpr {
 }
 
 impl RegexExpr for CharSetExpr {
-    fn match_apply<'a>(&self,
-                       target: &str, i: usize,
-                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
+    fn match_apply<'a>(
+        &self,
+        target: &str,
+        i: usize,
+        check: Arc<'a + Fn(&str, usize) -> bool>,
+    ) -> bool {
         let current_equal = match target.chars().nth(i) {
             Some(ref ch) => self.set.contains(ch),
-            None => false
+            None => false,
         };
         current_equal && check(target, i + 1)
     }
 }
 
 pub struct StringSetExpr {
-    pub set: HashSet<String>
+    pub set: HashSet<String>,
 }
 
 impl StringSetExpr {
@@ -80,18 +93,25 @@ impl StringSetExpr {
     }
 
     pub fn max_len(&self) -> usize {
-        self.set.iter().fold(0, |next, this| usize::max(next, this.len()))
+        self.set
+            .iter()
+            .fold(0, |next, this| usize::max(next, this.len()))
     }
 
     pub fn min_len(&self) -> usize {
-        self.set.iter().fold(usize::MAX, |next, this| usize::min(next, this.len()))
+        self.set
+            .iter()
+            .fold(usize::MAX, |next, this| usize::min(next, this.len()))
     }
 }
 
 impl RegexExpr for StringSetExpr {
-    fn match_apply<'a>(&self,
-                       target: &str, i: usize,
-                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
+    fn match_apply<'a>(
+        &self,
+        target: &str,
+        i: usize,
+        check: Arc<'a + Fn(&str, usize) -> bool>,
+    ) -> bool {
         let mut current_equal = false;
         let mut j = self.min_len();
         let max_len = self.max_len();
@@ -102,13 +122,15 @@ impl RegexExpr for StringSetExpr {
             }
             j += 1;
         }
-        if !current_equal { j = self.max_len() }
+        if !current_equal {
+            j = self.max_len()
+        }
         current_equal && check(target, i + j)
     }
 }
 
 pub struct NotInCharSetExpr {
-    pub set: HashSet<char>
+    pub set: HashSet<char>,
 }
 
 impl NotInCharSetExpr {
@@ -118,66 +140,75 @@ impl NotInCharSetExpr {
 }
 
 impl RegexExpr for NotInCharSetExpr {
-    fn match_apply<'a>(&self,
-                       target: &str, i: usize,
-                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
+    fn match_apply<'a>(
+        &self,
+        target: &str,
+        i: usize,
+        check: Arc<'a + Fn(&str, usize) -> bool>,
+    ) -> bool {
         let current_equal = match target.chars().nth(i) {
             Some(ref ch) => !self.set.contains(ch),
-            None => false
+            None => false,
         };
         current_equal && check(target, i + 1)
     }
 }
 
 pub struct SeqExpr {
-    pub seq: Vec<Rc<dyn RegexExpr>>
+    pub seq: Vec<Arc<dyn RegexExpr>>,
 }
 
 impl SeqExpr {
-    pub fn new(seq: Vec<Rc<dyn RegexExpr>>) -> SeqExpr {
+    pub fn new(seq: Vec<Arc<dyn RegexExpr>>) -> SeqExpr {
         SeqExpr { seq }
     }
 }
 
 impl RegexExpr for SeqExpr {
-    fn match_apply<'a>(&self,
-                       target: &str, i: usize,
-                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
-        let mut curr: Rc<RegexExpr> = reg!(EpsilonExpr);
+    fn match_apply<'a>(
+        &self,
+        target: &str,
+        i: usize,
+        check: Arc<'a + Fn(&str, usize) -> bool>,
+    ) -> bool {
+        let mut curr: Arc<RegexExpr> = reg!(EpsilonExpr);
         for i in 0..self.seq.len() {
-            curr = reg!(ConcatExpr,curr, self.seq[i].clone());
+            curr = reg!(ConcatExpr, curr, self.seq[i].clone());
         }
         curr.match_apply(target, i, check)
     }
 }
 
 pub struct PlusExpr {
-    pub sub: Rc<dyn RegexExpr>
+    pub sub: Arc<dyn RegexExpr>,
 }
 
 impl PlusExpr {
-    pub fn new(sub: Rc<dyn RegexExpr>) -> PlusExpr {
+    pub fn new(sub: Arc<dyn RegexExpr>) -> PlusExpr {
         PlusExpr { sub }
     }
 }
 
 impl RegexExpr for PlusExpr {
-    fn match_apply<'a>(&self,
-                       target: &str, i: usize,
-                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
-        let concat_expr: Rc<ConcatExpr> = reg!(ConcatExpr,
+    fn match_apply<'a>(
+        &self,
+        target: &str,
+        i: usize,
+        check: Arc<'a + Fn(&str, usize) -> bool>,
+    ) -> bool {
+        let concat_expr: Arc<ConcatExpr> = reg!(
+            ConcatExpr,
             self.sub.clone(),
-            reg!(RepeatExpr,self.sub.clone())
-            );
+            reg!(RepeatExpr, self.sub.clone())
+        );
         concat_expr.match_apply(target, i, check)
     }
 }
 
-
 #[cfg(test)]
 mod tests {
-    use super::*;
     use super::super::core::{reg_match, MatchExpr};
+    use super::*;
 
     #[test]
     fn test_optional() {
@@ -198,19 +229,26 @@ mod tests {
         for i in 0..10 {
             set.insert((i + ('0' as i32)) as u8 as char);
         }
-        let charset_reg = reg!(CharSetExpr, set );
+        let charset_reg = reg!(CharSetExpr, set);
         assert_eq!(reg_match(charset_reg, "1"), true);
     }
 
     #[test]
     fn test_seq() {
-        let seq: Vec<Rc<RegexExpr>> = vec![reg!(MatchExpr,'1'), reg!(MatchExpr,'c'), reg!(MatchExpr,'2')];
-        assert_eq!(reg_match(reg!(SeqExpr,seq), "1c2"), true);
+        let seq: Vec<Arc<RegexExpr>> = vec![
+            reg!(MatchExpr, '1'),
+            reg!(MatchExpr, 'c'),
+            reg!(MatchExpr, '2'),
+        ];
+        assert_eq!(reg_match(reg!(SeqExpr, seq), "1c2"), true);
     }
 
     #[test]
     fn test_plus() {
-        assert_eq!(reg_match(reg!(PlusExpr,reg!(MatchExpr,'a')), "aaaa"), true);
+        assert_eq!(
+            reg_match(reg!(PlusExpr, reg!(MatchExpr, 'a')), "aaaa"),
+            true
+        );
     }
 
     #[test]
@@ -219,26 +257,22 @@ mod tests {
         for i in 0..8 {
             set.insert((i + ('0' as i32)) as u8 as char);
         }
-        let charset_reg = reg!(NotInCharSetExpr, set );
+        let charset_reg = reg!(NotInCharSetExpr, set);
         assert_eq!(reg_match(charset_reg, "9"), true);
     }
 
     #[test]
     fn test_string_set() {
-        let keywords: HashSet<_> =
-            vec!["auto", "break", "case",
-                 "char", "const", "continue",
-                 "default", "do", "double",
-                 "else", "enum", "extern",
-                 "float", "for", "goto",
-                 "if", "int", "long",
-                 "register", "return", "short",
-                 "signed", "sizeof", "static",
-                 "struct", "switch", "typedef",
-                 "union", "unsigned", "void",
-                 "volatile", "while"
-            ].iter().map(|it| it.to_string()).collect();
-        let keywords_expr: Rc<StringSetExpr> = reg!(StringSetExpr,keywords);
+        let keywords: HashSet<_> = vec![
+            "auto", "break", "case", "char", "const", "continue", "default", "do", "double",
+            "else", "enum", "extern", "float", "for", "goto", "if", "int", "long", "register",
+            "return", "short", "signed", "sizeof", "static", "struct", "switch", "typedef",
+            "union", "unsigned", "void", "volatile", "while",
+        ]
+        .iter()
+        .map(|it| it.to_string())
+        .collect();
+        let keywords_expr: Arc<StringSetExpr> = reg!(StringSetExpr, keywords);
         assert_eq!(reg_match(keywords_expr.clone(), "switch"), true);
         assert_eq!(reg_match(keywords_expr.clone(), "switch1"), false);
     }

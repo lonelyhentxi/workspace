@@ -1,24 +1,27 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
-pub trait RegexExpr {
-    fn match_apply<'a>(&self,
-                       target: &str, i: usize,
-                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool;
+pub trait RegexExpr
+where
+    Self: Send + Sync,
+{
+    fn match_apply<'a>(
+        &self,
+        target: &str,
+        i: usize,
+        check: Arc<'a + Fn(&str, usize) -> bool>,
+    ) -> bool;
 
     fn reg_match(&self, target: &str) -> bool {
-        self.match_apply(target, 0, Rc::new(|rest, i| {
-            rest.len() == i
-        }))
+        self.match_apply(target, 0, Arc::new(|rest, i| rest.len() == i))
     }
     fn reg_search(&self, target: &str, i: usize) -> bool {
-        self.match_apply(target, i, Rc::new(|_, _| {
-            true
-        })) || (target.len() > i && self.reg_search(target, i + 1))
+        self.match_apply(target, i, Arc::new(|_, _| true))
+            || (target.len() > i && self.reg_search(target, i + 1))
     }
 }
 
 pub struct MatchExpr {
-   pub sub: char
+    pub sub: char,
 }
 
 impl MatchExpr {
@@ -28,19 +31,22 @@ impl MatchExpr {
 }
 
 impl RegexExpr for MatchExpr {
-    fn match_apply<'a>(&self,
-                       target: &str, i: usize,
-                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
+    fn match_apply<'a>(
+        &self,
+        target: &str,
+        i: usize,
+        check: Arc<'a + Fn(&str, usize) -> bool>,
+    ) -> bool {
         let current_equal = match target.chars().nth(i) {
             Some(ch) => ch == self.sub,
-            None => false
+            None => false,
         };
         current_equal && check(target, i + 1)
     }
 }
 
 pub struct NotMatchExpr {
-   pub sub: char
+    pub sub: char,
 }
 
 impl NotMatchExpr {
@@ -50,12 +56,15 @@ impl NotMatchExpr {
 }
 
 impl RegexExpr for NotMatchExpr {
-    fn match_apply<'a>(&self,
-                       target: &str, i: usize,
-                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
+    fn match_apply<'a>(
+        &self,
+        target: &str,
+        i: usize,
+        check: Arc<'a + Fn(&str, usize) -> bool>,
+    ) -> bool {
         let current_equal = match target.chars().nth(i) {
             Some(ch) => ch != self.sub,
-            None => false
+            None => false,
         };
         current_equal && check(target, i + 1)
     }
@@ -70,76 +79,86 @@ impl EpsilonExpr {
 }
 
 impl RegexExpr for EpsilonExpr {
-    fn match_apply<'a>(&self,
-                       target: &str, i: usize,
-                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
+    fn match_apply<'a>(
+        &self,
+        target: &str,
+        i: usize,
+        check: Arc<'a + Fn(&str, usize) -> bool>,
+    ) -> bool {
         check(target, i)
     }
 }
 
 pub struct ConcatExpr {
-   pub left: Rc<dyn RegexExpr>,
-   pub right: Rc<dyn RegexExpr>,
+    pub left: Arc<dyn RegexExpr>,
+    pub right: Arc<dyn RegexExpr>,
 }
 
 impl ConcatExpr {
-    pub fn new(left: Rc<dyn RegexExpr>, right: Rc<dyn RegexExpr>) -> ConcatExpr {
-        ConcatExpr {
-            left,
-            right,
-        }
+    pub fn new(left: Arc<dyn RegexExpr>, right: Arc<dyn RegexExpr>) -> ConcatExpr {
+        ConcatExpr { left, right }
     }
 }
 
 impl RegexExpr for ConcatExpr {
-    fn match_apply<'a>(&self,
-                       target: &str, i: usize,
-                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
-        self.left.match_apply(target, i, Rc::new(|rest, ri|
-            self.right.match_apply(rest, ri, check.clone())))
+    fn match_apply<'a>(
+        &self,
+        target: &str,
+        i: usize,
+        check: Arc<'a + Fn(&str, usize) -> bool>,
+    ) -> bool {
+        self.left.match_apply(
+            target,
+            i,
+            Arc::new(|rest, ri| self.right.match_apply(rest, ri, check.clone())),
+        )
     }
 }
 
 pub struct AltExpr {
-    pub left: Rc<dyn RegexExpr>,
-    pub right: Rc<dyn RegexExpr>,
+    pub left: Arc<dyn RegexExpr>,
+    pub right: Arc<dyn RegexExpr>,
 }
 
 impl AltExpr {
-    pub fn new(left: Rc<dyn RegexExpr>, right: Rc<dyn RegexExpr>) -> AltExpr {
-        AltExpr {
-            left,
-            right,
-        }
+    pub fn new(left: Arc<dyn RegexExpr>, right: Arc<dyn RegexExpr>) -> AltExpr {
+        AltExpr { left, right }
     }
 }
 
 impl RegexExpr for AltExpr {
-    fn match_apply<'a>(&self,
-                       target: &str, i: usize,
-                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
-        self.left.match_apply(target, i, check.clone())
-            || self.right.match_apply(target, i, check)
+    fn match_apply<'a>(
+        &self,
+        target: &str,
+        i: usize,
+        check: Arc<'a + Fn(&str, usize) -> bool>,
+    ) -> bool {
+        self.left.match_apply(target, i, check.clone()) || self.right.match_apply(target, i, check)
     }
 }
 
 pub struct RepeatExpr {
-    pub sub: Rc<dyn RegexExpr>,
+    pub sub: Arc<dyn RegexExpr>,
 }
 
 impl RepeatExpr {
-    pub fn new(sub: Rc<dyn RegexExpr>) -> RepeatExpr {
+    pub fn new(sub: Arc<dyn RegexExpr>) -> RepeatExpr {
         RepeatExpr { sub }
     }
 }
 
 impl RegexExpr for RepeatExpr {
-    fn match_apply<'a>(&self,
-                       target: &str, i: usize,
-                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
-        self.sub.match_apply(target, i, Rc::new(|rest, ri| {
-            self.match_apply(rest, ri, check.clone()) || check(rest, ri)
-        })) || check(target, i)
+    fn match_apply<'a>(
+        &self,
+        target: &str,
+        i: usize,
+        check: Arc<'a + Fn(&str, usize) -> bool>,
+    ) -> bool {
+        self.sub.match_apply(
+            target,
+            i,
+            Arc::new(|rest, ri| self.match_apply(rest, ri, check.clone()) || check(rest, ri)),
+        ) || check(target, i)
     }
 }
 
@@ -147,17 +166,20 @@ pub struct AnyExpr {}
 
 impl AnyExpr {
     pub fn new() -> AnyExpr {
-        AnyExpr{}
+        AnyExpr {}
     }
 }
 
 impl RegexExpr for AnyExpr {
-    fn match_apply<'a>(&self,
-                       target: &str, i: usize,
-                       check: Rc<'a + Fn(&str, usize) -> bool>) -> bool {
+    fn match_apply<'a>(
+        &self,
+        target: &str,
+        i: usize,
+        check: Arc<'a + Fn(&str, usize) -> bool>,
+    ) -> bool {
         let current_equal = match target.chars().nth(i) {
             Some(_) => true,
-            None => false
+            None => false,
         };
         current_equal && check(target, i + 1)
     }
@@ -167,8 +189,8 @@ impl RegexExpr for AnyExpr {
 macro_rules! reg {
     ( $y:ident $(,$x:expr)*) => {
         {
-            use std::rc::Rc;
-            let tmp_regex = Rc::new($y::new( $($x),*));
+            use std::sync::Arc;
+            let tmp_regex = Arc::new($y::new( $($x),*));
             tmp_regex
         }
     }
@@ -184,8 +206,7 @@ macro_rules! reg_static {
     }
 }
 
-
-pub fn reg_match(reg: Rc<dyn RegexExpr>, target: &str) -> bool {
+pub fn reg_match(reg: Arc<dyn RegexExpr>, target: &str) -> bool {
     reg.reg_match(target)
 }
 
@@ -193,7 +214,7 @@ pub fn reg_match_static(reg: impl RegexExpr, target: &str) -> bool {
     reg.reg_match(target)
 }
 
-pub fn reg_search(reg: Rc<dyn RegexExpr>, target: &str, i: usize) -> bool {
+pub fn reg_search(reg: Arc<dyn RegexExpr>, target: &str, i: usize) -> bool {
     reg.reg_search(target, i)
 }
 
@@ -207,13 +228,13 @@ mod tests {
 
     #[test]
     fn test_macro_and_reg_match() {
-        assert_eq!(reg_match_static(reg_static!(MatchExpr,'a'), "a"), true);
+        assert_eq!(reg_match_static(reg_static!(MatchExpr, 'a'), "a"), true);
         assert_eq!(reg_match(reg!(MatchExpr, 'a'), "a"), true);
     }
 
     #[test]
     fn test_match() {
-        assert_eq!(reg_match(reg!(MatchExpr,'a'), "a"), true);
+        assert_eq!(reg_match(reg!(MatchExpr, 'a'), "a"), true);
     }
 
     #[test]
@@ -223,31 +244,38 @@ mod tests {
 
     #[test]
     fn test_concat() {
-        assert_eq!(reg_match(reg!(ConcatExpr,
-    reg ! (MatchExpr, 'a'),
-    reg !(MatchExpr, 'b')), "ab"), true);
+        assert_eq!(
+            reg_match(
+                reg!(ConcatExpr, reg!(MatchExpr, 'a'), reg!(MatchExpr, 'b')),
+                "ab"
+            ),
+            true
+        );
     }
 
     #[test]
     fn test_alt() {
-        let alt_reg = reg!(AltExpr, reg !(MatchExpr, 'a'), reg ! (MatchExpr, 'b'));
+        let alt_reg = reg!(AltExpr, reg!(MatchExpr, 'a'), reg!(MatchExpr, 'b'));
         assert_eq!(reg_match(alt_reg.clone(), "a"), true);
         assert_eq!(reg_match(alt_reg.clone(), "b"), true);
     }
 
     #[test]
     fn test_repeat() {
-        assert_eq!(reg_match(reg!(RepeatExpr,reg ! (MatchExpr, 'a')), "aaaaaa"), true);
+        assert_eq!(
+            reg_match(reg!(RepeatExpr, reg!(MatchExpr, 'a')), "aaaaaa"),
+            true
+        );
     }
 
     #[test]
     fn test_not_match() {
-        assert_eq!(reg_match(reg!(NotMatchExpr,'d'), "a"), true);
+        assert_eq!(reg_match(reg!(NotMatchExpr, 'd'), "a"), true);
     }
 
     #[test]
     fn test_search() {
-        assert_eq!(reg_search(reg!(MatchExpr,'a'), "aba", 1), true);
+        assert_eq!(reg_search(reg!(MatchExpr, 'a'), "aba", 1), true);
     }
 
     #[test]

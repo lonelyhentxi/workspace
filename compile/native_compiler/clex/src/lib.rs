@@ -1,8 +1,10 @@
-pub mod core;
+#[macro_use]
+extern crate lazy_static;
 pub mod constant;
-pub mod keyword;
+pub mod core;
 pub mod identifier;
+pub mod keyword;
+pub mod lex;
 pub mod misc;
 pub mod operator;
 pub mod pattern;
-pub mod lex;

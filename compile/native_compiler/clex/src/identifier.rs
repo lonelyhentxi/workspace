@@ -1,25 +1,29 @@
-use std::rc::Rc;
-use regex_engine::ext::*;
-use regex_engine::core::*;
 use crate::core::{LexPattern, LexTable};
-use crate::misc::{gen_letter_reg, gen_digit_reg};
+use crate::misc::{gen_digit_reg, gen_letter_reg};
+use regex_engine::core::*;
+use regex_engine::ext::*;
 use regex_engine::reg;
+use std::sync::Arc;
 
 pub struct IdentifierPattern {
-    expr: Rc<ConcatExpr>,
+    expr: Arc<ConcatExpr>,
     min_len: usize,
     max_len: usize,
 }
 
 impl IdentifierPattern {
     pub fn new() -> IdentifierPattern {
-        let digit_expr: Rc<CharSetExpr> = gen_digit_reg();
-        let letter_expr: Rc<CharSetExpr> = gen_letter_reg();
+        let digit_expr: Arc<CharSetExpr> = gen_digit_reg();
+        let letter_expr: Arc<CharSetExpr> = gen_letter_reg();
         // {L}({L}|{D})*
-        let expr: Rc<ConcatExpr> = reg!(ConcatExpr,
-                letter_expr.clone(),
-                reg!(RepeatExpr, reg!(AltExpr,letter_expr.clone(),digit_expr.clone()))
-            );
+        let expr: Arc<ConcatExpr> = reg!(
+            ConcatExpr,
+            letter_expr.clone(),
+            reg!(
+                RepeatExpr,
+                reg!(AltExpr, letter_expr.clone(), digit_expr.clone())
+            )
+        );
         IdentifierPattern {
             min_len: 1,
             max_len: 64,
@@ -34,11 +38,11 @@ impl LexPattern for IdentifierPattern {
     }
 
     fn hook(&self, table: &LexTable, _target: &str) -> usize {
-        table.get("identifier").0
+        table.get("IDENTIFIER").0
     }
 
     fn register(&self, table: &mut LexTable) {
-        table.try_insert("identifier","identifier");
+        table.try_insert("IDENTIFIER", "IDENTIFIER");
     }
 
     fn is_match(&self, target: &str) -> bool {
