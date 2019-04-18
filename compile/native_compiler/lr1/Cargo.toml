@@ -1,8 +1,7 @@
 [package]
-name = "clex"
-version = "0.1.1"
+name = "lr1"
+version = "0.0.1"
 authors = ["lonelyhentai <master@evernightfireworks.com>"]
 edition = "2018"
 
 [dependencies]
-regex_engine = { path = "../regex_engine" }
