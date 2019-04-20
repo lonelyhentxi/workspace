@@ -99,7 +99,7 @@ namespace Eru.Server.Services
             var user = await _context.Users
                 .Include(u => u.UserRoleAssociations)
                 .ThenInclude(a => a.Role)
-                .SingleAsync(u => u.Name == loginParams.Name);
+                .FirstOrDefaultAsync(u => u.Name == loginParams.Name);
             if (user == null)
             {
                 throw new NotExistedException();
@@ -109,7 +109,7 @@ namespace Eru.Server.Services
 
             #region login_user_password_check
 
-            if (ValidatePassword(user, loginParams.Password))
+            if (!ValidatePassword(user, loginParams.Password))
             {
                 throw new BadAuthenticationException();
             }

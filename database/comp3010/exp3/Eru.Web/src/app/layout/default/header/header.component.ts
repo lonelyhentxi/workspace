@@ -14,8 +14,4 @@ export class HeaderComponent {
   toggleCollapsedSidebar() {
     this.settings.setLayout('collapsed', !this.settings.layout.collapsed);
   }
-
-  searchToggleChange() {
-    this.searchToggleStatus = !this.searchToggleStatus;
-  }
 }

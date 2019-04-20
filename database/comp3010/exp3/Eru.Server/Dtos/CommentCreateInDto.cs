@@ -18,5 +18,7 @@ namespace Eru.Server.Dtos
         [DefaultValue(null)] public int? CategoryId { get; set; } = null;
          
         [Required] public string Content { get; set; }
+
+        [Required] public Guid UserId { get; set; }
     }
 }

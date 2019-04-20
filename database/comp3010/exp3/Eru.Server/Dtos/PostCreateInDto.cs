@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -16,5 +17,7 @@ namespace Eru.Server.Dtos
 
         [Required] public string Content { get; set; }
         [Required] public string Description { get; set; }
+
+        [Required] public Guid UserId { get; set; }
     }
 }

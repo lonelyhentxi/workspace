@@ -59,7 +59,7 @@ namespace Eru.Server.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<ResultOutDto<object>>> PutComment(string id,Comment comment)
+        public async Task<ActionResult<ResultOutDto<object>>> PutComment([FromRoute]string id,[FromBody]Comment comment)
         {
             if (!Guid.TryParse(id, out Guid guid)||guid!=comment.Id)
             {
@@ -83,12 +83,11 @@ namespace Eru.Server.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<ResultOutDto<Comment>>> PostComment(CommentCreateInDto createOptions)
+        public async Task<ActionResult<ResultOutDto<Comment>>> PostComment([FromBody]CommentCreateInDto createOptions)
         {
-           var user = new User();
            try
            {
-           var comment = await _commentService.Create(createOptions, user);
+           var comment = await _commentService.Create(createOptions);
            return Ok(ResultOutDtoBuilder.Success(comment));
            }
            catch (NotExistedException e)
@@ -104,7 +103,7 @@ namespace Eru.Server.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<ResultOutDto<object>>> DeleteComment(string id)
+        public async Task<ActionResult<ResultOutDto<object>>> DeleteComment([FromRoute]string id)
         {
             if (!Guid.TryParse(id, out Guid guid))
             {
