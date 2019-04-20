@@ -1,5 +1,5 @@
 use clap::{App, Arg, SubCommand};
-use naive_compiler::command::lex_command;
+use naive_compiler::command::{lex_command, parse_command};
 
 fn main() {
     let matches = App::new("[A Progressive Naive Compiler]")
@@ -31,9 +31,37 @@ fn main() {
                         .required(true),
                 ),
         )
+        .subcommand(
+            SubCommand::with_name("parse")
+                .about("Grammar Analysis")
+                .arg(
+                    Arg::with_name("table")
+                        .short("t")
+                        .help("Input table file")
+                        .value_name("TABLE_FILE")
+                        .required(true),
+                )
+                .arg(
+                    Arg::with_name("tokens")
+                        .short("i")
+                        .help("Input tokens file")
+                        .value_name("TOKEN_FILE")
+                        .required(true),
+                )
+                .arg(
+                    Arg::with_name("sequence")
+                        .short("s")
+                        .help("Output sequence file")
+                        .value_name("SEQUENCE_FILE")
+                        .required(true),
+                ),
+        )
         .get_matches();
 
     if let Some(matches) = matches.subcommand_matches("lex") {
         lex_command(matches)
+    }
+    if let Some(matches) = matches.subcommand_matches("parse") {
+        parse_command(matches)
     }
 }

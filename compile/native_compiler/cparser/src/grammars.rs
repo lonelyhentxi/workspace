@@ -1,6 +1,6 @@
 use lr1::Grammar;
 
-pub fn gen_cgrammers() -> Grammar {
+pub fn gen_cgrammars() -> Grammar {
     let mut cases: Vec<(&str, Vec<&str>)> = vec![];
     macro_rules! add_case_group {
         ($head:expr$(,$tail:expr)*) => {
@@ -11,12 +11,6 @@ pub fn gen_cgrammers() -> Grammar {
     }
     add_case_group!(
         "primary_expression",
-        vec!["CONSTANT"],
-        vec!["STRING_LITERAL"],
-        vec!["(", "expression", ")"]
-    );
-    add_case_group!(
-        "primary_expression",
         vec!["IDENTIFIER"],
         vec!["CONSTANT"],
         vec!["STRING_LITERAL"],
@@ -24,7 +18,6 @@ pub fn gen_cgrammers() -> Grammar {
     );
     add_case_group!(
         "postfix_expression",
-        vec!["primary_expression"],
         vec!["postfix_expression", "[", "expression", "]"],
         vec!["postfix_expression", "(", ")"],
         vec!["postfix_expression", "(", "argument_expression_list", ")"],

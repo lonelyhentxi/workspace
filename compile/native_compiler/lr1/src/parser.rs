@@ -174,7 +174,7 @@ impl Parser {
                     let stacktop = item.stacktop().unwrap();
                     let next = self.goto(ss_i, &stacktop);
                     if next == None {
-                        println!("NONE NONE NONE");
+                        println!("NONE");
                         continue;
                     }
                     let next = next.unwrap();
@@ -184,7 +184,6 @@ impl Parser {
                             self.insert_ss(next.clone());
                         }
                     }
-
                     if stacktop.is_terminal() {
                         let entry = self
                             .action
@@ -204,7 +203,6 @@ impl Parser {
                 done.insert(ss_i.clone());
             }
         }
-
         self.ss = ss;
     }
 
@@ -582,7 +580,7 @@ mod tests {
     fn goto_test2() {
         use Symbol::*;
         let parser = example_parser();
-        let cc_vec = paretheses_cc();
+        let cc_vec = paretheses_ss();
 
         let col = vec![
             Nonterminal("Goal".to_string()),
@@ -656,7 +654,7 @@ mod tests {
     fn action_test() {
         use Action::*;
         let parser = example_parser();
-        let cc_vec = paretheses_cc();
+        let cc_vec = paretheses_ss();
         let prods = parser.grammar.productions.clone();
 
         let col = [EOF, "(", ")"];
@@ -730,20 +728,20 @@ mod tests {
     }
 
     #[test]
-    fn build_cc_test() {
+    fn build_ss_test() {
         let parser = example_parser();
-        let expected_cc: BTreeSet<Rc<BTreeSet<Item>>> = paretheses_cc().into_iter().collect();
-        let actual_cc = parser.ss.clone();
+        let expected_ss: BTreeSet<Rc<BTreeSet<Item>>> = paretheses_ss().into_iter().collect();
+        let actual_ss = parser.ss.clone();
 
         assert_eq!(
-            actual_cc.len(),
-            expected_cc.len(),
+            actual_ss.len(),
+            expected_ss.len(),
             "Should have the same length \nACTUAL   {}\nEXPECTED {}",
-            Item::set_of_sets_to_string(&actual_cc),
-            Item::set_of_sets_to_string(&expected_cc)
+            Item::set_of_sets_to_string(&actual_ss),
+            Item::set_of_sets_to_string(&expected_ss)
         );
 
-        for (actual_items, expected_items) in actual_cc.iter().zip(&expected_cc) {
+        for (actual_items, expected_items) in actual_ss.iter().zip(&expected_ss) {
             assert_eq!(
                 actual_items,
                 expected_items,
@@ -822,7 +820,7 @@ mod tests {
         Parser::new(g)
     }
 
-    fn paretheses_cc() -> Vec<Rc<BTreeSet<Item>>> {
+    fn paretheses_ss() -> Vec<Rc<BTreeSet<Item>>> {
         let g = paretheses_grammar().with_fake_goal();
         let cc0 = vec![
             Item::from_str(FAKE, vec!["List"], 0, EOF, &g),

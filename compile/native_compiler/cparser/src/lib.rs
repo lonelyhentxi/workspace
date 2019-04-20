@@ -1,2 +1,1 @@
-pub mod adapter;
-pub mod grammers;
+pub mod grammars;
