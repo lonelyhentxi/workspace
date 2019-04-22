@@ -1,14 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { UserDto } from '@core/eru/dtos/user.dto';
 import { ApplicationDto } from '@core/eru/dtos/application.dto';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   public readonly protocol = 'http';
-  public readonly host = '192.168.6.53:5001';
+  public readonly host = 'localhost:5001';
   public readonly apiBase = 'api';
-  public readonly apiCache = {
-     applications: [],
+  public readonly apiCache: {
+    applications: ApplicationDto[],
+    user?: UserDto
+  } = {
+    applications: [],
   };
 
   constructor(private httpClient: HttpClient) {

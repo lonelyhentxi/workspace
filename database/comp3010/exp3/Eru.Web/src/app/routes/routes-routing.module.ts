@@ -20,11 +20,11 @@ const routes: Routes = [
     component: LayoutDefaultComponent,
     canActivate: [SimpleGuard],
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: '', redirectTo: '/passport/login', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent, data: { title: '主页' } },
       { path: 'postcategories/:id',component: DashboardComponent, data: {title: '分类' } },
       { path: 'exception', loadChildren: './exception/exception.module#ExceptionModule' },
-      { path: 'posts/id',component: PostComponent }
+      { path: 'posts/:id',component: PostComponent,data: {title: '文章页' } }
       // 业务子模块
       // { path: 'widgets', loadChildren: './widgets/widgets.module#WidgetsModule' }
     ]

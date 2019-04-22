@@ -8,8 +8,8 @@
       </div>
     </div>
     <ul nz-menu>
-      <li nz-menu-item routerLink="/pro/account/center">{{ 'menu.account.center' | translate }}</li>
-      <li nz-menu-item routerLink="/pro/account/settings">{{ 'menu.account.settings' | translate }}</li>
+      <li nz-menu-item (click)="msg.warning('开发中')" [nzDisabled]="true" routerLink=".">{{ 'menu.account.center' | translate }} (开发中) </li>
+      <li nz-menu-item (click)="msg.warning('开发中')" [nzDisabled]="true" routerLink=".">{{ 'menu.account.settings' | translate }} (开发中)</li>
       <li nz-menu-divider></li>
       <div nz-menu-item (click)="logout()"><i nz-icon type="logout" class="mr-sm"></i>
         {{ 'menu.account.logout' | translate }}

@@ -57,10 +57,9 @@ namespace Eru.Server.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<ResultOutDto<Post>>> PostPost([FromBody] PostCreateInDto createOptions)
         {
-            var user = new User();
             try
             {
-                var post = await _postService.Create(createOptions, user);
+                var post = await _postService.Create(createOptions);
                 return Ok(ResultOutDtoBuilder.Success(post));
             }
             catch (NotExistedException e)

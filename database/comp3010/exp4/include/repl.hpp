@@ -4,8 +4,8 @@
 #include <iostream>
 
 namespace tinydb::repl {
-	using std::basic_ostream<char> ostream;
-	constexpr db_string_view_t prompt = u8"tinydb > ";
+	using std::ostream<db_char_t>;
+	constexpr db_string_view_t prompt = "tinydb > ";
 	inline ostream &write_prompt(ostream& os)
 	{
 		os << prompt;

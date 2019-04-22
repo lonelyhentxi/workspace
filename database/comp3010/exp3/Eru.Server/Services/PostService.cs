@@ -57,7 +57,7 @@ namespace Eru.Server.Services
             return post;
         }
 
-        public async Task<Post> Create(PostCreateInDto createOptions, User user)
+        public async Task<Post> Create(PostCreateInDto createOptions)
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
@@ -68,7 +68,7 @@ namespace Eru.Server.Services
                     CategoryId = createOptions.CategoryId,
                     CreateTime = now,
                     UpdateTime = now,
-                    UserId = user.Id,
+                    UserId = createOptions.UserId,
                     Title = createOptions.Title,
                     Content = createOptions.Content,
                     Description = createOptions.Description

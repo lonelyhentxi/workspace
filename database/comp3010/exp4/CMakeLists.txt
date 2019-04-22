@@ -4,7 +4,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(tiny_db_engine)
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/cmake-build-debug)
-
 find_package(Catch2 CONFIG REQUIRED)
 find_package(Boost REQUIRED locale)
 find_package(ICU)
