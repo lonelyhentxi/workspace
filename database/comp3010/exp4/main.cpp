@@ -1,21 +1,33 @@
 #include <iostream>
-<<<<<<< HEAD
-#include <repl.hpp>
-#include <unicode/utf8.h>
+#include "tinyutf8.h"
+#include "repl.hpp"
+#include "command.hpp"
 
-using std::cin;
-using std::cout;
+using namespace tinydb;
 
 int main(int argc, char* argv[]) {
-=======
-#include <cstdio>
-#include "extmem.h"
+	using frontend::command;
+	using frontend::command_type;
 
-int main() {
-    int a = 40;
-    const auto b = static_cast<unsigned char>(a);
-    std::printf("%c\n",b);
-    std::cout << b;
-    return 0;
->>>>>>> ca41912a34097351d76dcfb618c7f0ae3f39e17f
+	utf8_string current_line{};
+	frontend::repl_framework repl{};
+	while(true)
+	{
+		repl.log_prompt(std::cout);
+		std::cin >> current_line;
+		auto c = command::build_command(current_line);
+		if(c.has_value()) {
+			switch(c->type())
+			{
+				case command_type::exit:
+					exit(EXIT_SUCCESS);
+					break;
+				default: // command_type::unrecognized
+					c->warn_unrecognized(std::cout);
+					break;
+			}
+			continue;
+		}
+	}
+	return 0;
 }
