@@ -11,9 +11,9 @@ project(tiny_db_engine)
 
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/cmake-build-debug)
 find_package(Catch2 CONFIG REQUIRED)
-find_package(Boost REQUIRED locale)
+find_package(Boost REQUIRED)
 find_package (Qt5 COMPONENTS Core CONFIG REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS} ${Catch2_INCLUDE_DIRS} ${Qt_INCLUDE_DIRS} include)
+include_directories(${Boost_INCLUDE_DIRS} ${Catch2_INCLUDE_DIRS} ${Qt5_INCLUDE_DIRS} include)
 file(GLOB_RECURSE SOURCES include/*.hpp source/*.cpp)
 
 add_subdirectory(lib/extmem)

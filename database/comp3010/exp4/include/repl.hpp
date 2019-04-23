@@ -1,28 +1,35 @@
 #ifndef TINY_DB_ENGINE_REPL_HPP
 #define TINY_DB_ENGINE_REPL_HPP
+
 #include "QtCore/qstring.h"
 #include "QtCore/qtextstream.h"
 
 namespace tinydb::frontend {
-	using std::ostream;
+    using std::ostream;
 
 
     class repl_framework {
     private:
-         QString prompt_;
-		
+        QString prompt_;
+
+
     public:
-		repl_framework() : prompt_{ u8"tinydb> " } {}
+        QTextStream in;
+        QTextStream out;
 
-		inline void log_prompt(QTextStream &os) const
-		{
-			os << prompt_ << flush;
-		}
+        repl_framework() : prompt_{u8"tinydb> "}, in{stdin, QIODevice::ReadOnly}, out{stdout, QIODevice::WriteOnly} {}
 
-		inline QString input_preprocess(const QString &content) const
-		{
-			return content.trimmed();
-		}
+        inline void log_prompt() {
+            out << prompt_ << flush;
+        }
+
+        inline QString input_preprocess(const QString &content) const {
+            return content.trimmed();
+        }
+
+        inline QString read_line() {
+            return input_preprocess(in.readLine());
+        }
     };
 }
 

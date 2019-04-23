@@ -1,67 +1,94 @@
 #ifndef TINY_DB_ENGINE_STATEMENT_HPP
 #define TINY_DB_ENGINE_STATEMENT_HPP
 
+#include <memory>
 #include "QtCore/qtextstream.h"
 #include "QtCore/qstring.h"
+#include "factory.hpp"
+#include "repl.hpp"
 
 namespace tinydb::frontend {
-    enum class statement_type {
-        insert,
-        select,
-		empty,
-        unrecognized,
-    };
+    using std::unique_ptr;
 
-    using statement_t = statement_type;
-
-    class statement {
-    private:
-        statement_type type_;
+    struct statement : util::sorter<statement, QString> {
+    protected:
         QString content_;
-        const static QString insert_prefix;
-        const static QString select_prefix;
         const static QString unrecognized_warning_prefix;
-    public:
-        inline statement_type type() const {
-            return type_;
+
+        inline void warn_unrecognized(QTextStream &os) {
+            os << unrecognized_warning_prefix << " '" << content_ << "'" << endl << flush;
         }
+    public:
+        explicit statement(QString content) : content_(std::move(content)) {}
+
+        explicit statement(key) {}
+
+        virtual ~statement() = default;
 
         inline const QString &content() const {
             return content_;
         }
 
-        explicit statement(QString content) {
-            if (is_insert(content)) {
-                type_ = statement_type::insert;
-            } else if (is_select(content)) {
-                type_ = statement_type::select;
-			}
-			else if (is_empty(content))
-			{
-				type_ = statement_type::empty;
-			}
-			else {
-                type_ = statement_type::unrecognized;
-            }
+        static bool match(const QString &content) {
+            return !content.startsWith('.');
+        }
+
+        virtual inline void prepare(repl_framework &repl) {
+            warn_unrecognized(repl.out);
+        }
+    };
+
+    class select_statement : public statement::registrar<select_statement> {
+    private:
+        const static QString select_prefix;
+
+    public:
+        explicit select_statement(QString content) {
             content_ = std::move(content);
         }
 
-        inline static bool is_insert(const QString &content) {
-            return content.startsWith(insert_prefix);
-        }
+        ~select_statement() override = default;
 
-        inline static bool is_select(const QString &content) {
+        static bool match(const QString &content) {
             return content.startsWith(select_prefix);
         }
 
-		inline static bool is_empty(const QString &content)
-        {
-			return content.isEmpty();
+        inline void prepare(repl_framework &) override {
+        }
+    };
+
+    class insert_statement : public statement::registrar<insert_statement> {
+    private:
+        const static QString insert_prefix;
+    public:
+        explicit insert_statement(QString content) {
+            content_ = std::move(content);
         }
 
-        inline void warn_unrecognized(QTextStream &os) const {
-			os << unrecognized_warning_prefix << " '" << content() << "'."
-				<< endl << flush;
+        ~insert_statement() override = default;
+
+        static bool match(const QString &content) {
+            return content.startsWith(insert_prefix);
+        }
+
+        inline void prepare(repl_framework &) override {
+        }
+    };
+
+    class empty_statement : public statement::registrar<empty_statement> {
+
+    public:
+        explicit empty_statement(QString content) {
+            content_ = std::move(content);
+        }
+
+        ~empty_statement() override = default;
+
+        static bool match(const QString &content) {
+            return content.isEmpty();
+        }
+
+        inline void prepare(repl_framework &) override {
         }
     };
 }

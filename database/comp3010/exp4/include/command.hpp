@@ -4,67 +4,59 @@
 #include <optional>
 #include "QtCore/qstring.h"
 #include "QtCore/qtextstream.h"
+#include "factory.hpp"
+#include "repl.hpp"
 
-namespace tinydb::frontend
-{
-	using std::ostream;
-	using std::optional;
+namespace tinydb::frontend {
+    using std::ostream;
+    using std::optional;
 
-	enum class command_type
-	{
-		unrecognized,
-		exit,
-	};
-	using command_t = command_type;
+    struct command : util::sorter<command, QString> {
+    protected:
+        QString content_;
+        const static QString unrecognized_warning_prefix;
+    private:
+        inline void warn_unrecognized(QTextStream &os) {
+            os << unrecognized_warning_prefix << " '" << content_ << "'" << endl << flush;
+        }
+    public:
+        explicit command(QString content) : content_(std::move(content)) {}
 
-	class command
-	{
-	private:
-		const static QString exit_command;
-		const static QString unrecognized_warning_prefix;
-		QString content_;
-		command_type type_;
-		explicit command(QString content)
-		{
-			if(command::if_exit(content))
-			{
-				type_ = command_type::exit;
-			}
-			else
-			{
-				type_ = command_type::unrecognized;
-			}
-			content_ = std::move(content);
-		}
-	public:
-		command() = delete;
-		inline command_type type() const
-		{
-			return type_;
-		}
+        explicit command(key) {}
 
-		inline const QString& content() const
-		{
-			return content_;
-		}
+        virtual ~command() = default;
 
-		inline static bool if_exit(const QString& command)
-		{
-			return command == exit_command;
-		}
+        virtual inline void do_command(repl_framework &repl) {
+            warn_unrecognized(repl.out);
+        }
 
-		static std::optional<command> build_command(QString content);
+        inline const QString &content() const {
+            return content_;
+        }
 
-		inline void warn_unrecognized(QTextStream &os) const
-		{
-			os << unrecognized_warning_prefix << " '" << content() << "'." << endl << flush;
-		}
+        static bool match(const QString &content) {
+            return content.startsWith('.');
+        }
+    };
 
-		inline bool static is_command(const QString& content)
-		{
-			return content.startsWith('.');
-		}
-	};
+    class exit_command : public command::registrar<exit_command> {
+    private:
+        const static QString exit_command_match;
+    public:
+        explicit exit_command(QString content) {
+            content_ = std::move(content);
+        }
+
+        ~exit_command() override = default;
+
+        static bool match(const QString &content) {
+            return content.startsWith(exit_command_match);
+        }
+
+        inline void do_command(repl_framework &) override {
+            exit(EXIT_SUCCESS);
+        }
+    };
 }
 
 #endif
