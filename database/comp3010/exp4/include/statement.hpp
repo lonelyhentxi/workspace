@@ -7,18 +7,26 @@
 #include "factory.hpp"
 #include "repl.hpp"
 
-namespace tinydb::frontend {
-    using std::unique_ptr;
+/**
+ * do not directly use any constructor of statement
+ */
 
-    struct statement : util::sorter<statement, QString> {
+namespace tinydb::frontend {
+
+    struct statement: util::sorter<statement, QString> {
     protected:
         QString content_;
         const static QString unrecognized_warning_prefix;
 
-        inline void warn_unrecognized(QTextStream &os) {
+        inline void warn_unrecognized(QTextStream &os) const {
             os << unrecognized_warning_prefix << " '" << content_ << "'" << endl << flush;
         }
     public:
+		statement() = delete;
+		statement(const statement&) = default;
+		statement(statement&&) = default;
+		statement& operator=(const statement&) = default;
+		statement& operator=(statement&&) = default;
         explicit statement(QString content) : content_(std::move(content)) {}
 
         explicit statement(key) {}
@@ -38,12 +46,18 @@ namespace tinydb::frontend {
         }
     };
 
-    class select_statement : public statement::registrar<select_statement> {
+    class select_statement final: public statement::registrar<select_statement> {
     private:
         const static QString select_prefix;
 
     public:
-        explicit select_statement(QString content) {
+		select_statement() = delete;
+		select_statement(const select_statement&) = default;
+		select_statement(select_statement&&) = default;
+		select_statement& operator=(const select_statement&) = default;
+		select_statement& operator=(select_statement&&) = default;
+
+		explicit select_statement(QString content): registrar() {
             content_ = std::move(content);
         }
 
@@ -57,11 +71,18 @@ namespace tinydb::frontend {
         }
     };
 
-    class insert_statement : public statement::registrar<insert_statement> {
+    class insert_statement final: public statement::registrar<insert_statement> {
     private:
         const static QString insert_prefix;
+		
     public:
-        explicit insert_statement(QString content) {
+		insert_statement() = delete;
+		insert_statement(const insert_statement&) = default;
+		insert_statement(insert_statement&&) = default;
+		insert_statement& operator=(const insert_statement&) = default;
+		insert_statement& operator=(insert_statement&&) = default;
+
+		explicit insert_statement(QString content): registrar() {
             content_ = std::move(content);
         }
 
@@ -75,10 +96,16 @@ namespace tinydb::frontend {
         }
     };
 
-    class empty_statement : public statement::registrar<empty_statement> {
+    class empty_statement final: public statement::registrar<empty_statement> {
 
     public:
-        explicit empty_statement(QString content) {
+		empty_statement() = delete;
+		empty_statement(const empty_statement&) = default;
+		empty_statement(empty_statement&&) = default;
+		empty_statement& operator=(const empty_statement&) = default;
+		empty_statement& operator=(empty_statement&&) = default;
+
+        explicit empty_statement(QString content) : registrar() {
             content_ = std::move(content);
         }
 

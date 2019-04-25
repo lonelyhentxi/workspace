@@ -7,6 +7,10 @@
 #include "factory.hpp"
 #include "repl.hpp"
 
+/**
+ * do not directly use any constructor of command
+ */
+
 namespace tinydb::frontend {
     using std::ostream;
     using std::optional;
@@ -16,13 +20,21 @@ namespace tinydb::frontend {
         QString content_;
         const static QString unrecognized_warning_prefix;
     private:
-        inline void warn_unrecognized(QTextStream &os) {
+        inline void warn_unrecognized(QTextStream &os) const {
             os << unrecognized_warning_prefix << " '" << content_ << "'" << endl << flush;
         }
+
     public:
+
         explicit command(QString content) : content_(std::move(content)) {}
 
         explicit command(key) {}
+
+		command() = delete;
+		command(const command&) = default;
+		command(command&&) = default;
+		command& operator=(const command&) = default;
+		command& operator=(command&&) = default;
 
         virtual ~command() = default;
 
@@ -39,11 +51,17 @@ namespace tinydb::frontend {
         }
     };
 
-    class exit_command : public command::registrar<exit_command> {
+    class exit_command final: public command::registrar<exit_command> {
     private:
         const static QString exit_command_match;
     public:
-        explicit exit_command(QString content) {
+		exit_command() = delete;
+		exit_command(const exit_command&) = default;
+		exit_command(exit_command&&) = default;
+		exit_command& operator=(const exit_command&) = default;
+		exit_command& operator=(exit_command&&) = default;
+
+        explicit exit_command(QString content): registrar() {
             content_ = std::move(content);
         }
 

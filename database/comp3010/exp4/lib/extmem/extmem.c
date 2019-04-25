@@ -10,6 +10,7 @@
 #include "extmem.h"
 #include <memory.h>
 
+
 Buffer *initBuffer(size_t bufSize, size_t blkSize, Buffer *buf)
 {
     int i;

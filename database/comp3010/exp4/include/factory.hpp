@@ -1,11 +1,8 @@
 #ifndef TINY_DB_ENGINE_FACTORY_HPP
 #define TINY_DB_ENGINE_FACTORY_HPP
 
-#include <map>
 #include <unordered_map>
 #include <memory>
-#include <typeinfo>
-#include <type_traits>
 #include <optional>
 #include <string>
 #include "type_util.hpp"
