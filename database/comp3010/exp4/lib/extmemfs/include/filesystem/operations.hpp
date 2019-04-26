@@ -885,31 +885,23 @@ namespace detail {
 
     dir_itr_close(
             void *&handle
-#   if     defined(BOOST_POSIX_API)
             , void *& buffer
-#   endif
     );
 
     struct dir_itr_imp {
         directory_entry dir_entry;
         void *handle;
 
-#   ifdef BOOST_POSIX_API
-        void*            buffer;  
-#   endif
+        void*            buffer;
 
         dir_itr_imp() : handle(0)
-#   ifdef BOOST_POSIX_API
         , buffer(0)
-#   endif
         {}
 
         ~dir_itr_imp() 
         {
             dir_itr_close(handle
-#       if defined(BOOST_POSIX_API)
                     , buffer
-#       endif
             );
         }
     };

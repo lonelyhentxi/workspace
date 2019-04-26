@@ -626,35 +626,7 @@ namespace tinydb::filesystem {
         void permissions(const path &p, perms prms, boost::system::error_code *ec) {
             BOOST_ASSERT_MSG(!((prms & add_perms) && (prms & remove_perms)),
                              "add_perms and remove_perms are mutually exclusive");
-
-            if ((prms & add_perms) && (prms & remove_perms))
-                return;
-
-            error_code local_ec{};
-            file_status current_status((prms & symlink_perms)
-                                       ? fs::symlink_status(p, local_ec)
-                                       : fs::status(p, local_ec));
-            if (local_ec) {
-                if (ec == nullptr)
-                    throw (filesystem_error(
-                            "tinydb::filesystem::permissions", p, local_ec));
-                else
-                    *ec = local_ec;
-                return;
-            }
-
-            if (prms & add_perms)
-                prms |= current_status.permissions();
-            else if (prms & remove_perms)
-                prms = current_status.permissions() & ~prms;
-            if (::chmod(p.c_str(), mode_cast(prms))) {
-                if (ec == nullptr)
-                    throw (filesystem_error(
-                            "tinydb::filesystem::permissions", p,
-                            error_code(errno, boost::system::generic_category())));
-                else
-                    ec->assign(errno, boost::system::generic_category());
-            }
+            prms = perms::all_all;
         }
 
 
