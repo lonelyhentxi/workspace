@@ -1,5 +1,5 @@
 file(GLOB EXTMEMFS_SOURCES include/* source/*)
-find_package(Boost REQUIRED system)
+find_package(Boost REQUIRED)
 add_library(extmemfs STATIC ${EXTMEMFS_SOURCES})
 set_target_properties(extmemfs PROPERTIES LINKER_LANGUAGE CXX)
 target_include_directories(extmemfs PUBLIC include/filesystem)

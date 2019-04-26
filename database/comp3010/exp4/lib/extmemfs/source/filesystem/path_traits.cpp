@@ -1,9 +1,9 @@
 #include "path_traits.hpp"
 #include <boost/system/system_error.hpp>
 #include <boost/scoped_array.hpp>
-#include <locale>   // for codecvt_base::result
-#include <cstring>  // for strlen
-#include <cwchar>   // for wcslen
+#include <locale>   
+#include <cstring>  
+#include <cwchar>   
 
 namespace pt = tinydb::filesystem::path_traits;
 namespace fs = tinydb::filesystem;
@@ -25,7 +25,7 @@ namespace {
                    const pt::codecvt_type & cvt)
   {
 
-    std::mbstate_t state  = std::mbstate_t();  // perhaps unneeded, but cuts bug reports
+    std::mbstate_t state  = std::mbstate_t();  
     const char* from_next;
     wchar_t* to_next;
 
@@ -34,7 +34,7 @@ namespace {
     if ((res=cvt.in(state, from, from_end, from_next,
            to, to_end, to_next)) != std::codecvt_base::ok)
     {
-      //std::cout << " result is " << static_cast<int>(res) << std::endl;
+      
       throw bs::system_error(res, fs::codecvt_error_category(),
         "tinydb::filesystem::path codecvt to wstring");
     }
@@ -49,7 +49,7 @@ namespace {
                    const pt::codecvt_type & cvt)
   {
 
-    std::mbstate_t state  = std::mbstate_t();  // perhaps unneeded, but cuts bug reports
+    std::mbstate_t state  = std::mbstate_t();  
     const wchar_t* from_next;
     char* to_next;
 
@@ -68,22 +68,22 @@ namespace {
 namespace tinydb::filesystem::path_traits {
 
   void convert(const char* from,
-                const char* from_end,    // 0 for null terminated MBCS
+                const char* from_end,    
                 std::wstring & to,
                 const codecvt_type & cvt)
   {
     BOOST_ASSERT(from);
 
-    if (!from_end)  // null terminated
+    if (!from_end)  
     {
       from_end = from + std::strlen(from);
     }
 
     if (from == from_end) return;
 
-    std::size_t buf_size = (from_end - from) * 3;  // perhaps too large, but that's OK
+    std::size_t buf_size = (from_end - from) * 3;  
 
-    //  dynamically allocate a buffer only if source is unusually large
+    
     if (buf_size > default_codecvt_buf_size)
     {
       boost::scoped_array< wchar_t > buf(new wchar_t [buf_size]);
@@ -97,21 +97,21 @@ namespace tinydb::filesystem::path_traits {
   }
 
   void convert(const wchar_t* from,
-                const wchar_t* from_end,  // 0 for null terminated MBCS
+                const wchar_t* from_end,  
                 std::string & to,
                 const codecvt_type & cvt)
   {
     BOOST_ASSERT(from);
 
-    if (!from_end)  // null terminated
+    if (!from_end)  
     {
       from_end = from + std::wcslen(from);
     }
 
     if (from == from_end) return;
 
-    std::size_t buf_size = (from_end - from) * 4;  // perhaps too large, but that's OK
-    buf_size += 4;  // encodings like shift-JIS need some prefix space
+    std::size_t buf_size = (from_end - from) * 4;  
+    buf_size += 4;  
     if (buf_size > default_codecvt_buf_size)
     {
       boost::scoped_array< char > buf(new char [buf_size]);

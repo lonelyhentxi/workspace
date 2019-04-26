@@ -2,8 +2,6 @@
 #define TINY_DB_ENGINE_FILESYSTEM_OPERATIONS_HPP
 
 #include <boost/config.hpp>
-
-#include "config.hpp"
 #include "path.hpp"
 
 #include <boost/detail/scoped_enum_emulation.hpp>
@@ -16,39 +14,33 @@
 #include <boost/cstdint.hpp>
 #include <boost/assert.hpp>
 #include <string>
-#include <utility> // for pair
+#include <utility> 
 #include <ctime>
 #include <vector>
 #include <stack>
+#include <fstream>
+#include <boost/config/abi_prefix.hpp> 
 
-#ifdef BOOST_WINDOWS_API
 
-#  include <fstream>
-
-#endif
-
-#include <boost/config/abi_prefix.hpp> // must be the last #include
-
-//--------------------------------------------------------------------------------------//
 
 namespace tinydb::filesystem {
 
-    //--------------------------------------------------------------------------------------//
-    //                                                                                      //
-    //                            class filesystem_error                                    //
-    //                                                                                      //
-    //--------------------------------------------------------------------------------------//
+    
+    
+    
+    
+    
 
     class filesystem_error : public boost::system::system_error {
-        // see http://www.boost.org/more/error_handling.html for design rationale
+        
 
-        // all functions are inline to avoid issues with crossing dll boundaries
+        
 
-        // functions previously throw() are now BOOST_NOEXCEPT_OR_NOTHROW
-        // functions previously without throw() are now noexcept
+        
+        
 
     public:
-        // compiler generates copy constructor and copy assignment
+        
 
         filesystem_error(
                 const std::string &what_arg, boost::system::error_code ec) noexcept
@@ -121,16 +113,16 @@ namespace tinydb::filesystem {
 
     private:
         struct m_imp {
-            path m_path1; // may be empty()
-            path m_path2; // may be empty()
-            std::string m_what;  // not built until needed
+            path m_path1; 
+            path m_path2; 
+            std::string m_what;  
         };
         boost::shared_ptr<m_imp> m_imp_ptr;
     };
 
-//--------------------------------------------------------------------------------------//
-//                                     file_type                                        //
-//--------------------------------------------------------------------------------------//
+
+
+
 
     enum file_type {
         status_error,
@@ -138,83 +130,83 @@ namespace tinydb::filesystem {
         file_not_found,
         regular_file,
         directory_file,
-        // the following may not apply to some operating systems or file systems
+        
                 symlink_file,
         block_file,
         character_file,
         fifo_file,
         socket_file,
-        reparse_file,  // Windows: FILE_ATTRIBUTE_REPARSE_POINT that is not a symlink
-        type_unknown,  // file does exist, but isn't one of the above types or
-        // we don't have strong enough permission to find its type
+        reparse_file,  
+        type_unknown,  
+        
 
-        _detail_directory_symlink  // internal use only; never exposed to users
+        _detail_directory_symlink  
     };
 
-//--------------------------------------------------------------------------------------//
-//                                       perms                                          //
-//--------------------------------------------------------------------------------------//
+
+
+
 
     enum perms {
-        no_perms = 0,       // file_not_found is no_perms rather than perms_not_known
+        no_perms = 0,       
 
-        // POSIX equivalent macros given in comments.
-        // Values are from POSIX and are given in octal per the POSIX standard.
+        
+        
 
-        // permission bits
+        
 
-        owner_read = 0400,  // S_IRUSR, Read permission, owner
-        owner_write = 0200, // S_IWUSR, Write permission, owner
-        owner_exe = 0100,   // S_IXUSR, Execute/search permission, owner
-        owner_all = 0700,   // S_IRWXU, Read, write, execute/search by owner
+        owner_read = 0400,  
+        owner_write = 0200, 
+        owner_exe = 0100,   
+        owner_all = 0700,   
 
-        group_read = 040,   // S_IRGRP, Read permission, group
-        group_write = 020,  // S_IWGRP, Write permission, group
-        group_exe = 010,    // S_IXGRP, Execute/search permission, group
-        group_all = 070,    // S_IRWXG, Read, write, execute/search by group
+        group_read = 040,   
+        group_write = 020,  
+        group_exe = 010,    
+        group_all = 070,    
 
-        others_read = 04,   // S_IROTH, Read permission, others
-        others_write = 02,  // S_IWOTH, Write permission, others
-        others_exe = 01,    // S_IXOTH, Execute/search permission, others
-        others_all = 07,    // S_IRWXO, Read, write, execute/search by others
+        others_read = 04,   
+        others_write = 02,  
+        others_exe = 01,    
+        others_all = 07,    
 
-        all_all = 0777,     // owner_all|group_all|others_all
+        all_all = 0777,     
 
-        // other POSIX bits
+        
 
-        set_uid_on_exe = 04000, // S_ISUID, Set-user-ID on execution
-        set_gid_on_exe = 02000, // S_ISGID, Set-group-ID on execution
-        sticky_bit = 01000, // S_ISVTX,
-        // (POSIX XSI) On directories, restricted deletion flag
-        // (V7) 'sticky bit': save swapped text even after use
-        // (SunOS) On non-directories: don't cache this file
-        // (SVID-v4.2) On directories: restricted deletion flag
-        // Also see http://en.wikipedia.org/wiki/Sticky_bit
+        set_uid_on_exe = 04000, 
+        set_gid_on_exe = 02000, 
+        sticky_bit = 01000, 
+        
+        
+        
+        
+        
 
-        perms_mask = 07777,     // all_all|set_uid_on_exe|set_gid_on_exe|sticky_bit
+        perms_mask = 07777,     
 
-        perms_not_known = 0xFFFF, // present when directory_entry cache not loaded
+        perms_not_known = 0xFFFF, 
 
-        // options for permissions() function
+        
 
-        add_perms = 0x1000,     // adds the given permission bits to the current bits
-        remove_perms = 0x2000,  // removes the given permission bits from the current bits;
-        // choose add_perms or remove_perms, not both; if neither add_perms
-        // nor remove_perms is given, replace the current bits with
-        // the given bits.
+        add_perms = 0x1000,     
+        remove_perms = 0x2000,  
+        
+        
+        
 
-        symlink_perms = 0x4000, // on POSIX, don't resolve symlinks; implied on Windows
+        symlink_perms = 0x4000, 
 
-        // BOOST_BITMASK op~ casts to int32_least_t, producing invalid enum values
+        
                 _detail_extend_perms_32_1 = 0x7fffffff,
         _detail_extend_perms_32_2 = -0x7fffffff - 1
     };
 
     BOOST_BITMASK(perms)
 
-//--------------------------------------------------------------------------------------//
-//                                    file_status                                       //
-//--------------------------------------------------------------------------------------//
+
+
+
 
     class  file_status
             {
@@ -226,9 +218,9 @@ namespace tinydb::filesystem {
                     file_status(file_type v, perms prms) noexcept
                     : m_value(v), m_perms(prms) {}
 
-                    //  As of October 2015 the interaction between noexcept and =default is so troublesome
-                    //  for VC++, GCC, and probably other compilers, that =default is not used with noexcept
-                    //  functions. GCC is not even consistent for the same release on different platforms.
+                    
+                    
+                    
 
                     file_status(const file_status& rhs) noexcept
                     : m_value(rhs.m_value), m_perms(rhs.m_perms) {}
@@ -254,11 +246,11 @@ namespace tinydb::filesystem {
 # endif
 
 
-                    // observers
+                    
                     file_type  type() const noexcept            { return m_value; }
                     perms      permissions() const noexcept     { return m_perms; }
 
-                    // modifiers
+                    
                     void type(file_type v) noexcept       { m_value = v; }
                     void permissions(perms prms) noexcept { m_perms = prms; }
 
@@ -312,10 +304,10 @@ inline bool is_regular(file_status f) noexcept { return f.type() == regular_file
 # endif
 
 struct space_info {
-    // all values are byte counts
+    
     boost::uintmax_t capacity;
-    boost::uintmax_t free;      // <= capacity
-    boost::uintmax_t available; // <= free
+    boost::uintmax_t free;      
+    boost::uintmax_t available; 
 };
 
 BOOST_SCOPED_ENUM_START(copy_option) {
@@ -323,14 +315,14 @@ BOOST_SCOPED_ENUM_START(copy_option) {
 };
 BOOST_SCOPED_ENUM_END
 
-//--------------------------------------------------------------------------------------//
-//                             implementation details                                   //
-//--------------------------------------------------------------------------------------//
+
+
+
 
 namespace detail {
-    //  We cannot pass a BOOST_SCOPED_ENUM to a compled function because it will result
-    //  in an undefined reference if the library is compled with -std=c++0x but the use
-    //  is compiled in C++03 mode, or visa versa. See tickets 6124, 6779, 10038.
+    
+    
+    
     enum copy_option {
         none = 0, fail_if_exists = none, overwrite_if_exists
     };
@@ -366,7 +358,7 @@ namespace detail {
     void copy_directory(const path &from, const path &to, boost::system::error_code *ec = 0);
 
     
-    void copy_file(const path &from, const path &to,  // See ticket #2925
+    void copy_file(const path &from, const path &to,  
                    detail::copy_option option, boost::system::error_code *ec = 0);
 
     
@@ -472,13 +464,13 @@ namespace detail {
             path
 
     weakly_canonical(const path &p, boost::system::error_code *ec = 0);
-}  // namespace detail
+}  
 
-//--------------------------------------------------------------------------------------//
-//                                                                                      //
-//                             status query functions                                   //
-//                                                                                      //
-//--------------------------------------------------------------------------------------//
+
+
+
+
+
 
 inline
 file_status status(const path &p) { return detail::status(p); }
@@ -538,22 +530,22 @@ bool is_empty(const path &p) { return detail::is_empty(p); }
 inline
 bool is_empty(const path &p, boost::system::error_code &ec) { return detail::is_empty(p, &ec); }
 
-//--------------------------------------------------------------------------------------//
-//                                                                                      //
-//                             operational functions                                    //
-//                  in alphabetical order, unless otherwise noted                       //
-//                                                                                      //
-//--------------------------------------------------------------------------------------//
 
-//  forward declarations
-path current_path();  // fwd declaration
+
+
+
+
+
+
+
+path current_path();  
 path initial_path();
 
 
         path
 
 absolute(const path &p, const path &base = current_path());
-//  If base.is_absolute(), throws nothing. Thus no need for ec argument
+
 
 inline
 path canonical(const path &p, const path &base = current_path()) { return detail::canonical(p, base); }
@@ -593,7 +585,7 @@ void copy_directory(const path &from, const path &to, boost::system::error_code 
 }
 
 inline
-void copy_file(const path &from, const path &to,   // See ticket #2925
+void copy_file(const path &from, const path &to,   
                copy_option option) {
     detail::copy_file(from, to, static_cast<detail::copy_option>(option));
 }
@@ -604,7 +596,7 @@ void copy_file(const path &from, const path &to) {
 }
 
 inline
-void copy_file(const path &from, const path &to,   // See ticket #2925
+void copy_file(const path &from, const path &to,   
                copy_option option, boost::system::error_code &ec) noexcept {
     detail::copy_file(from, to, static_cast<detail::copy_option>(option), &ec);
 }
@@ -735,7 +727,7 @@ inline
 path read_symlink(const path &p, boost::system::error_code &ec) { return detail::read_symlink(p, &ec); }
 
 inline
-// For standardization, if the committee doesn't like "remove", consider "eliminate"
+
 bool remove(const path &p) { return detail::remove(p); }
 
 inline
@@ -755,7 +747,7 @@ void rename(const path &old_p, const path &new_p, boost::system::error_code &ec)
     detail::rename(old_p, new_p, &ec);
 }
 
-inline  // name suggested by Scott McMurray
+inline  
 void resize_file(const path &p, uintmax_t size) { detail::resize_file(p, size); }
 
 inline
@@ -808,20 +800,20 @@ path weakly_canonical(const path &p) { return detail::weakly_canonical(p); }
 inline
 path weakly_canonical(const path &p, boost::system::error_code &ec) { return detail::weakly_canonical(p, &ec); }
 
-//--------------------------------------------------------------------------------------//
-//                                                                                      //
-//                                 directory_entry                                      //
-//                                                                                      //
-//--------------------------------------------------------------------------------------//
 
-//  GCC has a problem with a member function named path within a namespace or 
-//  sub-namespace that also has a class named path. The workaround is to always
-//  fully qualify the name path when it refers to the class name.
+
+
+
+
+
+
+
+
 
 class  directory_entry
         {
                 public:
-                typedef tinydb::filesystem::path::value_type value_type;   // enables class path ctor taking directory_entry
+                typedef tinydb::filesystem::path::value_type value_type;   
 
                 directory_entry() noexcept = default;
                 explicit directory_entry(tinydb::filesystem::path p)
@@ -878,12 +870,12 @@ class  directory_entry
 
                 private:
                 tinydb::filesystem::path   m_path;
-                mutable file_status       m_status;           // stat()-like
-                mutable file_status       m_symlink_status;   // lstat()-like
+                mutable file_status       m_status;           
+                mutable file_status       m_symlink_status;   
 
                 file_status m_get_status(boost::system::error_code* ec=0) const;
                 file_status m_get_symlink_status(boost::system::error_code* ec=0) const;
-        }; // directory_entry
+        }; 
 
 class directory_iterator;
 
@@ -891,7 +883,7 @@ namespace detail {
     
             boost::system::error_code
 
-    dir_itr_close(// never throws()
+    dir_itr_close(
             void *&handle
 #   if     defined(BOOST_POSIX_API)
             , void *& buffer
@@ -903,7 +895,7 @@ namespace detail {
         void *handle;
 
 #   ifdef BOOST_POSIX_API
-        void*            buffer;  // see dir_itr_increment implementation
+        void*            buffer;  
 #   endif
 
         dir_itr_imp() : handle(0)
@@ -912,7 +904,7 @@ namespace detail {
 #   endif
         {}
 
-        ~dir_itr_imp() // never throws
+        ~dir_itr_imp() 
         {
             dir_itr_close(handle
 #       if defined(BOOST_POSIX_API)
@@ -922,20 +914,20 @@ namespace detail {
         }
     };
 
-    // see path::iterator: comment below
+    
      void directory_iterator_construct(directory_iterator &it,
                                                                      const path &p, boost::system::error_code *ec);
 
      void directory_iterator_increment(directory_iterator &it,
                                                                      boost::system::error_code *ec);
 
-}  // namespace detail
+}  
 
-//--------------------------------------------------------------------------------------//
-//                                                                                      //
-//                                directory_iterator                                    //
-//                                                                                      //
-//--------------------------------------------------------------------------------------//
+
+
+
+
+
 
 class directory_iterator
         : public boost::iterator_facade<directory_iterator,
@@ -945,8 +937,8 @@ public:
 
     directory_iterator() noexcept = default;
 
-    // iterator_facade derived classes don't seem to like implementations in
-    // separate translation unit dll's, so forward to detail functions
+    
+    
     explicit directory_iterator(const path &p)
             : m_imp(new detail::dir_itr_imp) { detail::directory_iterator_construct(*this, p, 0); }
 
@@ -970,8 +962,8 @@ private:
     friend  void detail::directory_iterator_increment(directory_iterator &it,
                                                                                     boost::system::error_code *ec);
 
-    // shared_ptr provides the shallow-copy semantics required for single pass iterators
-    // (i.e. InputIterators). The end iterator is indicated by !m_imp || !m_imp->handle
+    
+    
     boost::shared_ptr<detail::dir_itr_imp> m_imp;
 
     friend class boost::iterator_core_access;
@@ -992,20 +984,20 @@ private:
                || (!rhs.m_imp && m_imp && !m_imp->handle);
     }
 
-};  // directory_iterator
+};  
 
-//  enable directory_iterator C++11 range-base for statement use  --------------------//
 
-//  begin() and end() are only used by a range-based for statement in the context of
-//  auto - thus the top-level const is stripped - so returning const is harmless and
-//  emphasizes begin() is just a pass through.
+
+
+
+
 inline
 const directory_iterator &begin(const directory_iterator &iter) noexcept { return iter; }
 
 inline
 directory_iterator end(const directory_iterator &) noexcept { return directory_iterator(); }
 
-//  enable directory_iterator BOOST_FOREACH  -----------------------------------------//
+
 
 inline
 directory_iterator &range_begin(directory_iterator &iter) noexcept { return iter; }
@@ -1019,9 +1011,9 @@ directory_iterator range_end(directory_iterator &) noexcept { return directory_i
 inline
 directory_iterator range_end(const directory_iterator &) noexcept { return directory_iterator(); }
 
-}  // namespace filesystem
+}  
 
-//  namespace boost template specializations
+
 template<typename C, typename Enabler>
 struct range_mutable_iterator;
 
@@ -1040,19 +1032,19 @@ struct range_const_iterator<tinydb::filesystem::directory_iterator, void> {
 
 namespace tinydb::filesystem {
 
-//--------------------------------------------------------------------------------------//
-//                                                                                      //
-//                      recursive_directory_iterator helpers                            //
-//                                                                                      //
-//--------------------------------------------------------------------------------------//
+
+
+
+
+
 
     BOOST_SCOPED_ENUM_START(symlink_option) {
         none,
-        no_recurse = none,         // don't follow directory symlinks (default behavior)
-        recurse,                   // follow directory symlinks
-        _detail_no_push = recurse << 1, // internal use only
+        no_recurse = none,         
+        recurse,                   
+        _detail_no_push = recurse << 1, 
 
-        // BOOST_BITMASK op~ casts to int32_least_t, producing invalid enum values
+        
                 _detail_extend_symlink_option_32_1 = 0x7fffffff,
         _detail_extend_symlink_option_32_2 = -0x7fffffff - 1
     };
@@ -1069,7 +1061,7 @@ namespace tinydb::filesystem {
 
             recur_dir_itr_imp() : m_level(0), m_options(symlink_option::none) {}
 
-            void increment(boost::system::error_code *ec);  // ec == 0 means throw on error
+            void increment(boost::system::error_code *ec);  
 
             bool push_directory(boost::system::error_code &ec) noexcept;
 
@@ -1077,18 +1069,18 @@ namespace tinydb::filesystem {
 
         };
 
-        //  Implementation is inline to avoid dynamic linking difficulties with m_stack:
-        //  Microsoft warning C4251, m_stack needs to have dll-interface to be used by
-        //  clients of struct 'tinydb::filesystem::detail::recur_dir_itr_imp'
+        
+        
+        
 
         inline
         bool recur_dir_itr_imp::push_directory(boost::system::error_code &ec) noexcept
-        // Returns: true if push occurs, otherwise false. Always returns false on error.
+        
         {
             ec.clear();
 
-            //  Discover if the iterator is for a directory that needs to be recursed into,
-            //  taking symlinks and options into account.
+            
+            
 
             if ((m_options & symlink_option::_detail_no_push) == symlink_option::_detail_no_push) {
                 m_options &= ~symlink_option::_detail_no_push;
@@ -1097,21 +1089,21 @@ namespace tinydb::filesystem {
 
             file_status symlink_stat;
 
-            // if we are not recursing into symlinks, we are going to have to know if the
-            // stack top is a symlink, so get symlink_status and verify no error occurred
+            
+            
             if ((m_options & symlink_option::recurse) != symlink_option::recurse) {
                 symlink_stat = m_stack.top()->symlink_status(ec);
                 if (ec)
                     return false;
             }
 
-            // Logic for following predicate was contributed by Daniel Aarno to handle cyclic
-            // symlinks correctly and efficiently, fixing ticket #5652.
-            //   if (((m_options & symlink_option::recurse) == symlink_option::recurse
-            //         || !is_symlink(m_stack.top()->symlink_status()))
-            //       && is_directory(m_stack.top()->status())) ...
-            // The predicate code has since been rewritten to pass error_code arguments,
-            // per ticket #5653.
+            
+            
+            
+            
+            
+            
+            
 
             if ((m_options & symlink_option::recurse) == symlink_option::recurse
                 || !is_symlink(symlink_stat)) {
@@ -1131,32 +1123,32 @@ namespace tinydb::filesystem {
 
         inline
         void recur_dir_itr_imp::increment(boost::system::error_code *ec)
-        // ec == 0 means throw on error
-        //
-        // Invariant: On return, the top of the iterator stack is the next valid (possibly
-        // end) iterator, regardless of whether or not an error is reported, and regardless of
-        // whether any error is reported by exception or error code. In other words, progress
-        // is always made so a loop on the iterator will always eventually terminate
-        // regardless of errors.
+        
+        
+        
+        
+        
+        
+        
         {
             boost::system::error_code ec_push_directory;
 
-            //  if various conditions are met, push a directory_iterator into the iterator stack
+            
             if (push_directory(ec_push_directory)) {
                 if (ec)
                     ec->clear();
                 return;
             }
 
-            //  Do the actual increment operation on the top iterator in the iterator
-            //  stack, popping the stack if necessary, until either the stack is empty or a
-            //  non-end iterator is reached.
+            
+            
+            
             while (!m_stack.empty() && ++m_stack.top() == directory_iterator()) {
                 m_stack.pop();
                 --m_level;
             }
 
-            // report errors if any
+            
             if (ec_push_directory) {
                 if (ec)
                     *ec = ec_push_directory;
@@ -1179,13 +1171,9 @@ namespace tinydb::filesystem {
                 --m_level;
             } while (!m_stack.empty() && ++m_stack.top() == directory_iterator());
         }
-    } // namespace detail
+    }
 
-//--------------------------------------------------------------------------------------//
-//                                                                                      //
-//                           recursive_directory_iterator                               //
-//                                                                                      //
-//--------------------------------------------------------------------------------------//
+
 
     class recursive_directory_iterator
             : public boost::iterator_facade<
@@ -1196,7 +1184,7 @@ namespace tinydb::filesystem {
 
         recursive_directory_iterator() noexcept = default;
 
-        explicit recursive_directory_iterator(const path &dir_path)  // throws if !exists()
+        explicit recursive_directory_iterator(const path &dir_path)  
                 : m_imp(new detail::recur_dir_itr_imp) {
             m_imp->m_options = symlink_option::none;
             m_imp->m_stack.push(directory_iterator(dir_path));
@@ -1204,7 +1192,7 @@ namespace tinydb::filesystem {
         }
 
         recursive_directory_iterator(const path &dir_path,
-                                     symlink_option opt)  // throws if !exists()
+                                     symlink_option opt)  
                 : m_imp(new detail::recur_dir_itr_imp) {
             m_imp->m_options = opt;
             m_imp->m_stack.push(directory_iterator(dir_path));
@@ -1233,7 +1221,7 @@ namespace tinydb::filesystem {
                              "increment() on end recursive_directory_iterator");
             m_imp->increment(&ec);
             if (m_imp->m_stack.empty())
-                m_imp.reset(); // done, so make end iterator
+                m_imp.reset(); 
             return *this;
         }
 
@@ -1264,7 +1252,7 @@ namespace tinydb::filesystem {
             BOOST_ASSERT_MSG(m_imp.get(),
                              "pop() on end recursive_directory_iterator");
             m_imp->pop();
-            if (m_imp->m_stack.empty()) m_imp.reset(); // done, so make end iterator
+            if (m_imp->m_stack.empty()) m_imp.reset(); 
         }
 
         void disable_recursion_pending(bool value = true) noexcept {
@@ -1292,9 +1280,9 @@ namespace tinydb::filesystem {
 
     private:
 
-        // shared_ptr provides the shallow-copy semantics required for single pass iterators
-        // (i.e. InputIterators).
-        // The end iterator is indicated by !m_imp || m_imp->m_stack.empty()
+        
+        
+        
         boost::shared_ptr<detail::recur_dir_itr_imp> m_imp;
 
         friend class boost::iterator_core_access;
@@ -1314,7 +1302,7 @@ namespace tinydb::filesystem {
                              "increment of end recursive_directory_iterator");
             m_imp->increment(0);
             if (m_imp->m_stack.empty())
-                m_imp.reset(); // done, so make end iterator
+                m_imp.reset(); 
         }
 
         bool equal(const recursive_directory_iterator &rhs) const {
@@ -1323,13 +1311,13 @@ namespace tinydb::filesystem {
                    || (!rhs.m_imp && m_imp && m_imp->m_stack.empty());
         }
 
-    };  // recursive directory iterator
+    };  
 
-    //  enable recursive directory iterator C++11 range-base for statement use  ----------//
+    
 
-    //  begin() and end() are only used by a range-based for statement in the context of
-    //  auto - thus the top-level const is stripped - so returning const is harmless and
-    //  emphasizes begin() is just a pass through.
+    
+    
+    
     inline
     const recursive_directory_iterator &
     begin(const recursive_directory_iterator &iter) noexcept { return iter; }
@@ -1338,7 +1326,7 @@ namespace tinydb::filesystem {
     recursive_directory_iterator
     end(const recursive_directory_iterator &) noexcept { return recursive_directory_iterator(); }
 
-    //  enable recursive directory iterator BOOST_FOREACH  -------------------------------//
+    
 
     inline
     recursive_directory_iterator &
@@ -1355,9 +1343,9 @@ namespace tinydb::filesystem {
     inline
     recursive_directory_iterator
     range_end(const recursive_directory_iterator &) noexcept { return recursive_directory_iterator(); }
-}  // namespace filesystem
+}  
 
-//  namespace boost template specializations
+
 template<>
 struct range_mutable_iterator<tinydb::filesystem::recursive_directory_iterator, void> {
     typedef tinydb::filesystem::recursive_directory_iterator type;
@@ -1373,18 +1361,18 @@ namespace tinydb::filesystem {
     typedef recursive_directory_iterator wrecursive_directory_iterator;
 # endif
 
-//  test helper  -----------------------------------------------------------------------//
 
-//  Not part of the documented interface since false positives are possible;
-//  there is no law that says that an OS that has large stat.st_size
-//  actually supports large file sizes.
+
+
+
+
 
     namespace detail {
          bool possible_large_file_size_support();
     }
 
-} // namespace filesystem
+} 
 
-#include <boost/config/abi_suffix.hpp> // pops abi_prefix.hpp pragmas
+#include <boost/config/abi_suffix.hpp> 
 
-#endif // TINY_DB_ENGINE_FILESYSTEM_OPERATIONS_HPP
+#endif 

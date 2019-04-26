@@ -15,11 +15,13 @@ file(GLOB_RECURSE PROJECT_SOURCES source/*)
 
 find_package(Catch2 CONFIG REQUIRED)
 find_package(Boost REQUIRED)
-find_package(Qt5 COMPONENTS Core CONFIG REQUIRED)
+#find_package(Qt5 COMPONENTS Core CONFIG REQUIRED)
 add_subdirectory(lib/extmem)
 add_subdirectory(lib/extmemfs)
 
-include_directories(${Boost_INCLUDE_DIRS} ${Catch2_INCLUDE_DIRS} ${Qt5_INCLUDE_DIRS} include lib/extmemfs/include/filesystem)
+#include_directories(${Boost_INCLUDE_DIRS} ${Catch2_INCLUDE_DIRS} ${Qt5_INCLUDE_DIRS} include lib/extmemfs/include/filesystem)
+include_directories(${Boost_INCLUDE_DIRS} ${Catch2_INCLUDE_DIRS} include lib/extmemfs/include/filesystem)
 
 add_executable(tiny_db_engine main.cpp ${PROJECT_INCLUDES} ${PROJECT_SOURCES})
-target_link_libraries(tiny_db_engine LINK_PUBLIC Catch2::Catch2 ${Boost_LIBRARIES} Qt5::Core extmem)
+#target_link_libraries(tiny_db_engine LINK_PUBLIC Catch2::Catch2 ${Boost_LIBRARIES} Qt5::Core extmem)
+target_link_libraries(tiny_db_engine LINK_PUBLIC Catch2::Catch2 ${Boost_LIBRARIES})

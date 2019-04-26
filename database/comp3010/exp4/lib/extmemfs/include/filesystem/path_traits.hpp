@@ -1,23 +1,12 @@
-//  filesystem path_traits.hpp  --------------------------------------------------------//
-
-//  Copyright Beman Dawes 2009
-
-//  Distributed under the Boost Software License, Version 1.0.
-//  See http://www.boost.org/LICENSE_1_0.txt
-
-//  Library home page: http://www.boost.org/libs/filesystem
-
 #ifndef TINY_DB_ENGINE_FILESYSTEM_PATH_TRAITS_HPP
 #define TINY_DB_ENGINE_FILESYSTEM_PATH_TRAITS_HPP
 
 #include <boost/config.hpp>
-
-#include "config.hpp"
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_array.hpp>
 #include <boost/type_traits/decay.hpp>
 #include <boost/system/error_code.hpp>
-#include <cwchar>  // for mbstate_t
+#include <cwchar>  
 #include <string>
 #include <vector>
 #include <list>
@@ -25,7 +14,7 @@
 #include <locale>
 #include <boost/assert.hpp>
 
-#include <boost/config/abi_prefix.hpp> // must be the last #include
+#include <boost/config/abi_prefix.hpp> 
 
 namespace tinydb::filesystem {
 
@@ -37,7 +26,7 @@ namespace path_traits {
  
   typedef std::codecvt<wchar_t, char, std::mbstate_t> codecvt_type;
 
-  //  is_pathable type trait; allows disabling over-agressive class path member templates
+  
 
   template <class T>
   struct is_pathable { static const bool value = false; };
@@ -54,11 +43,11 @@ namespace path_traits {
   template<> struct is_pathable<std::list<wchar_t> >    { static const bool value = true; };
   template<> struct is_pathable<directory_entry>        { static const bool value = true; };
 
-  //  Pathable empty
+  
 
   template <class Container> inline
-    // disable_if aids broken compilers (IBM, old GCC, etc.) and is harmless for
-    // conforming compilers. Replace by plain "bool" at some future date (2012?) 
+    
+    
     typename boost::disable_if<boost::is_array<Container>, bool>::type
       empty(const Container & c)
         { return c.begin() == c.end(); }
@@ -74,21 +63,21 @@ namespace path_traits {
      bool empty(T (&x)[N])
        { return !x[0]; }
 
-  // value types differ  ---------------------------------------------------------------//
-  //
-  //   A from_end argument of 0 is less efficient than a known end, so use only if needed
+  
+  
+  
 
-  //  with codecvt
+  
 
   
     void convert(const char* from,
-    const char* from_end,    // 0 for null terminated MBCS
+    const char* from_end,    
     std::wstring & to,
     const codecvt_type& cvt);
 
   
     void convert(const wchar_t* from,
-    const wchar_t* from_end,  // 0 for null terminated MBCS
+    const wchar_t* from_end,  
     std::string & to,
     const codecvt_type& cvt);
 
@@ -110,16 +99,16 @@ namespace path_traits {
     convert(from, 0, to, cvt);
   }
 
-  //  without codecvt
+  
 
   inline
     void convert(const char* from,
-    const char* from_end,    // 0 for null terminated MBCS
+    const char* from_end,    
     std::wstring & to);
 
   inline
     void convert(const wchar_t* from,
-    const wchar_t* from_end,  // 0 for null terminated MBCS
+    const wchar_t* from_end,  
     std::string & to);
 
   inline
@@ -130,9 +119,9 @@ namespace path_traits {
     void convert(const wchar_t* from,
     std::string & to);
 
-  // value types same  -----------------------------------------------------------------//
+  
 
-  // char with codecvt
+  
 
   inline
     void convert(const char* from, const char* from_end, std::string & to,
@@ -152,7 +141,7 @@ namespace path_traits {
     to += from;
   }
 
-  // wchar_t with codecvt
+  
 
   inline
     void convert(const wchar_t* from, const wchar_t* from_end, std::wstring & to,
@@ -172,7 +161,7 @@ namespace path_traits {
     to += from;
   }
 
-  // char without codecvt
+  
 
   inline
     void convert(const char* from, const char* from_end, std::string & to)
@@ -189,7 +178,7 @@ namespace path_traits {
     to += from;
   }
 
-  // wchar_t without codecvt
+  
 
   inline
     void convert(const wchar_t* from, const wchar_t* from_end, std::wstring & to)
@@ -206,9 +195,9 @@ namespace path_traits {
     to += from;
   }
 
-  //  Source dispatch  -----------------------------------------------------------------//
+  
 
-  //  contiguous containers with codecvt
+  
   template <class U> inline
     void dispatch(const std::string& c, U& to, const codecvt_type& cvt)
   {
@@ -234,7 +223,7 @@ namespace path_traits {
       convert(&*c.begin(), &*c.begin() + c.size(), to, cvt);
   }
 
-  //  contiguous containers without codecvt
+  
   template <class U> inline
     void dispatch(const std::string& c, U& to)
   {
@@ -260,10 +249,10 @@ namespace path_traits {
       convert(&*c.begin(), &*c.begin() + c.size(), to);
   }
 
-  //  non-contiguous containers with codecvt
+  
   template <class Container, class U> inline
-    // disable_if aids broken compilers (IBM, old GCC, etc.) and is harmless for
-    // conforming compilers. Replace by plain "void" at some future date (2012?) 
+    
+    
     typename boost::disable_if<boost::is_array<Container>, void>::type
     dispatch(const Container & c, U& to, const codecvt_type& cvt)
   {
@@ -274,31 +263,27 @@ namespace path_traits {
     }
   }
 
-  //  c_str
+  
   template <class T, class U> inline
     void dispatch(T * const & c_str, U& to, const codecvt_type& cvt)
   {
-    //    std::cout << "dispatch() const T *\n";
+    
     BOOST_ASSERT(c_str);
     convert(c_str, to, cvt);
   }
 
-  //  Note: there is no dispatch on C-style arrays because the array may
-  //  contain a string smaller than the array size. 
+  
+  
 
   
     void dispatch(const directory_entry & de,
-#                ifdef BOOST_WINDOWS_API
-    std::wstring & to,
-#                else   
     std::string & to,
-#                endif
     const codecvt_type&);
 
-  //  non-contiguous containers without codecvt
+  
   template <class Container, class U> inline
-    // disable_if aids broken compilers (IBM, old GCC, etc.) and is harmless for
-    // conforming compilers. Replace by plain "void" at some future date (2012?) 
+    
+    
     typename boost::disable_if<boost::is_array<Container>, void>::type
     dispatch(const Container & c, U& to)
   {
@@ -309,30 +294,20 @@ namespace path_traits {
     }
   }
 
-  //  c_str
+  
   template <class T, class U> inline
     void dispatch(T * const & c_str, U& to)
   {
-    //    std::cout << "dispatch() const T *\n";
+    
     BOOST_ASSERT(c_str);
     convert(c_str, to);
   }
-
-  //  Note: there is no dispatch on C-style arrays because the array may
-  //  contain a string smaller than the array size. 
-
   
-    void dispatch(const directory_entry & de,
-#                ifdef BOOST_WINDOWS_API
-    std::wstring & to
-#                else   
-    std::string & to
-#                endif
-    );
+  void dispatch(const directory_entry & de, std::string & to);
 
 
-}} // namespace filesystem::path_traits
+}} 
 
-#include <boost/config/abi_suffix.hpp> // pops abi_prefix.hpp pragmas
+#include <boost/config/abi_suffix.hpp> 
 
-#endif  // TINY_DB_ENGINE_FILESYSTEM_PATH_TRAITS_HPP
+#endif  

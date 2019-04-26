@@ -26,6 +26,6 @@ void load_string_file(const path& p, std::string& str)
   str.resize(sz, '\0');
   file.read(&str[0], sz);
 }
-}  // namespace filesystem
+}  
 
-#endif  // include guard
+#endif  
