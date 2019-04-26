@@ -11,7 +11,7 @@
 
 //  on Windows, except for standard libaries known to have wchar_t overloads for
 //  file stream I/O, use path::string() to get a narrow character c_str()
-#if defined(TINY_DB_ENGINE_WINDOWS_API) \
+#if defined(BOOST_WINDOWS_API) \
   && (!defined(_CPPLIB_VER) || _CPPLIB_VER < 405 || defined(_STLPORT_VERSION))
   // !Dinkumware || early Dinkumware || STLPort masquerading as Dinkumware
 # define TINY_DB_ENGINE_FILESYSTEM_C_STR string().c_str()  // use narrow, since wide not available
@@ -19,16 +19,14 @@
 # define TINY_DB_ENGINE_FILESYSTEM_C_STR c_str()
 #endif
 
-namespace tinydb
-{
-namespace filesystem
+namespace tinydb::filesystem
 {
 
 //--------------------------------------------------------------------------------------//
 //                                  basic_filebuf                                       //
 //--------------------------------------------------------------------------------------//
 
-  template < class charT, class traits = std::char_traits<charT> >
+  template <class charT, class traits = std::char_traits<charT> >
   class basic_filebuf : public std::basic_filebuf<charT,traits>
   {
   private: // disallow copying
@@ -60,9 +58,6 @@ namespace filesystem
 
   public:
     basic_ifstream() {}
-
-    // use two signatures, rather than one signature with default second
-    // argument, to workaround VC++ 7.1 bug (ID VSWhidbey 38416)
 
     explicit basic_ifstream(const path& p)
       : std::basic_ifstream<charT,traits>(p.TINY_DB_ENGINE_FILESYSTEM_C_STR, std::ios_base::in) {}
@@ -160,7 +155,7 @@ namespace filesystem
   typedef basic_ofstream<wchar_t> wofstream;
   typedef basic_fstream<wchar_t> wfstream;
   
-}
-}
+} // namespace filesystem
 
-#endif  // TINY_DB_ENGINE_FILESYSTEM3_FSTREAM_HPP
+#include <boost/config/abi_suffix.hpp> // pops abi_prefix.hpp pragmas
+#endif

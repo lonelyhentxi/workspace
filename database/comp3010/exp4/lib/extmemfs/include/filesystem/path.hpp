@@ -1,14 +1,22 @@
-#ifndef BOOST_FILESYSTEM_PATH_HPP
-#define BOOST_FILESYSTEM_PATH_HPP
+//  filesystem path.hpp  ---------------------------------------------------------------//
+
+//  Copyright Beman Dawes 2002-2005, 2009
+//  Copyright Vladimir Prus 2002
+
+//  Distributed under the Boost Software License, Version 1.0.
+//  See http://www.boost.org/LICENSE_1_0.txt
+
+//  Library home page: http://www.boost.org/libs/filesystem
+
+//  path::stem(), extension(), and replace_extension() are based on
+//  basename(), extension(), and change_extension() from the original
+//  filesystem/convenience.hpp header by Vladimir Prus.
+
+#ifndef TINY_DB_ENGINE_FILESYSTEM_PATH_HPP
+#define TINY_DB_ENGINE_FILESYSTEM_PATH_HPP
 
 #include <boost/config.hpp>
-
-# if defined( BOOST_NO_STD_WSTRING )
-#   error Configuration not supported: Boost.Filesystem V3 and later requires std::wstring support
-# endif
-
-#include <boost/filesystem/config.hpp>
-#include <boost/filesystem/path_traits.hpp>  // includes <cwchar>
+#include "path_traits.hpp"
 #include <boost/system/error_code.hpp>
 #include <boost/system/system_error.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -28,122 +36,50 @@
 
 #include <boost/config/abi_prefix.hpp> // must be the last #include
 
-namespace boost
-{
-namespace filesystem
+namespace tinydb::filesystem
 {
 
-  //------------------------------------------------------------------------------------//
-  //                                                                                    //
-  //                                    class path                                      //
-  //                                                                                    //
-  //------------------------------------------------------------------------------------//
-
-  class BOOST_FILESYSTEM_DECL path
+  class path
   {
   public:
 
     //  value_type is the character type used by the operating system API to
     //  represent paths.
-
-# ifdef BOOST_WINDOWS_API
-    typedef wchar_t                        value_type;
-    BOOST_STATIC_CONSTEXPR value_type      separator = L'/';
-    BOOST_STATIC_CONSTEXPR value_type      preferred_separator = L'\\';
-    BOOST_STATIC_CONSTEXPR value_type      dot = L'.';
-# else 
-    typedef char                           value_type;
-    BOOST_STATIC_CONSTEXPR value_type      separator = '/';
-    BOOST_STATIC_CONSTEXPR value_type      preferred_separator = '/';
-    BOOST_STATIC_CONSTEXPR value_type      dot = '.';
-# endif
+#ifdef BOOST_WINDOWS_API
+    using value_type = wchar_t;
+#else
+    using value_type = char;
+#endif
+    constexpr static value_type      separator = '/';
+    constexpr static value_type      preferred_separator = '/';
+    constexpr static value_type      dot = '.';
     typedef std::basic_string<value_type>  string_type;  
     typedef std::codecvt<wchar_t, char,
                          std::mbstate_t>   codecvt_type;
+    
 
-
-    //  ----- character encoding conversions -----
-
-    //  Following the principle of least astonishment, path input arguments
-    //  passed to or obtained from the operating system via objects of
-    //  class path behave as if they were directly passed to or
-    //  obtained from the O/S API, unless conversion is explicitly requested.
-    //
-    //  POSIX specfies that path strings are passed unchanged to and from the
-    //  API. Note that this is different from the POSIX command line utilities,
-    //  which convert according to a locale.
-    //
-    //  Thus for POSIX, char strings do not undergo conversion.  wchar_t strings
-    //  are converted to/from char using the path locale or, if a conversion
-    //  argument is given, using a conversion object modeled on
-    //  std::wstring_convert.
-    //
-    //  The path locale, which is global to the thread, can be changed by the
-    //  imbue() function. It is initialized to an implementation defined locale.
-    //  
-    //  For Windows, wchar_t strings do not undergo conversion. char strings
-    //  are converted using the "ANSI" or "OEM" code pages, as determined by
-    //  the AreFileApisANSI() function, or, if a conversion argument is given,
-    //  using a conversion object modeled on std::wstring_convert.
-    //
-    //  See m_pathname comments for further important rationale.
-
-    //  TODO: rules needed for operating systems that use / or .
-    //  differently, or format directory paths differently from file paths. 
-    //
-    //  **********************************************************************************
-    //
-    //  More work needed: How to handle an operating system that may have
-    //  slash characters or dot characters in valid filenames, either because
-    //  it doesn't follow the POSIX standard, or because it allows MBCS
-    //  filename encodings that may contain slash or dot characters. For
-    //  example, ISO/IEC 2022 (JIS) encoding which allows switching to
-    //  JIS x0208-1983 encoding. A valid filename in this set of encodings is
-    //  0x1B 0x24 0x42 [switch to X0208-1983] 0x24 0x2F [U+304F Kiragana letter KU]
-    //                                             ^^^^
-    //  Note that 0x2F is the ASCII slash character
-    //
-    //  **********************************************************************************
-
-    //  Supported source arguments: half-open iterator range, container, c-array,
-    //  and single pointer to null terminated string.
-
-    //  All source arguments except pointers to null terminated byte strings support
-    //  multi-byte character strings which may have embedded nulls. Embedded null
-    //  support is required for some Asian languages on Windows.
-
-    //  "const codecvt_type& cvt=codecvt()" default arguments are not used because this
-    //  limits the impact of locale("") initialization failures on POSIX systems to programs
-    //  that actually depend on locale(""). It further ensures that exceptions thrown
-    //  as a result of such failues occur after main() has started, so can be caught. 
-
-    //  -----  constructors  -----
-
-    path() BOOST_NOEXCEPT {}                                          
-    path(const path& p) : m_pathname(p.m_pathname) {}
+    path() noexcept = default;
+    path(const path& p) = default;
 
     template <class Source>
     path(Source const& source,
       typename boost::enable_if<path_traits::is_pathable<
-        typename boost::decay<Source>::type> >::type* =0)
+        typename boost::decay<Source>::type>>::type* = nullptr)
     {
       path_traits::dispatch(source, m_pathname);
     }
 
-    path(const value_type* s) : m_pathname(s) {}
-    path(value_type* s) : m_pathname(s) {}
-    path(const string_type& s) : m_pathname(s) {}
-    path(string_type& s) : m_pathname(s) {}
+    explicit path(const value_type* s) : m_pathname(s) {}
+    explicit path(value_type* s) : m_pathname(s) {}
+    explicit path(const string_type&s) : m_pathname(s) {}
 
   //  As of October 2015 the interaction between noexcept and =default is so troublesome
   //  for VC++, GCC, and probably other compilers, that =default is not used with noexcept
   //  functions. GCC is not even consistent for the same release on different platforms.
-
-# if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
-    path(path&& p) BOOST_NOEXCEPT { m_pathname = std::move(p.m_pathname); }
-    path& operator=(path&& p) BOOST_NOEXCEPT
+  
+    path(path&& p) noexcept { m_pathname = std::move(p.m_pathname); }
+    path& operator=(path&& p) noexcept
       { m_pathname = std::move(p.m_pathname); return *this; }
-# endif
 
     template <class Source>
     path(Source const& source, const codecvt_type& cvt)
@@ -257,7 +193,7 @@ namespace filesystem
     path& operator+=(value_type c)          { m_pathname += c; return *this; }
 
     template <class CharT>
-      typename boost::enable_if<is_integral<CharT>, path&>::type
+      typename boost::enable_if<std::is_integral<CharT>, path&>::type
     operator+=(CharT c)
     {
       CharT tmp[2];
@@ -351,42 +287,15 @@ namespace filesystem
 
     //  -----  modifiers  -----
 
-    void   clear() BOOST_NOEXCEPT             { m_pathname.clear(); }
-    path&  make_preferred()
-#   ifdef BOOST_POSIX_API
-      { return *this; }  // POSIX no effect
-#   else // BOOST_WINDOWS_API
-      ;  // change slashes to backslashes
-#   endif
+    void   clear() noexcept             { m_pathname.clear(); }
+    path&  make_preferred() { return *this; }
     path&  remove_filename();
     path&  remove_trailing_separator();
     path&  replace_extension(const path& new_extension = path());
-    void   swap(path& rhs) BOOST_NOEXCEPT     { m_pathname.swap(rhs.m_pathname); }
-
-    //  -----  observers  -----
-  
-    //  For operating systems that format file paths differently than directory
-    //  paths, return values from observers are formatted as file names unless there
-    //  is a trailing separator, in which case returns are formatted as directory
-    //  paths. POSIX and Windows make no such distinction.
-
-    //  Implementations are permitted to return const values or const references.
-
-    //  The string or path returned by an observer are specified as being formatted
-    //  as "native" or "generic".
-    //
-    //  For POSIX, these are all the same format; slashes and backslashes are as input and
-    //  are not modified.
-    //
-    //  For Windows,   native:    as input; slashes and backslashes are not modified;
-    //                            this is the format of the internally stored string.
-    //                 generic:   backslashes are converted to slashes
-
-    //  -----  native format observers  -----
-
-    const string_type&  native() const BOOST_NOEXCEPT  { return m_pathname; }
-    const value_type*   c_str() const BOOST_NOEXCEPT   { return m_pathname.c_str(); }
-    string_type::size_type size() const BOOST_NOEXCEPT { return m_pathname.size(); }
+    void   swap(path& rhs) noexcept     { m_pathname.swap(rhs.m_pathname); }
+    const string_type&  native() const noexcept  { return m_pathname; }
+    const value_type*   c_str() const noexcept   { return m_pathname.c_str(); }
+    string_type::size_type size() const noexcept { return m_pathname.size(); }
 
     template <class String>
     String string() const;
@@ -439,22 +348,9 @@ namespace filesystem
     }
 
 #   endif
-
-    //  -----  generic format observers  -----
-
-    //  Experimental generic function returning generic formatted path (i.e. separators
-    //  are forward slashes). Motivation: simpler than a family of generic_*string
-    //  functions.
     path generic_path() const
     {
-#   ifdef BOOST_WINDOWS_API
-      path tmp;
-      std::replace_copy(m_pathname.begin(), m_pathname.end(),
-        std::back_inserter(tmp.m_pathname), L'\\', L'/');
-      return tmp;
-#   else
       return path(*this);
-#   endif
     }
 
     template <class String>
@@ -480,8 +376,8 @@ namespace filesystem
 
     //  -----  compare  -----
 
-    int compare(const path& p) const BOOST_NOEXCEPT;  // generic, lexicographical
-    int compare(const std::string& s) const { return compare(path(s)); }
+    int compare(const path& p) const noexcept;  // generic, lexicographical
+    int compare(const string_type& s) const { return compare(path(s)); }
     int compare(const value_type* s) const  { return compare(path(s)); }
 
     //  -----  decomposition  -----
@@ -498,7 +394,7 @@ namespace filesystem
 
     //  -----  query  -----
 
-    bool empty() const BOOST_NOEXCEPT{ return m_pathname.empty(); }
+    bool empty() const noexcept{ return m_pathname.empty(); }
     bool filename_is_dot() const;
     bool filename_is_dot_dot() const;
     bool has_root_path() const       { return has_root_directory() || has_root_name(); }
@@ -548,11 +444,11 @@ namespace filesystem
 
     //  -----  deprecated functions  -----
 
-# if defined(BOOST_FILESYSTEM_DEPRECATED) && defined(BOOST_FILESYSTEM_NO_DEPRECATED)
-#   error both BOOST_FILESYSTEM_DEPRECATED and BOOST_FILESYSTEM_NO_DEPRECATED are defined
+# if defined(TINY_DB_ENGINE_FILESYSTEM_DEPRECATED) && defined(TINY_DB_ENGINE_FILESYSTEM_NO_DEPRECATED)
+#   error both TINY_DB_ENGINE_FILESYSTEM_DEPRECATED and TINY_DB_ENGINE_FILESYSTEM_NO_DEPRECATED are defined
 # endif
 
-# if !defined(BOOST_FILESYSTEM_NO_DEPRECATED)
+# if !defined(TINY_DB_ENGINE_FILESYSTEM_NO_DEPRECATED)
     //  recently deprecated functions supplied by default
     path&  normalize()              { 
                                       path tmp(lexically_normal());
@@ -567,31 +463,6 @@ namespace filesystem
     bool   has_branch_path() const  { return !parent_path().empty(); }
     bool   is_complete() const      { return is_absolute(); }
 # endif
-
-# if defined(BOOST_FILESYSTEM_DEPRECATED)
-    //  deprecated functions with enough signature or semantic changes that they are
-    //  not supplied by default 
-    const std::string file_string() const               { return string(); }
-    const std::string directory_string() const          { return string(); }
-    const std::string native_file_string() const        { return string(); }
-    const std::string native_directory_string() const   { return string(); }
-    const string_type external_file_string() const      { return native(); }
-    const string_type external_directory_string() const { return native(); }
-
-    //  older functions no longer supported
-    //typedef bool (*name_check)(const std::string & name);
-    //basic_path(const string_type& str, name_check) { operator/=(str); }
-    //basic_path(const typename string_type::value_type* s, name_check)
-    //  { operator/=(s);}
-    //static bool default_name_check_writable() { return false; } 
-    //static void default_name_check(name_check) {}
-    //static name_check default_name_check() { return 0; }
-    //basic_path& canonize();
-# endif
-
-//--------------------------------------------------------------------------------------//
-//                            class path private members                                //
-//--------------------------------------------------------------------------------------//
 
   private:
 
@@ -635,16 +506,16 @@ namespace filesystem
 
   namespace detail
   {
-    BOOST_FILESYSTEM_DECL
+    
       int lex_compare(path::iterator first1, path::iterator last1,
         path::iterator first2, path::iterator last2);
-    BOOST_FILESYSTEM_DECL
+    
       const path&  dot_path();
-    BOOST_FILESYSTEM_DECL
+    
       const path&  dot_dot_path();
   }
 
-# ifndef BOOST_FILESYSTEM_NO_DEPRECATED
+# ifndef TINY_DB_ENGINE_FILESYSTEM_NO_DEPRECATED
   typedef path wpath;
 # endif
 
@@ -660,8 +531,8 @@ namespace filesystem
   {
   private:
     friend class boost::iterator_core_access;
-    friend class boost::filesystem::path;
-    friend class boost::filesystem::path::reverse_iterator;
+    friend class tinydb::filesystem::path;
+    friend class tinydb::filesystem::path::reverse_iterator;
     friend void m_path_iterator_increment(path::iterator & it);
     friend void m_path_iterator_decrement(path::iterator & it);
 
@@ -706,7 +577,7 @@ namespace filesystem
     }
   private:
     friend class boost::iterator_core_access;
-    friend class boost::filesystem::path;
+    friend class tinydb::filesystem::path;
 
     const path& dereference() const { return m_element; }
     bool equal(const reverse_iterator& rhs) const { return m_itr == rhs.m_itr; }
@@ -754,8 +625,6 @@ namespace filesystem
   inline bool operator!=(const path& lhs, const path::value_type* rhs)  {return lhs.compare(rhs) != 0;}
   inline bool operator!=(const path::value_type* lhs, const path& rhs)  {return rhs.compare(lhs) != 0;}
 
-  // TODO: why do == and != have additional overloads, but the others don't?
-
   inline bool operator<(const path& lhs, const path& rhs)  {return lhs.compare(rhs) < 0;}
   inline bool operator<=(const path& lhs, const path& rhs) {return !(rhs < lhs);}
   inline bool operator> (const path& lhs, const path& rhs) {return rhs < lhs;}
@@ -763,14 +632,7 @@ namespace filesystem
 
   inline std::size_t hash_value(const path& x)
   {
-# ifdef BOOST_WINDOWS_API
-    std::size_t seed = 0;
-    for(const path::value_type* it = x.c_str(); *it; ++it)
-      hash_combine(seed, *it == '/' ? L'\\' : *it);
-    return seed;
-# else   // BOOST_POSIX_API
-    return hash_range(x.native().begin(), x.native().end());
-# endif
+    return boost::hash_range(x.native().begin(), x.native().end());
   }
 
   inline void swap(path& lhs, path& rhs)                   { lhs.swap(rhs); }
@@ -798,18 +660,13 @@ namespace filesystem
     p = str;
     return is;
   }
- 
-  //  name_checks
 
-  //  These functions are holdovers from version 1. It isn't clear they have much
-  //  usefulness, or how to generalize them for later versions.
-
-  BOOST_FILESYSTEM_DECL bool portable_posix_name(const std::string & name);
-  BOOST_FILESYSTEM_DECL bool windows_name(const std::string & name);
-  BOOST_FILESYSTEM_DECL bool portable_name(const std::string & name);
-  BOOST_FILESYSTEM_DECL bool portable_directory_name(const std::string & name);
-  BOOST_FILESYSTEM_DECL bool portable_file_name(const std::string & name);
-  BOOST_FILESYSTEM_DECL bool native(const std::string & name);
+   bool portable_posix_name(const std::string & name);
+   bool windows_name(const std::string & name);
+   bool portable_name(const std::string & name);
+   bool portable_directory_name(const std::string & name);
+   bool portable_file_name(const std::string & name);
+   bool native(const std::string & name);
 
   namespace detail
   {
@@ -818,21 +675,13 @@ namespace filesystem
     //  element separator. For Windows, forward slash and back slash are the possible
     //  directory separators, but colon (example: "c:foo") is also an element separator.
 
-    inline bool is_directory_separator(path::value_type c) BOOST_NOEXCEPT
+    inline bool is_directory_separator(path::value_type c) noexcept
     {
-      return c == path::separator
-#     ifdef BOOST_WINDOWS_API
-        || c == path::preferred_separator
-#     endif
-      ;
+      return c == path::separator;
     }
-    inline bool is_element_separator(path::value_type c) BOOST_NOEXCEPT
+    inline bool is_element_separator(path::value_type c) noexcept
     {
-      return c == path::separator
-#     ifdef BOOST_WINDOWS_API
-        || c == path::preferred_separator || c == L':'
-#     endif
-      ;
+      return c == path::separator;
     }
   }  // namespace detail
 
@@ -951,11 +800,6 @@ namespace filesystem
   std::wstring path::generic_string<std::wstring>(const codecvt_type& cvt) const
     { return generic_wstring(cvt); }
 
-  //--------------------------------------------------------------------------------------//
-  //                     path_traits convert function implementations                     //
-  //                        requiring path::codecvt() be visable                          //
-  //--------------------------------------------------------------------------------------//
-
 namespace path_traits
 {  //  without codecvt
 
@@ -980,7 +824,7 @@ namespace path_traits
     std::wstring & to)
   {
     BOOST_ASSERT(from);
-    convert(from, 0, to, path::codecvt());
+    convert(from, nullptr, to, path::codecvt());
   }
 
   inline
@@ -988,14 +832,13 @@ namespace path_traits
     std::string & to)
   {
     BOOST_ASSERT(from);
-    convert(from, 0, to, path::codecvt());
+    convert(from, nullptr, to, path::codecvt());
   }
 }  // namespace path_traits
 }  // namespace filesystem
-}  // namespace boost
 
 //----------------------------------------------------------------------------//
 
 #include <boost/config/abi_suffix.hpp> // pops abi_prefix.hpp pragmas
 
-#endif  // BOOST_FILESYSTEM_PATH_HPP
+#endif  // TINY_DB_ENGINE_FILESYSTEM_PATH_HPP

@@ -7,16 +7,12 @@
 
 //  Library home page: http://www.boost.org/libs/filesystem
 
-#ifndef BOOST_FILESYSTEM_PATH_TRAITS_HPP
-#define BOOST_FILESYSTEM_PATH_TRAITS_HPP
+#ifndef TINY_DB_ENGINE_FILESYSTEM_PATH_TRAITS_HPP
+#define TINY_DB_ENGINE_FILESYSTEM_PATH_TRAITS_HPP
 
 #include <boost/config.hpp>
 
-# if defined( BOOST_NO_STD_WSTRING )
-#   error Configuration not supported: Boost.Filesystem V3 and later requires std::wstring support
-# endif
-
-#include <boost/filesystem/config.hpp>
+#include "config.hpp"
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_array.hpp>
 #include <boost/type_traits/decay.hpp>
@@ -28,22 +24,12 @@
 #include <iterator>
 #include <locale>
 #include <boost/assert.hpp>
-// #include <iostream>   //**** comment me out ****
 
 #include <boost/config/abi_prefix.hpp> // must be the last #include
 
-namespace boost { namespace filesystem {
+namespace tinydb::filesystem {
 
-  BOOST_FILESYSTEM_DECL const system::error_category& codecvt_error_category();
-  //  uses std::codecvt_base::result used for error codes:
-  //
-  //    ok:       Conversion successful.
-  //    partial:  Not all source characters converted; one or more additional source
-  //              characters are needed to produce the final target character, or the
-  //              size of the target intermediate buffer was too small to hold the result.
-  //    error:    A character in the source could not be converted to the target encoding.
-  //    noconv:   The source and target characters have the same type and encoding, so no
-  //              conversion was necessary.
+  const boost::system::error_category& codecvt_error_category();
 
   class directory_entry;
   
@@ -94,13 +80,13 @@ namespace path_traits {
 
   //  with codecvt
 
-  BOOST_FILESYSTEM_DECL
+  
     void convert(const char* from,
     const char* from_end,    // 0 for null terminated MBCS
     std::wstring & to,
     const codecvt_type& cvt);
 
-  BOOST_FILESYSTEM_DECL
+  
     void convert(const wchar_t* from,
     const wchar_t* from_end,  // 0 for null terminated MBCS
     std::string & to,
@@ -300,7 +286,7 @@ namespace path_traits {
   //  Note: there is no dispatch on C-style arrays because the array may
   //  contain a string smaller than the array size. 
 
-  BOOST_FILESYSTEM_DECL
+  
     void dispatch(const directory_entry & de,
 #                ifdef BOOST_WINDOWS_API
     std::wstring & to,
@@ -335,7 +321,7 @@ namespace path_traits {
   //  Note: there is no dispatch on C-style arrays because the array may
   //  contain a string smaller than the array size. 
 
-  BOOST_FILESYSTEM_DECL
+  
     void dispatch(const directory_entry & de,
 #                ifdef BOOST_WINDOWS_API
     std::wstring & to
@@ -345,8 +331,8 @@ namespace path_traits {
     );
 
 
-}}} // namespace boost::filesystem::path_traits
+}} // namespace filesystem::path_traits
 
 #include <boost/config/abi_suffix.hpp> // pops abi_prefix.hpp pragmas
 
-#endif  // BOOST_FILESYSTEM_PATH_TRAITS_HPP
+#endif  // TINY_DB_ENGINE_FILESYSTEM_PATH_TRAITS_HPP
