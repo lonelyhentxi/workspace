@@ -40,6 +40,7 @@ namespace tinydb::filesystem::util
 	}
 
 	using sys_time_spec = std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds>;
+	constexpr size_t mem_page_size = 4096;
 }
 
 #endif
