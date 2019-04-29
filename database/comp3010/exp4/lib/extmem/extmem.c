@@ -9,9 +9,10 @@
 #include <stdio.h>
 #include "extmem.h"
 #include <memory.h>
+#include <string.h>
 
-
-Buffer *initBuffer(size_t bufSize, size_t blkSize, Buffer *buf)
+// device name, should not bigger than 10
+Buffer *initBuffer(const char *name,size_t bufSize, size_t blkSize, Buffer *buf)
 {
     int i;
 
@@ -21,13 +22,17 @@ Buffer *initBuffer(size_t bufSize, size_t blkSize, Buffer *buf)
     buf->numAllBlk = bufSize / (blkSize + 1);
     buf->numFreeBlk = buf->numAllBlk;
     buf->data = (unsigned char*)malloc(bufSize * sizeof(unsigned char));
-
+	buf->name = (char *)malloc((10 + 1) * sizeof(char));
+	for(size_t i=0;i<11;i++)
+	{
+		buf->name[i] = '\0';
+	}
+	strncpy(buf->name, name, 10);
     if (!buf->data)
     {
         perror("Buffer Initialization Failed!\n");
         return NULL;
     }
-
     memset(buf->data, 0, bufSize * sizeof(unsigned char));
     return buf;
 }
@@ -35,6 +40,7 @@ Buffer *initBuffer(size_t bufSize, size_t blkSize, Buffer *buf)
 void freeBuffer(Buffer *buf)
 {
     free(buf->data);
+	free(buf->name);
 }
 
 unsigned char *getNewBlockInBuffer(Buffer *buf)
@@ -68,11 +74,11 @@ void freeBlockInBuffer(unsigned char *blk, Buffer *buf)
     buf->numFreeBlk++;
 }
 
-int dropBlockOnDisk(unsigned int addr)
+int dropBlockOnDisk(unsigned int addr, Buffer* buf)
 {
-    char filename[40];
+    char filename[50];
 
-    sprintf(filename, "data/%d.blk", addr);
+    sprintf(filename, "%s/data/%d.blk", buf->name, addr);
 
     if (remove(filename) == -1)
     {
@@ -85,7 +91,7 @@ int dropBlockOnDisk(unsigned int addr)
 
 unsigned char *readBlockFromDisk(unsigned int addr, Buffer *buf)
 {
-    char filename[40];
+	char filename[50];
     unsigned char *blkPtr, *bytePtr;
     char ch;
 
@@ -105,7 +111,7 @@ unsigned char *readBlockFromDisk(unsigned int addr, Buffer *buf)
             blkPtr += buf->blkSize + 1;
     }
 
-    sprintf(filename, "data/%d.blk", addr);
+    sprintf(filename, "%s/data/%d.blk", buf->name, addr);
     FILE *fp = fopen(filename, "r");
 
     if (!fp)
@@ -133,10 +139,10 @@ unsigned char *readBlockFromDisk(unsigned int addr, Buffer *buf)
 
 int writeBlockToDisk(unsigned char *blkPtr, unsigned int addr, Buffer *buf)
 {
-    char filename[40];
+    char filename[50];
     unsigned char *bytePtr;
 
-    sprintf(filename, "data/%d.blk", addr);
+    sprintf(filename, "%s/data/%d.blk",buf->name, addr);
     FILE *fp = fopen(filename, "w");
 
     if (!fp)
