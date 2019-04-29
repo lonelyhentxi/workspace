@@ -9,7 +9,7 @@ int main(int argc, char **argv)
     int i = 0;
 
     /* Initialize the buffer */
-    if (!initBuffer(520, 64, &buf))
+    if (!initBuffer("test",520, 64, &buf))
     {
         perror("Buffer Initialization Failed!\n");
         return -1;
@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     }
 
     /* Read the block from the hard disk */
-    if ((blk = readBlockFromDisk(1, &buf)) == NULL)
+    if ((blk = readBlockFromDisk(blk, 1, &buf)) == NULL)
     {
         perror("Reading Block Failed!\n");
         return -1;
@@ -48,19 +48,19 @@ int main(int argc, char **argv)
 
         for (int k = 0; k < 4; k++)
         {
-            str[k] = *(blk + i*8 + k);
+            str[k] = *(blk + i * 8 + k);
         }
         X = atoi(str);
         for (int k = 0; k < 4; k++)
         {
-            str[k] = *(blk + i*8 + 4 + k);
+            str[k] = *(blk + i * 8 + 4 + k);
         }
         Y = atoi(str);
         printf("(%d, %d) ", X, Y);
     }
     for (int k = 0; k < 4; k++)
     {
-        str[k] = *(blk + i*8 + k);
+        str[k] = *(blk + i * 8 + k);
     }
     addr = atoi(str);
     printf("\nnext address = %d \n", addr);

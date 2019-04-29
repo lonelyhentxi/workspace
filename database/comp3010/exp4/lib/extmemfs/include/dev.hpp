@@ -13,22 +13,21 @@ namespace tinydb::filesystem
 	using std::valarray;
 	using std::byte;
 	using std::slice;
-	using tinydb::filesystem::util::mem_page_size;
 
 	class stream_device
 	{
 	public:
-		virtual optional<size_t> read_at(size_t offset, valarray<byte>& buf, slice& s) = 0;
-		virtual optional<size_t> write_at(size_t offset, const valarray<byte>& buf, const slice& s) = 0;
+		virtual optional<size_t> read_at(const size_t offset, valarray<byte>& buf, const slice& s) = 0;
+		virtual optional<size_t> write_at(const size_t offset, const valarray<byte>& buf, const slice& s) = 0;
 		virtual ~stream_device() = default;
 	};
 
 	class block_device
 	{
 	public:
-		virtual uint8_t block_size_log2() = 0;
-		virtual bool read_at_b(size_t block_id, valarray<byte>& buf, slice& s) = 0;
-		virtual bool write_at_b(size_t block_id, const valarray<byte>& buf, const slice& s) = 0;
+		virtual size_t block_size() const = 0;
+		virtual bool read_at_b(const size_t block_id, valarray<byte>& buf, const slice& s) = 0;
+		virtual bool write_at_b(const size_t block_id, const valarray<byte>& buf, const slice& s) = 0;
 		virtual ~block_device() = default;
 	};
 
@@ -37,7 +36,7 @@ namespace tinydb::filesystem
 		size_t begin;
 		size_t end;
 		size_t block;
-		uint8_t block_size_log2;
+		size_t block_size;
 
 		size_t len() const
 		{
@@ -46,30 +45,30 @@ namespace tinydb::filesystem
 
 		bool is_full() const
 		{
-			return len() == (1 << block_size_log2);
+			return len() == block_size;
 		}
 
 		size_t raw_begin() const
 		{
-			return (block << block_size_log2) + begin;
+			return block_size * block + begin;
 		}
 
 		size_t raw_end() const
 		{
-			return (block << block_size_log2) + end;
+			return block * block + end;
 		}
 
 		struct iterator
 		{
 			size_t begin;
 			size_t end;
-			uint8_t block_size_log2;
+			size_t block_size;
 			using value_type = block_range;
 
 			iterator() = delete;
 
-			iterator(const size_t l_begin, const size_t l_end, const uint8_t l_block_size_log2):
-				begin(l_begin), end(l_end), block_size_log2(l_block_size_log2)
+			iterator(const size_t l_begin, const size_t l_end, const size_t l_block_size):
+				begin(l_begin), end(l_end), block_size(l_block_size)
 			{
 			}
 
@@ -85,26 +84,24 @@ namespace tinydb::filesystem
 				{
 					return {};
 				}
-				const auto l_block_size_log2 = block_size_log2;
-				const size_t l_block_size = 1 << block_size_log2;
-				const auto l_block = begin / l_block_size;
-				const auto l_begin = begin % l_block_size;
+				const auto l_block = begin / block_size;
+				const auto l_begin = begin % block_size;
 				size_t l_end;
-				if (l_block == end / l_block_size)
+				if (l_block == end / block_size)
 				{
-					l_end = end % l_block_size;
+					l_end = end % block_size;
 				}
 				else
 				{
-					l_end = l_block_size;
+					l_end = block_size;
 				}
-				begin += l_end - begin;
+				begin += l_end - l_begin;
 				return {
 					block_range{
 						l_block,
 						l_begin,
 						l_end,
-						l_block_size_log2,
+						block_size,
 					}
 				};
 			}
@@ -119,9 +116,9 @@ namespace tinydb::filesystem
 	class block_stream_device : block_device, stream_device
 	{
 	public:
-		optional<size_t> read_at(size_t offset, valarray<byte>& buf, slice& s) override
+		optional<size_t> read_at(const size_t offset, valarray<byte>& buf, const slice& s) override
 		{
-			auto iter = block_range::iterator{offset, offset + s.size(), block_size_log2()};
+			auto iter = block_range::iterator{offset, offset + s.size(), block_size()};
 			while (true)
 			{
 				auto range = iter.next();
@@ -129,45 +126,47 @@ namespace tinydb::filesystem
 				{
 					return {s.size()};
 				}
-				auto sub_slice = slice{range->raw_begin() - offset, range->raw_end() - range->raw_begin(), 1};
-				auto len = range->raw_begin() - offset;
+				const auto sub_slice = slice(range->raw_begin() - offset, range->raw_end() - range->raw_begin(), 1);
+				const auto len = range->raw_begin() - offset;
 				if (range->is_full())
 				{
 					RECHECK(len, read_at_b(range->block, buf, sub_slice));
 				}
 				else
 				{
-					auto block_buf = std::valarray<byte>{mem_page_size};
-					auto block_buf_slice = slice{0, mem_page_size, 1};
+					auto block_buf = valarray<byte>(range->block_size);
+					const auto block_buf_slice = slice(0, range->block_size, 1);
 					RECHECK(len, read_at_b(range->block, block_buf, block_buf_slice));
-					buf[sub_slice] = block_buf[block_buf_slice];
+					const auto new_block_buf_slice = slice(0, sub_slice.size(), 1);
+					buf[sub_slice] = block_buf[new_block_buf_slice];
 				}
 			}
 		}
 
-		optional<size_t> write_at(size_t offset, const valarray<byte>& buf, const slice& s) override
+		optional<size_t> write_at(const size_t offset, const valarray<byte>& buf, const slice& s) override
 		{
-			auto iter = block_range::iterator{offset, offset + s.size(), block_size_log2()};
+			auto iter = block_range::iterator{offset, offset + s.size(), block_size()};
 			while (true)
 			{
 				auto range = iter.next();
-				if (!range.has_value)
+				if (!range.has_value())
 				{
 					return {s.size()};
 				}
 				const auto sub_slice = slice{range->raw_begin() - offset, range->raw_end() - range->raw_begin(), 1};
-				auto len = range->raw_begin() - offset;
+				const auto len = range->raw_begin() - offset;
 				if (range->is_full())
 				{
 					RECHECK(len, write_at_b(range->block, buf, sub_slice));
 				}
 				else
 				{
-					auto block_buf = std::valarray<byte>{mem_page_size};
-					auto block_buf_slice = slice{0, mem_page_size, 1};
-					RECHECK(len, write_at_b(range->block, block_buf,block_buf_slice ));
-					block_buf[slice{range->begin(), range->end() - range->begin(), 1}] = buf[sub_slice];
-					RECHECK(len, write_at_b(range->block, block_buf,block_buf_slice));
+					auto block_buf = std::valarray<byte>(range->block_size);
+					const auto block_buf_slice = slice(0, range->block_size, 1);
+					RECHECK(len, read_at_b(range->block, block_buf, block_buf_slice ));
+					const auto new_block_buf_slice = slice(0, sub_slice.size(), 1);
+					block_buf[new_block_buf_slice] = buf[sub_slice];
+					RECHECK(len, write_at_b(range->block, block_buf, block_buf_slice));
 				}
 			}
 		}

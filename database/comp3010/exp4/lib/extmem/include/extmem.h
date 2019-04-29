@@ -8,6 +8,10 @@
 #ifndef EXTMEM_H
 #define EXTMEM_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define BLOCK_AVAILABLE 0
 #define BLOCK_UNAVAILABLE 1
 
@@ -43,9 +47,12 @@ void freeBlockInBuffer(unsigned char *blk, Buffer *buf);
 int dropBlockOnDisk(unsigned int addr, Buffer *buf);
 
 /* Read a block from the hard disk to the buffer by the address of the block. */
-unsigned char *readBlockFromDisk(unsigned int addr, Buffer *buf);
+unsigned char *readBlockFromDisk(unsigned char* blkPtr, unsigned int addr, Buffer *buf);
 
 /* Read a block in the buffer to the hard disk by the address of the block. */
 int writeBlockToDisk(unsigned char *blkPtr, unsigned int addr, Buffer *buf);
 
+#ifdef __cplusplus
+}
+#endif
 #endif // EXTMEM_H

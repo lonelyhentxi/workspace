@@ -1,11 +1,15 @@
-file(GLOB EXTMEMFS_SOURCES include/* include/vfs/* source/*)
-find_package(Boost REQUIRED)
-add_library(extmemfs STATIC ${EXTMEMFS_SOURCES})
-set_target_properties(extmemfs PROPERTIES LINKER_LANGUAGE CXX)
-find_library({EXTMEM_LIB} NAMES extmem PATHS ../extmem)
-target_include_directories(extmemfs PUBLIC
-        include
-        include/vfs
-        ${Boost_INCLUDE_DIRS}
-        )
-target_link_libraries(extmemfs PRIVATE ${Boost_LIBRARIES} extmem)
+file(GLOB_RECURSE EXTMEMFS_SOURCES include/* source/*)
+find_package(Boost REQUIRED system container filesystem compute)
+#add_library(extmemfs STATIC ${EXTMEMFS_SOURCES})
+#set_target_properties(extmemfs PROPERTIES LINKER_LANGUAGE CXX)
+#target_include_directories(extmemfs PRIVATE ${Boost_INCLUDE_DIRS} include)
+#target_link_libraries(extmemfs PRIVATE extmem ${Boost_LIBRARIES})
+set(CMAKE_CXX_STANDARD 17)
+find_package(Catch2 CONFIG REQUIRED)
+file(GLOB_RECURSE EXTMEMFS_TEST_SOURCES spec/*)
+add_executable(extmemfs_test test.cpp ${EXTMEMFS_SOURCES} ${EXTMEMFS_TEST_SOURCES})
+set_target_properties(extmemfs_test PROPERTIES LINKER_LANGUAGE CXX)
+target_include_directories(extmemfs_test PRIVATE ${Catch2_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} include)
+target_link_libraries(extmemfs_test PRIVATE ${Boost_LIBRARIES} extmem Catch2::Catch2)
+add_custom_command(TARGET extmemfs_test PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${EXECUTABLE_OUTPUT_PATH}/data)

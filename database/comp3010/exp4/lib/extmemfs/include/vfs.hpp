@@ -14,7 +14,7 @@
 #include <filesystem>
 #include "fs_error.hpp"
 #include "result.hpp"
-#include "util.hpp";
+#include "util.hpp"
 
 namespace tinydb::filesystem
 {
