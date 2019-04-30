@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 project(tiny_db_engine)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/cmake-build-debug)
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/cmake-build-debug)
+set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/cmake-build-debug/lib)
 set(VCPKG_INCLUDE_DIR $ENV{VCPKG_HOME}/installed/${VCPKG_TARGET_TRIPLET}/include)
 set(VCPKG_LIBRARY_DIR $ENV{VCPKG_HOME}/installed/${VCPKG_TARGET_TRIPLET}/lib)
 
@@ -20,7 +20,5 @@ add_subdirectory(lib/extmem)
 add_subdirectory(lib/extmemfs)
 
 include_directories(${Boost_INCLUDE_DIRS} ${Catch2_INCLUDE_DIRS} ${Qt5_INCLUDE_DIRS} include)
-include_directories(${Boost_INCLUDE_DIRS} ${Catch2_INCLUDE_DIRS} include)
-
 add_executable(tiny_db_engine main.cpp ${PROJECT_INCLUDES} ${PROJECT_SOURCES})
-target_link_libraries(tiny_db_engine LINK_PUBLIC Catch2::Catch2 ${Boost_LIBRARIES} Qt5::Core extmem)
+target_link_libraries(tiny_db_engine PRIVATE Catch2::Catch2 ${Boost_LIBRARIES} Qt5::Core extmem extmemfs)

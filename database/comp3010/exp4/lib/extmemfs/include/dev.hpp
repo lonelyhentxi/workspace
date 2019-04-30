@@ -13,6 +13,7 @@ namespace tinydb::filesystem
 	using std::valarray;
 	using std::byte;
 	using std::slice;
+	using std::slice_array;
 
 	class stream_device
 	{
@@ -138,7 +139,8 @@ namespace tinydb::filesystem
 					const auto block_buf_slice = slice(0, range->block_size, 1);
 					RECHECK(len, read_at_b(range->block, block_buf, block_buf_slice));
 					const auto new_block_buf_slice = slice(0, sub_slice.size(), 1);
-					buf[sub_slice] = block_buf[new_block_buf_slice];
+					const auto& buf_proxy = buf[sub_slice];
+					buf_proxy = block_buf[new_block_buf_slice];
 				}
 			}
 		}
@@ -165,7 +167,8 @@ namespace tinydb::filesystem
 					const auto block_buf_slice = slice(0, range->block_size, 1);
 					RECHECK(len, read_at_b(range->block, block_buf, block_buf_slice ));
 					const auto new_block_buf_slice = slice(0, sub_slice.size(), 1);
-					block_buf[new_block_buf_slice] = buf[sub_slice];
+					const auto &block_buf_proxy = block_buf[new_block_buf_slice];
+					block_buf_proxy = buf[sub_slice];
 					RECHECK(len, write_at_b(range->block, block_buf, block_buf_slice));
 				}
 			}
