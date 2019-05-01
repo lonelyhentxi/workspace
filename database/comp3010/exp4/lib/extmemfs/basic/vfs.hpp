@@ -10,11 +10,11 @@
 #include <type_traits>
 #include <vector>
 #include <variant>
-
 #include <filesystem>
 #include "fs_error.hpp"
 #include "result.hpp"
 #include "util.hpp"
+#include "fs_config.hpp"
 
 namespace tinydb::filesystem
 {
@@ -34,14 +34,15 @@ namespace tinydb::filesystem
 	using std::vector;
 	using std::monostate;
 	using std::exception;
+	using std::slice;
 
 	struct poll_status;
 	struct fs_info;
 	struct inode;
 
-	enum struct file_type
+	enum struct file_type: uint16_t
 	{
-		file,
+		file = 0,
 		dir,
 		sym_link,
 		char_device,
@@ -77,8 +78,8 @@ namespace tinydb::filesystem
 
 	struct inode
 	{
-		virtual fs_result<size_t> read_at(size_t offset, valarray<byte>& buf) = 0;
-		virtual fs_result<size_t> write_at(size_t offset, const valarray<byte>& buf) = 0;
+		virtual fs_result<size_t> read_at(const size_t offset, valarray<byte>& buf, const slice& s) = 0;
+		virtual fs_result<size_t> write_at(const size_t offset, const valarray<byte>& buf, const slice& s) = 0;
 		virtual fs_result<poll_status> poll() = 0;
 		virtual fs_result<metadata> metadata() = 0;
 		virtual fs_result<monostate> metadata(struct metadata&) = 0;
@@ -108,14 +109,14 @@ namespace tinydb::filesystem
 			}
 		}
 
-		fs_result<vector<string>> list()
+		fs_result<vector<path>> list()
 		{
 			UNWRAP(metadata(),info,const);
 			if (info.type != file_type::dir)
 			{
-				ERR(fs_error::not_dir{});
+				ERR(fs_error::not_dir);
 			}
-			auto res = vector<string>{};
+			auto res = vector<path>{};
 			for (size_t i = 0; i < info.size; i++)
 			{
 				UNWRAP(entry(i), item);
@@ -134,7 +135,7 @@ namespace tinydb::filesystem
 			UNWRAP(metadata(),info,const)
 			if (info.type != file_type::dir)
 			{
-				ERR(fs_error::not_dir{});
+				ERR(fs_error::not_dir);
 			}
 			UNWRAP(find("."),current);
 			pth = pth.generic_string();
@@ -160,13 +161,17 @@ namespace tinydb::filesystem
 				if (node_metadata.type == file_type::sym_link && follow_times > 0)
 				{
 					follow_times--;
-					auto content = valarray<byte>();
-					UNWRAP(node->read_at(0, content), size_t,const);
+					auto content = valarray<byte>(config::max_file_name);
+					const auto s = slice(0, config::max_file_name, 1);
+					UNWRAP(node->read_at(0, content,s), size_t,const);
 					auto link_string = string{};
 					valarray_to_container(link_string, content);
 					++p_pth;
-					pth = path{ link_string }.append(p_pth,pth.end());
-					return lookup_follow(pth, follow_times);
+					for(auto other = p_pth;p_pth!=pth.end();++other)
+					{
+						link_string += p_pth->string();
+					}
+					return lookup_follow(link_string, follow_times);
 				}
 				else
 				{
