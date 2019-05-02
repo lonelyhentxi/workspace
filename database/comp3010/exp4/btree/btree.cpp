@@ -5,13 +5,6 @@
 
 namespace tinydb::btree
 {
-#ifdef WIN32
-#include <io.h>
-#endif
-
-#ifdef LINUX
-#include <unistd.h>
-#endif
 
 	shared_ptr<btree_node> btree::btree_node_new()
 	{

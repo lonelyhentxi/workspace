@@ -1,19 +1,10 @@
 #include "bptree.hpp"
 #include "tree.hpp"
 #include <cstdio>
-#include <cstdlib>
 #include <memory>
 
 namespace tinydb::btree
 {
-
-#ifdef WIN32
-#include <io.h>
-#endif
-
-#ifdef LINUX
-#include <unistd.h>
-#endif
 
 	shared_ptr<btree_node> bptree::btree_node_new()
 	{
