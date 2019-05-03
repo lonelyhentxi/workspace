@@ -23,8 +23,7 @@
 		buf->numAllBlk = bufSize / (blkSize + 1);
 		buf->numFreeBlk = buf->numAllBlk;
 		buf->data = (unsigned char*)malloc(bufSize * sizeof(unsigned char));
-		buf->name = (char*)malloc((21) * sizeof(char));
-		strcpy(buf->name, name);
+		buf->name = _strdup(name);
 		if (!buf->data)
 		{
 			// errno has been set
@@ -37,11 +36,12 @@
 
 	void freeBuffer(Buffer* buf)
 	{
-		if (buf->data != NULL) {
-			free(buf->data);
-		}
-		if (buf->name != NULL) {
-			free(buf->name);
+		if(buf!=NULL)
+		{
+			if (buf->data != NULL) {
+				//free(buf->data);
+				buf->data = NULL;
+			}
 		}
 	}
 
@@ -106,11 +106,14 @@
 
 		if (!fp)
 		{
-			errno = EAGAIN;
-			perror("Reading Block Failed!\n");
-			return NULL;
+			fp = fopen(filename, "w");
+			if (!fp)
+			{
+				errno = EAGAIN;
+				perror("open file failed.");
+				return NULL;
+			}
 		}
-
 		*blkPtr = BLOCK_UNAVAILABLE;
 		blkPtr++;
 		bytePtr = blkPtr;

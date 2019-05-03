@@ -15,17 +15,15 @@ namespace tinydb::filesystem
 	using std::slice;
 	using std::slice_array;
 
-	class stream_device
+	struct stream_device
 	{
-	public:
 		virtual optional<size_t> read_at(const size_t offset, valarray<byte>& buf, const slice& s) = 0;
 		virtual optional<size_t> write_at(const size_t offset, const valarray<byte>& buf, const slice& s) = 0;
 		virtual ~stream_device() = default;
 	};
 
-	class block_device
+	struct block_device
 	{
-	public:
 		virtual size_t block_size() const = 0;
 		virtual bool read_at_b(const size_t block_id, valarray<byte>& buf, const slice& s) = 0;
 		virtual bool write_at_b(const size_t block_id, const valarray<byte>& buf, const slice& s) = 0;
@@ -56,7 +54,7 @@ namespace tinydb::filesystem
 
 		size_t raw_end() const
 		{
-			return block * block + end;
+			return block_size * block + end;
 		}
 
 		struct iterator
@@ -99,9 +97,9 @@ namespace tinydb::filesystem
 				begin += l_end - l_begin;
 				return {
 					block_range{
-						l_block,
 						l_begin,
 						l_end,
+						l_block,
 						block_size,
 					}
 				};
@@ -114,7 +112,7 @@ namespace tinydb::filesystem
    return {len};		\
 	}
 
-	class block_stream_device : block_device, stream_device
+	struct block_stream_device : public block_device, public stream_device
 	{
 	public:
 		optional<size_t> read_at(const size_t offset, valarray<byte>& buf, const slice& s) override
@@ -173,6 +171,7 @@ namespace tinydb::filesystem
 				}
 			}
 		}
+		~block_stream_device() override = default;
 	};
 }
 

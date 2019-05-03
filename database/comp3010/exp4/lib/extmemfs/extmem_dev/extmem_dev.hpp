@@ -1,8 +1,8 @@
 #ifndef TINY_DB_ENGINE_EXTMEM_DEVICE_HPP
 #define TINY_DB_ENGINE_EXTMEM_DEVICE_HPP
 
-#include "fs_error.hpp"
-#include "dev.hpp"
+#include "../basic/fs_error.hpp"
+#include "../basic/dev.hpp"
 #include "util.hpp"
 #include <optional>
 #include <valarray>
@@ -51,7 +51,7 @@ namespace tinydb::extmem {
     using tinydb::filesystem::fs_error;
     using tinydb::filesystem::util::current_sys_time_spec;
 
-    class extmem_device final : block_stream_device {
+    class extmem_device final : public block_stream_device {
     private:
         using extmem_cache_id_t = size_t;
         using extmem_block_id_t = size_t;
@@ -72,16 +72,12 @@ namespace tinydb::extmem {
                 >>;
         Buffer *buf_;
         size_t block_num_;
-        size_t head_;
-        size_t tail_;
-        size_t count_;
         extmem_cache_index_t cache_index_;
 
         friend class extmem_device_manager;
 
         extmem_device(const size_t block_num, Buffer *buf) :
-                buf_{buf}, block_num_{block_num}, head_{0},
-                tail_{0}, count_{0},
+                buf_{buf}, block_num_{block_num},
                 cache_index_{} {
             for (size_t i = 0; i < cache_num(); i++) {
                 cache_index_.insert(extmem_device_index{0, i, current_sys_time_spec()});
@@ -115,13 +111,9 @@ namespace tinydb::extmem {
 
         extmem_device(extmem_device &&rhs) noexcept :
                 buf_(rhs.buf_), block_num_{rhs.block_num_},
-                head_{rhs.head_}, tail_{rhs.tail_}, count_{rhs.count_},
                 cache_index_{std::move(rhs.cache_index_)} {
             rhs.block_num_ = 0;
             rhs.buf_ = nullptr;
-            rhs.head_ = 0;
-            rhs.tail_ = 0;
-            rhs.count_ = 0;
             rhs.cache_index_ = {};
         }
 
@@ -130,9 +122,6 @@ namespace tinydb::extmem {
         extmem_device &operator=(extmem_device &&rhs) noexcept {
             std::swap(block_num_, rhs.block_num_);
             std::swap(buf_, rhs.buf_);
-            std::swap(head_, rhs.head_);
-            std::swap(tail_, rhs.tail_);
-            std::swap(count_, rhs.count_);
             std::swap(cache_index_, rhs.cache_index_);
             return *this;
         }
@@ -146,7 +135,7 @@ namespace tinydb::extmem {
         }
 
         inline size_t cache_count() const {
-            return count_;
+			return cache_num() - buf_->numFreeBlk;
         }
 
         inline size_t cache_header_size() const {
@@ -162,7 +151,7 @@ namespace tinydb::extmem {
         }
 
         inline bool cache_empty() const {
-            return head_ == tail_;
+			return cache_count() == 0;
         }
 
         inline bool cache_full() const {

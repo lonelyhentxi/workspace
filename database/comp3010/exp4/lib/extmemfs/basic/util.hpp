@@ -39,12 +39,10 @@ namespace tinydb::filesystem::util
 		}
 	}
 
-	using sys_time_spec = std::chrono::milliseconds;
+	using sys_time_spec = uint64_t;
 	inline sys_time_spec current_sys_time_spec()
 	{
-		return std::chrono::duration_cast<std::chrono::milliseconds>(
-			std::chrono::system_clock::now().time_since_epoch()
-			);
+		return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	}
 	constexpr size_t mem_page_size = 4096;
 }
