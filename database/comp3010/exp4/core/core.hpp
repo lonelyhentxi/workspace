@@ -1,63 +1,10 @@
 #ifndef TINY_DB_ENGINE_CORE_HPP
 #define TINY_DB_ENGINE_CORE_HPP
 
-#include <cstdint>
-#include <memory>
-#include <vector>
-#include <optional>
-#include <valarray>
-#include <sstream>
-#include <iomanip>
-#include <cstddef>
-#include <exception>
-#include "extmemfs/basic/dev.hpp"
-#include "extmemfs/extmem_dev/extmem_dev.hpp"
+#include "functools.hpp"
 
 namespace tinydb::core
 {
-	using std::vector;
-	using std::optional;
-	using std::shared_ptr;
-	using std::tuple;
-	using std::valarray;
-	using std::slice;
-	using std::stringstream;
-	using std::setw;
-	using std::setbase;
-	using std::byte;
-	using std::exception;
-	using std::make_shared;
-	using std::dynamic_pointer_cast;
-	using std::static_pointer_cast;
-	using std::enable_shared_from_this;
-	using tinydb::extmem::extmem_device;
-	using tinydb::extmem::extmem_device_manager;
-	using tinydb::filesystem::block_stream_device;
-
-	template <typename I>
-	void integer_to_valarray(const I value, valarray<byte>& buf, const slice& s)
-	{
-		stringstream ss;
-		uint8_t tmp;
-		ss << setbase(16) << setw(sizeof(I) * 2) << value;
-		for (auto i = s.start(); i < s.size() * s.stride(); i += s.stride())
-		{
-			ss >> setbase(16) >> setw(sizeof(uint8_t) * 2) >> tmp;
-			buf[i] = static_cast<byte>(tmp);
-		}
-	}
-
-	template <typename I>
-	void valarray_to_integer(I& value, const valarray<byte>& buf, const slice& s)
-	{
-		stringstream ss;
-		for (auto i = s.start(); i < s.size() * s.stride(); i += s.stride())
-		{
-			ss << setbase(16) << setw(sizeof(uint8_t) * 2) << static_cast<uint8_t>(buf[i]);
-		}
-		ss >> setbase(16) >> setw(sizeof(I) * 2) >> value;
-	}
-
 	struct engine
 	{
 		shared_ptr<extmem_device> device;
@@ -70,17 +17,30 @@ namespace tinydb::core
 			}
 			device = make_shared<extmem_device>(std::move(*dev));
 		}
+		template<typename SimpleTable>
+		void inject(shared_ptr<SimpleTable>& st, const size_t start_block_id,const size_t record_num) const {
+			st->device_ = device;
+			st->start_block_id_ = start_block_id;
+			st->record_num_ = record_num;
+		}
+	};
+
+	struct unit
+	{
+		virtual size_t size() const = 0;
+		virtual ~unit() = default;
 	};
 
 	struct record
 	{
+		virtual size_t size() const = 0;
 		virtual ~record() = default;
 	};
 
-	struct table_insertor;
 	struct table_iterator;
+	struct table_insertor;
 
-	struct table: public std::enable_shared_from_this<table>
+	struct table
 	{
 		virtual size_t record_start_block_id(const size_t record_id)
 		{
@@ -99,6 +59,8 @@ namespace tinydb::core
 		virtual size_t num() = 0;
 		virtual optional<table_insertor> get_insertor(const shared_ptr<table>& t) = 0;
 		virtual optional<table_iterator> get_iterator(const shared_ptr<table>& t) = 0;
+		virtual shared_ptr<record> deserialize(const valarray<byte>& buf, const slice& s) const = 0;
+		virtual void serialize(const shared_ptr<record>& r, valarray<byte>& buf, const slice& s) const = 0;
 		virtual valarray<byte> read_batch(const size_t start, const size_t end)
 		{
 			const auto start_byte = record_start_block_id(start);
@@ -157,7 +119,7 @@ namespace tinydb::core
 				copy.records.clear();
 				copy.records = (copy.table->read_batch_records(copy.start, copy.end));
 			}
-			return {copy};
+			return { copy };
 		}
 
 		shared_ptr<record> retrieve() const
@@ -187,7 +149,7 @@ namespace tinydb::core
 				{
 					copy.end = copy.start + copy.size;
 				}
-				copy.table -> write_batch_records(copy.records, copy.start, copy.end);
+				copy.table->write_batch_records(copy.records, copy.start, copy.end);
 				copy.records.clear();
 			}
 			return copy;
@@ -195,7 +157,7 @@ namespace tinydb::core
 
 		void retrieve(shared_ptr<record> re)
 		{
-			if(offset == size-1)
+			if (offset == size - 1)
 			{
 				records[offset] = re;
 			}
@@ -208,6 +170,245 @@ namespace tinydb::core
 		void save()
 		{
 			table->write_batch_records(records, start, start + records.size());
+		}
+	};
+
+	template <typename T>
+	struct intergal_unit final : public unit
+	{
+		using value_type = typename enable_if<std::is_integral<T>::value, T>::type;
+		value_type value;
+		size_t size() const override
+		{
+			return sizeof(T);
+		}
+
+		~intergal_unit() override = default;
+	};
+
+	template <typename T>
+	struct intergal_unit_builder
+	{
+		using value_type = typename enable_if<std::is_integral<T>::value, T>::type;
+
+		static shared_ptr<intergal_unit<value_type>> deserialize(const valarray<byte>& buf, const slice& s)
+		{
+			auto r = make_shared<intergal_unit<value_type>>();
+			const auto s1 = slice(s.start(), sizeof(T), 1);
+			valarray_to_integer(r->value, buf, s1);
+			return r;
+		}
+
+		static void serialize(const shared_ptr<intergal_unit<value_type>>& r, valarray<byte>& buf, const slice& s)
+		{
+			const auto s1 = slice(s.start(), sizeof(T), 1);
+			integer_to_valarray(r->value, buf, s1);
+		}
+
+		constexpr size_t size() const
+		{
+			return sizeof(value_type);
+		}
+	};
+
+
+	template <typename T>
+	struct fixed_record : public record
+	{
+		using types_tag = typename enable_if<is_tuple<T>::value, T>::type;
+		array<shared_ptr<unit>, tuple_size<types_tag>::value> values;
+
+		template<size_t I>
+		constexpr shared_ptr<intergal_unit<typename std::tuple_element<I, types_tag>::type>> get()
+		{
+			return dynamic_pointer_cast<intergal_unit<typename std::tuple_element<I, types_tag>::type>>(values[I]);
+		}
+		size_t size() const override
+		{
+			return tuple_size_adder<types_tag>();
+		}
+
+		~fixed_record() override = default;
+	};
+
+	template <typename T, size_t N, size_t C>
+	constexpr void simple_table_iarchiver_rec(array<shared_ptr<unit>, N>& v, const valarray<byte>& buf,
+		const slice& s)
+	{
+		if constexpr (C == N)
+		{
+			return;
+		}
+		else
+		{
+			size_t size = sizeof(typename std::tuple_element<C, T>::type);
+			v[C] = intergal_unit_builder<typename std::tuple_element<C, T>::type>::deserialize(
+				buf, std::slice(s.start(), size, 1));
+			return simple_table_iarchiver_rec<T, N, C + 1>(v,buf,slice(s.start()+size,s.size()-size,1));
+		}
+	}
+
+	template <typename T>
+	constexpr void simple_table_iarchiver(array<shared_ptr<unit>, std::tuple_size<T>::value>& v,
+		const valarray<byte>& buf, const slice& s)
+	{
+		simple_table_iarchiver_rec<T, std::tuple_size<T>::value,0>(v, buf, s);
+	}
+
+
+	template <typename T, size_t N, size_t C>
+	constexpr void simple_table_oarchiver_rec(const array<shared_ptr<unit>, N>& v, valarray<byte>& buf, const slice& s)
+	{
+		if constexpr (C == N)
+		{
+			return;
+		}
+		else
+		{
+			size_t size = sizeof(typename std::tuple_element<C, T>::type);
+			intergal_unit_builder<typename std::tuple_element<C, T>::type>
+				::serialize(dynamic_pointer_cast<intergal_unit<typename std::tuple_element<C, T>::type>>(v[C]), buf,
+					std::slice(s.start(), size, 1));
+			return simple_table_oarchiver_rec<T, N, C + 1>(v, buf, slice(s.start() + size, s.size() - size,1));
+		}
+	}
+
+	template <typename T>
+	constexpr void simple_table_oarchiver(const array<shared_ptr<unit>, std::tuple_size<T>::value>& v,
+		valarray<byte>& buf, const slice& s)
+	{
+		simple_table_oarchiver_rec<T, std::tuple_size<T>::value, 0>(v, buf, s);
+	}
+
+	template <typename Record>
+	struct simple_table final : public table
+	{
+	private:
+		shared_ptr<extmem_device> device_;
+		size_t start_block_id_;
+		size_t record_num_;
+		friend struct table_insertor;
+		friend struct table_iterator;
+		friend struct engine;
+	public:
+		using record_type = Record;
+		~simple_table() override = default;
+		shared_ptr<record> deserialize(const valarray<byte>& buf, const slice& s) const override
+		{
+			auto res = make_shared<Record>();
+			simple_table_iarchiver<typename Record::types_tag>(res->values, buf, s);
+			return res;
+		}
+
+		void serialize(const shared_ptr<record>& r, valarray<byte>& buf, const slice& s) const override
+		{
+			simple_table_oarchiver<typename Record::types_tag>(dynamic_pointer_cast<Record>(r)->values, buf, s);
+		}
+
+		size_t record_start_block_id(const size_t record_id) override
+		{
+			return (record_id / batch_size() + start()) * (device()->block_size()) + ((record_id % batch_size()) *
+				record_size());
+		}
+
+		size_t record_end_block_id(const size_t record_id) override
+		{
+			return (record_id / batch_size() + start()) * (device()->block_size() + 1) + ((record_id % batch_size()) *
+				record_size());
+		}
+
+		shared_ptr<extmem_device> device() override
+		{
+			return device_;
+		}
+
+		size_t start() override
+		{
+			return start_block_id_;
+		}
+
+		size_t record_size() override
+		{
+			return tuple_size_adder<typename record_type::types_tag> ();
+		}
+
+		size_t batch_size() override
+		{
+			return (device()->block_size() - 4) / record_size();
+		}
+
+		size_t num() override
+		{
+			return record_num_;
+		}
+
+		optional<table_iterator> get_iterator(const shared_ptr<table> & t) override
+		{
+			if (t->num() == 0)
+			{
+				return {};
+			}
+			const auto size = t->batch_size() <= t->num() ? t->batch_size() : t->num();
+			auto copy = table_iterator{
+				0, 0, size, size, t, t->read_batch_records(0, size)
+			};
+			return { copy };
+		}
+
+		optional<table_insertor> get_insertor(const shared_ptr<table> & t) override
+		{
+			auto copy = table_insertor{
+				0, 0, t->batch_size(), t->batch_size(), t, {}
+			};
+			return { copy };
+		}
+
+
+		vector<shared_ptr<record>> read_batch_records(const size_t start, const size_t end) override
+		{
+			auto res = vector<shared_ptr<record>>{};
+			const auto buf = read_batch(start, end);
+			const auto all_start = record_start_block_id(start);
+			for (auto i = start; i < end; i++)
+			{
+				const auto block_start = record_start_block_id(i);
+				const auto s = slice(block_start - all_start, record_size(), 1);
+				res.push_back(deserialize(buf, s));
+			}
+			return res;
+		}
+
+		void write_batch_records(valarray<byte> buf, const vector<shared_ptr<record>> & rs, const size_t start,
+			const size_t end, const vector<size_t> & offsets) override
+		{
+			const auto all_start = record_start_block_id(start);
+			for (const auto i : offsets)
+			{
+				const auto block_start = record_start_block_id(i);
+				const auto s = slice(block_start - all_start, record_size(), 1);
+				serialize(dynamic_pointer_cast<record_type>(rs[i]), buf, s);
+			}
+			write_batch(buf, start, end);
+		}
+
+		void write_batch_records(const vector<shared_ptr<record>> & rs, const size_t start,
+			const size_t end) override
+		{
+			const auto all_start = record_start_block_id(start);
+			const auto all_end = record_start_block_id(end);
+			const auto all_size = all_end - all_start;
+			auto buf = valarray<byte>(byte(0), all_size);
+			for (size_t i = 0, j = start; j < end; j++, i++)
+			{
+				const auto block_start = record_start_block_id(i);
+				const auto s = slice(block_start - all_start, record_size(), 1);
+				serialize(dynamic_pointer_cast<record_type>(rs[i]), buf, s);
+			}
+			write_batch(buf, start, end);
+			if (end > num())
+			{
+				record_num_ = end;
+			}
 		}
 	};
 }
