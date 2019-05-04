@@ -3,6 +3,7 @@
 #include "extension.hpp"
 #include "query.hpp"
 #include "core.hpp"
+#include "cppbtree/btree.h"
 
 using namespace tinydb::core;
 using namespace tinydb::extmem;
@@ -73,4 +74,25 @@ TEST_CASE("where","[query]")
 			}, int32_t{ 4 });
 		REQUIRE(bs_result->offset + bs_result->start == 0);
 	}
+
+	SECTION("btree index")
+	{
+		auto r = make_shared<r_table>();
+		eng.inject(r, 1, 112);
+		auto res = bptree_search<int32_t>(r, [](const shared_ptr<record> & rc)->int32_t
+			{
+				return dynamic_pointer_cast<r_record>(rc)->get<0>()->value;
+			}, int32_t{ 4 });
+		REQUIRE(res);
+	}
+}
+
+TEST_CASE("projection_and_sets","[query]")
+{
+	const auto eng = engine();
+	auto r = make_shared<r_table>();
+	eng.inject(r, 1, 112);
+	auto s = make_shared<s_table>();
+	eng.inject(s, 20, 224);
+	auto t = make_shared<s_table>
 }

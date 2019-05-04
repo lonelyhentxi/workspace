@@ -1,7 +1,7 @@
 #ifndef TINY_DB_ENGINE_QUERY_HPP
 #define TINY_DB_ENGINE_QUERY_HPP
 
-#include <cppbtree/btree_map.h>
+#include <cppbtree/btree_set.h>
 #include <optional>
 #include <functional>
 #include "core.hpp"
@@ -43,14 +43,14 @@ namespace tinydb::core
 	}
 
 	template<typename Key>
-	auto bptree_search(const shared_ptr<table>& source,function<Key(const shared_ptr<record>&)>& key_fn, const Key& value)
+	auto bptree_search(const shared_ptr<table>& source,function<Key(const shared_ptr<record>&)> key_fn, const Key& value)
 	{
-		auto container = btree::btree_map<int32_t, shared_ptr<extmem::r_record>>();
+		auto container = btree::btree_set<int32_t>();
 		auto rt_iter = source->get_iterator(source);
 		while (true)
 		{
-			const auto key = key_fn(rt_iter->retrieve());
-			container.insert(key, rt_iter->retrieve());
+			auto key = key_fn(rt_iter->retrieve());
+			container.insert(key);
 			auto next = rt_iter->next();
 			if (!next.has_value())
 			{
@@ -58,7 +58,7 @@ namespace tinydb::core
 			}
 			rt_iter = *next;
 		}
-		return container.find(value);
+		return container.find(value)!=container.end();
 	}
 
 	shared_ptr<table> project(shared_ptr<table> target, const shared_ptr<table>& source, function<shared_ptr<record>(const shared_ptr<record>& reco)>& map);
