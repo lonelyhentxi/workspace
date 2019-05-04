@@ -1,46 +1,67 @@
 #ifndef TINY_DB_ENGINE_QUERY_HPP
 #define TINY_DB_ENGINE_QUERY_HPP
 
+#include <cppbtree/btree_map.h>
+#include <optional>
 #include <functional>
 #include "core.hpp"
+#include "extension.hpp"
 
 namespace tinydb::core
 {
 
 	using std::function;
 
-	shared_ptr<table> linear_where(shared_ptr<table> target,const shared_ptr<table>& source,function<bool(const shared_ptr<extmem::record>&)> pred)
+	shared_ptr<table> linear_where(shared_ptr<table> target, const shared_ptr<table>& source, function<bool(const shared_ptr<record>&)> pred);
+
+	shared_ptr<table> order_by(shared_ptr<table> target, const shared_ptr<table>& source, function<bool(const shared_ptr<record>&, const shared_ptr<record>&)> comp);
+
+	template<typename T>
+	optional<table_iterator> binary_search(const shared_ptr<table>& source, function<int(const shared_ptr<record>&, T value)> comp, T value)
 	{
-		auto tb_iter = source->get_iterator(source);
-		auto target_iter = target->get_insertor(target);
+		size_t lo = 0;
+		size_t hi = source->num();
+		auto iter = source->get_iterator(source);
+		while (hi - lo <=1)
+		{
+			size_t mi = (lo + hi) / 2;
+			iter = iter->to(mi);
+			if (comp(iter->retrieve(), value) > 0)
+			{
+				hi = mi;
+			}
+			else if (comp(iter->retrieve(), value) == 0)
+			{
+				return { iter };
+			}
+			else
+			{
+				lo = mi;
+			}
+		}
+		return {};
+	}
+
+	template<typename Key>
+	auto bptree_search(const shared_ptr<table>& source,function<Key(const shared_ptr<record>&)>& key_fn, const Key& value)
+	{
+		auto container = btree::btree_map<int32_t, shared_ptr<extmem::r_record>>();
+		auto rt_iter = source->get_iterator(source);
 		while (true)
 		{
-			const auto value = tb_iter->retrieve();
-			if(pred(value))
-			{
-				target_iter->retrieve(value);
-				target_iter = target_iter->next();
-			}
-			auto next = tb_iter->next();
+			const auto key = key_fn(rt_iter->retrieve());
+			container.insert(key, rt_iter->retrieve());
+			auto next = rt_iter->next();
 			if (!next.has_value())
 			{
 				break;
 			}
-			tb_iter = *next;
+			rt_iter = *next;
 		}
-		target_iter->save();
-		return target;
+		return container.find(value);
 	}
 
-	void binary_where()
-	{
-		
-	}
-
-	void select()
-	{
-		
-	}
+	shared_ptr<table> project(shared_ptr<table> target, const shared_ptr<table>& source, function<shared_ptr<record>(const shared_ptr<record>& reco)>& map);
 }
 
 #endif

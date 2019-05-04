@@ -19,7 +19,7 @@ TEST_CASE("table_basic_usage","[extension]")
 		auto st = make_shared<s_table>();
 		eng.inject(rt, 1, 112);
 		eng.inject(st, 20, 224);
-		auto rt_iter = rt -> get_iterator(rt);
+		auto rt_iter = rt->get_iterator(rt);
 		while (true)
 		{
 			rt_res.push_back(rt_iter->retrieve());
@@ -38,20 +38,39 @@ TEST_CASE("table_basic_usage","[extension]")
 
 TEST_CASE("where","[query]")
 {
+	const auto eng = engine();
 	SECTION("linear where")
 	{
-		const auto eng = engine();
 		auto rt = make_shared<r_table>();
 		const int32_t target_value = 2;
 		auto linear_wear_rt = make_shared<r_table>();
 		eng.inject(rt, 1, 112);
 		eng.inject(linear_wear_rt, 20, 224);
-		auto stored_tb = dynamic_pointer_cast<r_table>(linear_where(linear_wear_rt, rt,[=](const auto &r)-> bool
-		{
+		auto stored_tb = dynamic_pointer_cast<r_table>(
+			linear_where(linear_wear_rt, rt, [target_value](const auto& r)-> bool
+			{
 				auto r1 = std::dynamic_pointer_cast<r_record>(r);
-				return r1->get<0>() -> value == target_value;
-		}));
+				return r1->get<0>()->value == target_value;
+			}));
 		const auto first_r_record = dynamic_pointer_cast<r_record>(stored_tb->get_iterator(stored_tb)->retrieve());
 		REQUIRE(first_r_record->get<1>()->value == int32_t(0));
+	}
+
+	SECTION("binary search")
+	{
+		auto r = make_shared<r_table>();
+		eng.inject(r, 1, 112);
+		auto order_target = make_shared<r_table>();
+		eng.inject(order_target, 60, 171);
+		order_target = dynamic_pointer_cast<r_table>(
+			order_by(order_target, r, [](const auto& lhs, const auto& rhs)-> bool
+			{
+				return dynamic_pointer_cast<r_record>(lhs)->get<0>()->value < dynamic_pointer_cast<r_record>(rhs)->get<0>()->value;
+			}));
+		auto bs_result = binary_search<int32_t>(order_target, [](const auto& lhs,int32_t rhs)-> int
+		{
+			return dynamic_pointer_cast<r_record>(lhs)->get<0>()->value - rhs;
+			}, int32_t{ 4 });
+		REQUIRE(bs_result->offset + bs_result->start == 0);
 	}
 }

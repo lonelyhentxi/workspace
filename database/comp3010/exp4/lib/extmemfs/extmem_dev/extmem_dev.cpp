@@ -12,14 +12,20 @@ namespace tinydb::extmem
 		auto& cache_id_indices = cache_index_.get<1>();
 		auto& timespec_indices = cache_index_.get<2>();
 		const auto found = block_id_indices.find(block_id);
-		extmem_device_index index{};
+		extmem_device_index index;
 		if (found == block_id_indices.end()) {
-			if (cache_full()) {
-				index = *timespec_indices.begin(); // find earliest time
+			auto& zero = block_id_indices.find(0);
+			if (cache_full()||zero== block_id_indices.end()) {
+				auto &tmp = timespec_indices.begin(); // find earliest time
+				index.block_id = tmp->block_id;
+				index.cache_id = tmp->cache_id;
+				index.time = tmp->time;
 				freeBlockInBuffer(buf_->data + cal_cache_offset(index.cache_id), buf_);
 			}
 			else {
-				index = *block_id_indices.find(0); // find empty cache
+				index.block_id = zero->block_id;
+				index.cache_id = zero->cache_id;
+				index.time = zero->time;
 			}
 			
 			if (readBlockFromDisk(buf_->data + cal_cache_offset(index.cache_id),
@@ -29,7 +35,10 @@ namespace tinydb::extmem
 			index.block_id = block_id;
 		}
 		else {
-			index = *found;
+			auto &tmp = found;
+			index.block_id = tmp->block_id;
+			index.cache_id = tmp->cache_id;
+			index.time = tmp->time;
 		}
 		const auto cache_id = index.cache_id;
 		const auto target = cache_id_indices.find(cache_id);
@@ -47,24 +56,32 @@ namespace tinydb::extmem
 		auto& cache_id_indices = cache_index_.get<1>();
 		auto& timespec_indices = cache_index_.get<2>();
 		const auto found = block_id_indices.find(block_id);
-		extmem_device_index index{};
+		extmem_device_index index;
 		if (found == block_id_indices.end()) {
-			if (cache_full()) {
-				index = *timespec_indices.begin(); // find earliest time
+			auto& zero = block_id_indices.find(0);
+			if (cache_full()||zero==block_id_indices.end()) {
+				auto& tmp = timespec_indices.begin(); // find earliest time
+				index.block_id = tmp->block_id;
+				index.cache_id = tmp->cache_id;
+				index.time = tmp->time;
 				freeBlockInBuffer(buf_->data + cal_cache_offset(index.cache_id), buf_);
 			}
 			else {
-				index = *block_id_indices.find(0); // find empty cache
+				 // find empty cache
+				index.block_id = zero->block_id;
+				index.cache_id = zero->cache_id;
+				index.time = zero->time;
 			}
 		}
 		else {
-			index = *found;
+			index.cache_id = found->cache_id;
+			index.block_id = found->block_id;
+			index.time = found->time;
 		}
 		const auto cache_id = index.cache_id;
 		const auto target = cache_id_indices.find(cache_id);
 		valarray_to_cache(buf, s, cal_cache_offset(cache_id));
-		if (writeBlockToDisk(buf_->data + cal_cache_offset(cache_id), static_cast<unsigned int>(block_id), buf_) <
-			0) {
+		if (writeBlockToDisk(buf_->data + cal_cache_offset(cache_id), static_cast<unsigned int>(block_id), buf_) < 0) {
 			return false;
 		}
 		index.time = filesystem::util::current_sys_time_spec();

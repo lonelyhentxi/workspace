@@ -122,6 +122,32 @@ namespace tinydb::core
 			return { copy };
 		}
 
+		optional<table_iterator> skip(int64_t off) const
+		{
+			const auto target = start + off + offset;
+			return to(target);
+		}
+
+		optional<table_iterator> to(int64_t off) const
+		{
+			auto copy = *this;
+			const auto target = off;
+			if (target < 0 || target >= table->num())
+			{
+				return {};
+			}
+			copy.start = size * (target / size);
+			copy.offset = target - copy.start;
+			copy.end = copy.start + copy.size;
+			copy.end = copy.end > table->num() ? table->num() : copy.end;
+			if (copy.start != start)
+			{
+				copy.records.clear();
+				copy.records = (copy.table->read_batch_records(copy.start, copy.end));
+			}
+			return { copy };
+		}
+
 		shared_ptr<record> retrieve() const
 		{
 			return records[offset];
@@ -143,21 +169,18 @@ namespace tinydb::core
 			copy.offset++;
 			if (copy.offset >= copy.size)
 			{
-				copy.offset = 0;
-				copy.start = copy.end;
-				if (copy.start >= table->num())
-				{
-					copy.end = copy.start + copy.size;
-				}
 				copy.table->write_batch_records(copy.records, copy.start, copy.end);
 				copy.records.clear();
+				copy.offset = 0;
+				copy.start = copy.start + copy.size;
+				copy.end = copy.end + copy.size;
 			}
 			return copy;
 		}
 
 		void retrieve(shared_ptr<record> re)
 		{
-			if (offset == size - 1)
+			if (offset == records.size() - 1)
 			{
 				records[offset] = re;
 			}
@@ -169,7 +192,10 @@ namespace tinydb::core
 
 		void save()
 		{
-			table->write_batch_records(records, start, start + records.size());
+			if(records.size()!=0)
+			{
+				table->write_batch_records(records, start, start + records.size());
+			}
 		}
 	};
 
@@ -244,7 +270,7 @@ namespace tinydb::core
 			size_t size = sizeof(typename std::tuple_element<C, T>::type);
 			v[C] = intergal_unit_builder<typename std::tuple_element<C, T>::type>::deserialize(
 				buf, std::slice(s.start(), size, 1));
-			return simple_table_iarchiver_rec<T, N, C + 1>(v,buf,slice(s.start()+size,s.size()-size,1));
+			return simple_table_iarchiver_rec<T, N, C + 1>(v,buf,slice(s.start()+size,size,1));
 		}
 	}
 
@@ -269,7 +295,7 @@ namespace tinydb::core
 			intergal_unit_builder<typename std::tuple_element<C, T>::type>
 				::serialize(dynamic_pointer_cast<intergal_unit<typename std::tuple_element<C, T>::type>>(v[C]), buf,
 					std::slice(s.start(), size, 1));
-			return simple_table_oarchiver_rec<T, N, C + 1>(v, buf, slice(s.start() + size, s.size() - size,1));
+			return simple_table_oarchiver_rec<T, N, C + 1>(v, buf, slice(s.start() + size, size,1));
 		}
 	}
 
@@ -401,7 +427,7 @@ namespace tinydb::core
 			for (size_t i = 0, j = start; j < end; j++, i++)
 			{
 				const auto block_start = record_start_block_id(i);
-				const auto s = slice(block_start - all_start, record_size(), 1);
+				const auto s = slice(block_start, record_size(), 1);
 				serialize(dynamic_pointer_cast<record_type>(rs[i]), buf, s);
 			}
 			write_batch(buf, start, end);
