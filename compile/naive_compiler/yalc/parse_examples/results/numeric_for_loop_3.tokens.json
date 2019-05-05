@@ -1,0 +1,258 @@
+[
+  {
+    "kind": {
+      "Symbol": "For"
+    },
+    "prefix": [],
+    "start_position": {
+      "bytes": 0,
+      "line": 1,
+      "column": 1
+    },
+    "end_position": {
+      "bytes": 3,
+      "line": 1,
+      "column": 4
+    }
+  },
+  {
+    "kind": {
+      "Identifier": "i"
+    },
+    "prefix": [
+      {
+        "Whitespace": " "
+      }
+    ],
+    "start_position": {
+      "bytes": 4,
+      "line": 1,
+      "column": 5
+    },
+    "end_position": {
+      "bytes": 5,
+      "line": 1,
+      "column": 6
+    }
+  },
+  {
+    "kind": {
+      "Symbol": "Equal"
+    },
+    "prefix": [
+      {
+        "Whitespace": " "
+      }
+    ],
+    "start_position": {
+      "bytes": 6,
+      "line": 1,
+      "column": 7
+    },
+    "end_position": {
+      "bytes": 7,
+      "line": 1,
+      "column": 8
+    }
+  },
+  {
+    "kind": {
+      "Identifier": "start"
+    },
+    "prefix": [
+      {
+        "Whitespace": " "
+      }
+    ],
+    "start_position": {
+      "bytes": 8,
+      "line": 1,
+      "column": 9
+    },
+    "end_position": {
+      "bytes": 13,
+      "line": 1,
+      "column": 14
+    }
+  },
+  {
+    "kind": {
+      "Symbol": "Comma"
+    },
+    "prefix": [],
+    "start_position": {
+      "bytes": 13,
+      "line": 1,
+      "column": 14
+    },
+    "end_position": {
+      "bytes": 14,
+      "line": 1,
+      "column": 15
+    }
+  },
+  {
+    "kind": {
+      "Identifier": "limit"
+    },
+    "prefix": [
+      {
+        "Whitespace": " "
+      }
+    ],
+    "start_position": {
+      "bytes": 15,
+      "line": 1,
+      "column": 16
+    },
+    "end_position": {
+      "bytes": 20,
+      "line": 1,
+      "column": 21
+    }
+  },
+  {
+    "kind": {
+      "Symbol": "Comma"
+    },
+    "prefix": [],
+    "start_position": {
+      "bytes": 20,
+      "line": 1,
+      "column": 21
+    },
+    "end_position": {
+      "bytes": 21,
+      "line": 1,
+      "column": 22
+    }
+  },
+  {
+    "kind": {
+      "NumberLiteral": "2"
+    },
+    "prefix": [
+      {
+        "Whitespace": " "
+      }
+    ],
+    "start_position": {
+      "bytes": 22,
+      "line": 1,
+      "column": 23
+    },
+    "end_position": {
+      "bytes": 23,
+      "line": 1,
+      "column": 24
+    }
+  },
+  {
+    "kind": {
+      "Symbol": "Do"
+    },
+    "prefix": [
+      {
+        "Whitespace": " "
+      }
+    ],
+    "start_position": {
+      "bytes": 24,
+      "line": 1,
+      "column": 25
+    },
+    "end_position": {
+      "bytes": 26,
+      "line": 1,
+      "column": 27
+    }
+  },
+  {
+    "kind": {
+      "Identifier": "print"
+    },
+    "prefix": [
+      {
+        "Whitespace": "\n    "
+      }
+    ],
+    "start_position": {
+      "bytes": 31,
+      "line": 2,
+      "column": 5
+    },
+    "end_position": {
+      "bytes": 36,
+      "line": 2,
+      "column": 10
+    }
+  },
+  {
+    "kind": {
+      "Symbol": "LeftParen"
+    },
+    "prefix": [],
+    "start_position": {
+      "bytes": 36,
+      "line": 2,
+      "column": 10
+    },
+    "end_position": {
+      "bytes": 37,
+      "line": 2,
+      "column": 11
+    }
+  },
+  {
+    "kind": {
+      "Identifier": "i"
+    },
+    "prefix": [],
+    "start_position": {
+      "bytes": 37,
+      "line": 2,
+      "column": 11
+    },
+    "end_position": {
+      "bytes": 38,
+      "line": 2,
+      "column": 12
+    }
+  },
+  {
+    "kind": {
+      "Symbol": "RightParen"
+    },
+    "prefix": [],
+    "start_position": {
+      "bytes": 38,
+      "line": 2,
+      "column": 12
+    },
+    "end_position": {
+      "bytes": 39,
+      "line": 2,
+      "column": 13
+    }
+  },
+  {
+    "kind": {
+      "Symbol": "End"
+    },
+    "prefix": [
+      {
+        "Whitespace": "\n"
+      }
+    ],
+    "start_position": {
+      "bytes": 40,
+      "line": 3,
+      "column": 0
+    },
+    "end_position": {
+      "bytes": 43,
+      "line": 3,
+      "column": 3
+    }
+  }
+]

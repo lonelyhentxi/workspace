@@ -1,0 +1,29 @@
+{
+  "statements": [
+    {
+      "IfStatement": {
+        "condition": {
+          "Name": "foo"
+        },
+        "body": {
+          "statements": [
+            {
+              "FunctionCall": {
+                "name_expression": {
+                  "Name": "print"
+                },
+                "arguments": [
+                  {
+                    "Name": "bar"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "else_if_branches": [],
+        "else_branch": null
+      }
+    }
+  ]
+}

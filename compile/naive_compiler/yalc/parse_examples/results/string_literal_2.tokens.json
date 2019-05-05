@@ -1,0 +1,69 @@
+[
+  {
+    "kind": {
+      "Identifier": "print"
+    },
+    "prefix": [],
+    "start_position": {
+      "bytes": 0,
+      "line": 1,
+      "column": 1
+    },
+    "end_position": {
+      "bytes": 5,
+      "line": 1,
+      "column": 6
+    }
+  },
+  {
+    "kind": {
+      "Symbol": "LeftParen"
+    },
+    "prefix": [],
+    "start_position": {
+      "bytes": 5,
+      "line": 1,
+      "column": 6
+    },
+    "end_position": {
+      "bytes": 6,
+      "line": 1,
+      "column": 7
+    }
+  },
+  {
+    "kind": {
+      "StringLiteral": {
+        "type": "SingleQuote",
+        "raw_content": "Hello, world!"
+      }
+    },
+    "prefix": [],
+    "start_position": {
+      "bytes": 6,
+      "line": 1,
+      "column": 7
+    },
+    "end_position": {
+      "bytes": 21,
+      "line": 1,
+      "column": 22
+    }
+  },
+  {
+    "kind": {
+      "Symbol": "RightParen"
+    },
+    "prefix": [],
+    "start_position": {
+      "bytes": 21,
+      "line": 1,
+      "column": 22
+    },
+    "end_position": {
+      "bytes": 22,
+      "line": 1,
+      "column": 23
+    }
+  }
+]

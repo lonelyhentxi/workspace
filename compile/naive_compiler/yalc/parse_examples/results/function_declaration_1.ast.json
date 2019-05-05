@@ -1,0 +1,19 @@
+{
+  "statements": [
+    {
+      "FunctionDeclaration": {
+        "name": {
+          "segments": [
+            "test"
+          ],
+          "method": null
+        },
+        "body": {
+          "statements": []
+        },
+        "parameters": [],
+        "local": false
+      }
+    }
+  ]
+}
