@@ -1,0 +1,7 @@
+find_package(Boost REQUIRED system container filesystem)
+file(GLOB_RECURSE EXTMEMFS_SOURCES basic/* extmem_dev/*)
+add_library(extmemfs STATIC ${EXTMEMFS_SOURCES})
+set_target_properties(extmemfs PROPERTIES LINKER_LANGUAGE CXX)
+target_include_directories(extmemfs PRIVATE ${Boost_INCLUDE_DIRS})
+target_include_directories(extmemfs PUBLIC basic extmem_dev)
+target_link_libraries(extmemfs PUBLIC ${Boost_LIBRARIES})

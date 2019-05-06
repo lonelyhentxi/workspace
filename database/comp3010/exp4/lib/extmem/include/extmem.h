@@ -8,6 +8,10 @@
 #ifndef EXTMEM_H
 #define EXTMEM_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define BLOCK_AVAILABLE 0
 #define BLOCK_UNAVAILABLE 1
 
@@ -18,13 +22,14 @@ typedef struct tagBuffer {
     size_t numAllBlk; /* Number of blocks that can be kept in the buffer */
     size_t numFreeBlk; /* Number of available blocks in the buffer */
     unsigned char *data; /* Starting address of the buffer */
+	char* name;
 } Buffer;
 
 /* Initialize a buffer with the specified buffer size and block size.
  * If the initialization fails, the return value is NULL;
  * otherwise the pointer to the buffer.
  */
-Buffer *initBuffer(size_t bufSize, size_t blkSize, Buffer *buf);
+Buffer *initBuffer(const char* name,size_t bufSize, size_t blkSize, Buffer *buf);
 
 /* Free the memory used by a buffer. */
 void freeBuffer(Buffer *buf);
@@ -39,12 +44,15 @@ unsigned char *getNewBlockInBuffer(Buffer *buf);
 void freeBlockInBuffer(unsigned char *blk, Buffer *buf);
 
 /* Drop a block on the disk */
-int dropBlockOnDisk(unsigned int addr);
+int dropBlockOnDisk(unsigned int addr, Buffer *buf);
 
 /* Read a block from the hard disk to the buffer by the address of the block. */
-unsigned char *readBlockFromDisk(unsigned int addr, Buffer *buf);
+unsigned char *readBlockFromDisk(unsigned char* blkPtr, unsigned int addr, Buffer *buf);
 
 /* Read a block in the buffer to the hard disk by the address of the block. */
 int writeBlockToDisk(unsigned char *blkPtr, unsigned int addr, Buffer *buf);
 
+#ifdef __cplusplus
+}
+#endif
 #endif // EXTMEM_H
