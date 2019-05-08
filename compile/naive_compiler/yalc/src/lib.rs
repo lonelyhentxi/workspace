@@ -2,7 +2,9 @@
 #[macro_use] extern crate serde_derive;
 extern crate serde;
 extern crate regex;
-extern crate llvm_sys;
+
+#[macro_use]
+extern crate llvm_sys_wrapper;
 
 
 #[macro_use]
@@ -12,6 +14,7 @@ pub mod ast;
 pub mod emitter;
 pub mod tokenizer;
 pub mod parser;
+pub mod codegen;
 
 pub use tokenizer::*;
 pub use parser::*;

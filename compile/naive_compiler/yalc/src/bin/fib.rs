@@ -1,4 +1,3 @@
-#[macro_use]
 extern crate llvm_sys_wrapper;
 
 use llvm_sys_wrapper::*;
@@ -50,6 +49,7 @@ fn main() {
     builder.build_call(printf_func.as_ref(),&mut args);
     builder.build_ret_void();
     module.verify().unwrap();
+    module.print_module_to_file("assets/fib.ll").unwrap(); 
     let engine = module.create_jit_engine().unwrap();
     let named_function = module.named_function("main");
     let mut params = [];
