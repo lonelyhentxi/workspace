@@ -20,7 +20,3 @@ version = "0.0.2"
 [dependencies.clr1]
 path = "./clr1"
 version = "0.0.2"
-
-[dependencies.yalc]
-path = "./yalc"
-version = "0.0.1"
