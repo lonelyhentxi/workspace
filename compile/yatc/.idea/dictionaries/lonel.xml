@@ -6,8 +6,10 @@
       <w>deref</w>
       <w>extern</w>
       <w>ftype</w>
+      <w>ifcond</w>
       <w>oppar</w>
       <w>passmanager</w>
+      <w>preheader</w>
     </words>
   </dictionary>
 </component>

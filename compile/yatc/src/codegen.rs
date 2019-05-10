@@ -1,54 +1,71 @@
+use libc::c_char;
 use std::collections::HashMap;
+use std::ffi::CString;
+use std::iter;
 use std::ops::Deref;
 
-use std::iter;
-
+use cstring_manager::CStringManager;
 use llvm_sys;
 use llvm_sys_wrapper::*;
 use parser;
 
-pub struct Codegen {
-    context: Context,
-    builder: Builder,
-    named_values: HashMap<String, LLVMValueRef>,
-    ty: LLVMTypeRef,
-}
-
 pub struct Module {
     module: llvm_sys_wrapper::Module,
-    params_map: HashMap<String, HashMap<String, usize>>,
+    function_passmanager: LLVMPassManagerRef,
 }
 
 impl Module {
-    pub fn new(module: llvm_sys_wrapper::Module) -> Module {
-        Module {
-            module,
-            params_map: HashMap::new(),
+    pub fn new(gen: &mut Codegen, name: &str) -> Module {
+        let module = gen.context.create_module(name);
+        let function_passmanager = unsafe {
+            use llvm_sys::core::*;
+            use llvm_sys::transforms::scalar::*;
+            let function_passmanager = LLVMCreateFunctionPassManagerForModule(module.as_ref());
+            LLVMAddBasicAliasAnalysisPass(function_passmanager);
+            LLVMAddInstructionCombiningPass(function_passmanager);
+            LLVMAddReassociatePass(function_passmanager);
+            LLVMAddGVNPass(function_passmanager);
+            LLVMAddCFGSimplificationPass(function_passmanager);
+            LLVMInitializeFunctionPassManager(function_passmanager);
+            function_passmanager
+        };
+        Module { module, function_passmanager }
+    }
+
+    pub fn get_function(&self, name: &str) -> Option<(LLVMValueRef, bool)> {
+        let func_name_ptr = CString::new(name).unwrap();
+        let named_function = unsafe {
+            LLVMGetNamedFunction(
+                self.module.as_ref(),
+                func_name_ptr.as_ptr() as *const c_char,
+            )
+        };
+        if named_function.is_null() {
+            None
+        } else {
+            let defined = unsafe { llvm_sys::core::LLVMCountBasicBlocks(named_function) > 0 };
+            Some((named_function, defined))
         }
     }
 
-    pub fn set_func_param(&mut self, function_name: &str, param_name: &str, idx: usize) {
-        self.params_map
-            .entry(function_name.to_string())
-            .or_insert(HashMap::new())
-            .insert(param_name.to_string(), idx);
-    }
-
-    pub fn get_func_param(&mut self, function_name: &str, param_name: &str) -> usize {
-        *self
-            .params_map
-            .get(function_name)
-            .unwrap()
-            .get(param_name)
-            .unwrap()
+    pub fn run_function_pass(&self, function: LLVMValueRef) -> bool {
+        unsafe {
+            LLVMRunFunctionPassManager(self.function_passmanager, function) > 0
+        }
     }
 }
 
 impl Deref for Module {
     type Target = llvm_sys_wrapper::Module;
-    fn deref(&self) -> &T {
+    fn deref(&self) -> &Self::Target {
         &self.module
     }
+}
+pub struct Codegen {
+    pub context: Context,
+    pub builder: Builder,
+    pub named_values: HashMap<String, LLVMValueRef>,
+    pub ty: LLVMTypeRef,
 }
 
 impl Codegen {
@@ -64,6 +81,50 @@ impl Codegen {
             named_values,
             ty,
         }
+    }
+
+    pub fn get_insert_block(&self) -> LLVMBasicBlockRef {
+        unsafe { llvm_sys::core::LLVMGetInsertBlock(self.builder.as_ref()) }
+    }
+
+    pub fn get_current_function(&self) -> LLVMValueRef {
+        let block = self.get_insert_block();
+        unsafe { llvm_sys::core::LLVMGetBasicBlockParent(block) }
+    }
+
+    pub fn append_basic_block_in_context(
+        &mut self,
+        function: LLVMValueRef,
+        name: &str,
+    ) -> LLVMBasicBlockRef {
+        unsafe {
+            let label_name_ptr = CStringManager::new_cstring_as_ptr(name);
+            llvm_sys::core::LLVMAppendBasicBlockInContext(
+                self.context.as_ref(),
+                function,
+                label_name_ptr,
+            )
+        }
+    }
+
+    pub fn set_func_param(function: LLVMValueRef, param_name: &str, idx: usize) {
+        let param_name = CString::new(param_name).unwrap();
+        let param = unsafe { llvm_sys::core::LLVMGetParam(function, idx as u32) };
+        unsafe {
+            llvm_sys::core::LLVMSetValueName(param, param_name.as_ptr() as *const i8);
+        }
+    }
+
+    pub fn get_func_param(function: LLVMValueRef, idx: usize) -> LLVMValueRef {
+        unsafe { llvm_sys::core::LLVMGetParam(function, idx as u32) }
+    }
+
+    pub fn count_func_param(function: LLVMValueRef) -> usize {
+        unsafe { llvm_sys::core::LLVMCountParams(function) as usize }
+    }
+
+    pub fn dump(value: LLVMValueRef) {
+        unsafe { llvm_sys::core::LLVMDumpValue(value) }
     }
 }
 
@@ -97,33 +158,43 @@ impl IRBuilder for Vec<parser::ASTNode> {
 }
 
 impl IRBuilder for parser::ASTNode {
-    fn codegen(&self, context: &mut Codegen, module: &mut Module) -> IRBuildingResult {
+    fn codegen(&self, gen: &mut Codegen, module: &mut Module) -> IRBuildingResult {
         match self {
-            &parser::ExternNode(ref prototype) => prototype.codegen(context, module),
-            &parser::FunctionNode(ref function) => function.codegen(context, module),
+            parser::ExternNode(ref prototype) => prototype.codegen(gen, module),
+            parser::FunctionNode(ref function) => function.codegen(gen, module),
         }
     }
 }
 
 impl IRBuilder for parser::Prototype {
     fn codegen(&self, gen: &mut Codegen, module: &mut Module) -> IRBuildingResult {
-        let fun_type = unsafe {
-            let mut param_types = iter::repeat(gen.ty)
-                .take(self.args.len())
-                .collect::<Vec<_>>();
-            llvm_sys::LLVMFunctionType(
-                gen.ty,
-                param_types.as_mut_ptr(),
-                param_types.len() as u32,
-                0,
-            )
+        let fun = match module.get_function(&self.name) {
+            Some((prev_definition, _)) => {
+                if Codegen::count_func_param(prev_definition) != self.args.len() {
+                    return error("declaration of function with different number of args");
+                }
+                prev_definition
+            }
+            None => {
+                let mut param_types = iter::repeat(gen.ty)
+                    .take(self.args.len())
+                    .collect::<Vec<_>>();
+                let fun_type = unsafe {
+                    llvm_sys::core::LLVMFunctionType(
+                        gen.ty,
+                        param_types.as_mut_ptr(),
+                        param_types.len() as u32,
+                        0,
+                    )
+                };
+                let func = module.add_function(&self.name, fun_type);
+                for idx in 0..self.args.len() {
+                    Codegen::set_func_param(func.as_ref(), &self.args[idx], idx);
+                }
+                func.as_ref()
+            }
         };
-        let name = &self.name;
-        let func = module.add_function(name, fun_type);
-        for idx in 0..self.args.len() {
-            module.set_func_param(name, &self.args[idx], idx);
-        }
-        Ok(func.as_ref())
+        Ok(fun)
     }
 }
 
@@ -131,32 +202,33 @@ impl IRBuilder for parser::Function {
     fn codegen(&self, gen: &mut Codegen, module: &mut Module) -> IRBuildingResult {
         gen.named_values.clear();
 
-        let (fp, _) = self.prototype.codegen(gen, module)?;
-        let mut function = Function::from_ptr(fp);
-
-        let mut bb = function.append_basic_block("entry");
+        let function = self.prototype.codegen(gen, module)?;
+        let fun_res = &module.get_function(&self.prototype.name);
+        if fun_res.is_some() && fun_res.unwrap().1==true {
+            return error("redefiniation of function");
+        }
+        let bb = gen.append_basic_block_in_context(function, "entry");
         gen.builder.position_at_end(bb);
 
         let prototype = &self.prototype;
-        for i in 0..prototype.args.len() {
-            let arg = &prototype.args[i];
-            let arg_alloca = gen.builder.build_alloca_with_name(gen.ty, arg);
-            gen.builder
-                .build_store(function.get_param(i as u32), arg_alloca);
-            gen.named_values.insert(arg.clone(), arg_alloca);
+        for idx in 0..prototype.args.len() {
+            let arg = &prototype.args[idx];
+            let param = Codegen::get_func_param(function, idx);
+            gen.named_values.insert(arg.clone(), param);
         }
 
         let body = match self.body.codegen(gen, module) {
             Ok(value) => value,
             Err(message) => {
-                unsafe { LLVMDeleteFunction(function.to_ref()) };
+                unsafe { LLVMDeleteFunction(function) };
                 return Err(message);
             }
         };
 
         gen.builder.build_ret(body);
+        module.run_function_pass(function);
         gen.named_values.clear();
-        Ok(function.to_ref())
+        Ok(function)
     }
 }
 
@@ -164,12 +236,8 @@ impl IRBuilder for parser::Expression {
     fn codegen(&self, gen: &mut Codegen, module: &mut Module) -> IRBuildingResult {
         match self {
             parser::LiteralExpr(ref value) => Ok(gen.context.Double(*value)),
-
             parser::VariableExpr(ref name) => match gen.named_values.get(name) {
-                Some(value) => {
-                    let var = gen.builder.build_load(*value);
-                    Ok(var)
-                }
+                Some(value) => Ok(*value),
                 None => error("unknown variable name"),
             },
             parser::UnaryExpr(ref operator, ref operand) => {
@@ -177,38 +245,26 @@ impl IRBuilder for parser::Expression {
                 let name = "unary".to_string() + operator;
                 let function = module.named_function(name.as_str());
                 let mut args_value = vec![operand];
-                Ok(gen.builder.build_call(function.as_ref(), &mut args_value))
+                Ok(gen.builder.build_call_with_name(function.as_ref(), &mut args_value,"unop"))
             }
             parser::BinaryExpr(ref name, ref lhs, ref rhs) => {
-                if name.as_str() == "=" {
-                    let var_name = match **lhs {
-                        parser::VariableExpr(ref nm) => nm,
-                        _ => return error("destination of '=' must be a variable"),
-                    };
-
-                    let value = rhs.codegen(context, module)?;
-
-                    let variable = match gen.named_values.get(var_name) {
-                        Some(vl) => *vl,
-                        None => return error("unknown variable name"),
-                    };
-                    gen.builder.build_store(value, variable);
-                    return Ok(value);
-                }
-
-                let lhs_value = lhs.codegen(context, module)?;
-                let rhs_value = rhs.codegen(context, module)?;
+                let lhs_value = lhs.codegen(gen, module)?;
+                let rhs_value = rhs.codegen(gen, module)?;
 
                 match name.as_str() {
-                    "+" => Ok(gen
-                        .builder
-                        .build_add_with_name(lhs_value, rhs_value, "addtmp")),
-                    "-" => Ok(gen
-                        .builder
-                        .build_sub_with_name(lhs_value, rhs_value, "subtmp")),
-                    "*" => Ok(gen
-                        .builder
-                        .build_mul_with_name(lhs_value, rhs_value, "multmp")),
+                    "+" => 
+                        Ok(unsafe {
+                            let name = CStringManager::new_cstring_as_ptr("addtmp");
+                          llvm_sys::core::LLVMBuildFAdd(gen.builder.as_ref(),lhs_value,rhs_value, name)
+                        }),
+                    "-" => Ok(unsafe {
+                            let name = CStringManager::new_cstring_as_ptr("subtmp");
+                          llvm_sys::core::LLVMBuildFSub(gen.builder.as_ref(),lhs_value,rhs_value, name)
+                        }),
+                    "*" => Ok(unsafe {
+                            let name = CStringManager::new_cstring_as_ptr("multtmp");
+                          llvm_sys::core::LLVMBuildFMul(gen.builder.as_ref(),lhs_value,rhs_value, name)
+                        }),
                     "<" => {
                         let cmp = gen
                             .builder
@@ -216,8 +272,8 @@ impl IRBuilder for parser::Expression {
                         let res = unsafe {
                             let val_name_ptr = CStringManager::new_cstring_as_ptr("booltmp");
                             llvm_sys::core::LLVMBuildUIToFP(
-                                *gen.builder,
-                                lhs_value,
+                                gen.builder.as_ref(),
+                                cmp,
                                 gen.context.DoubleType(),
                                 val_name_ptr,
                             )
@@ -229,7 +285,7 @@ impl IRBuilder for parser::Expression {
                         let function = module.named_function(&name);
                         let mut args_value = vec![lhs_value, rhs_value];
                         Ok(gen.builder.build_call_with_name(
-                            function.to_ref(),
+                            function.as_ref(),
                             &mut args_value,
                             "binop",
                         ))
@@ -241,175 +297,108 @@ impl IRBuilder for parser::Expression {
                 if function.params_count() as usize != args.len() {
                     return error("incorrect number of arguments passed");
                 }
+                if module.get_function(name).is_none() {
+                    return error("call function which have no definiation");
+                }
                 let mut args_value = vec![];
                 for arg in args.iter() {
-                    let arg_value = arg.codegen(context, module)?;
+                    let arg_value = arg.codegen(gen, module)?;
                     args_value.push(arg_value);
                 }
-
                 Ok(gen
                     .builder
-                    .build_call_with_name(function.to_ref(), &mut args_value, "calltmp"))
+                    .build_call_with_name(function.as_ref(), &mut args_value, "calltmp"))
             }
             parser::ConditionalExpr {
                 ref cond_expr,
                 ref then_expr,
                 ref else_expr,
             } => {
-                let cond_value = cond_expr.codegen(context, module)?;
+                let cond_value = cond_expr.codegen(gen, module)?;
                 let zero = gen.context.Double(0.);
                 let ifcond = gen
                     .builder
                     .build_fcmp_one_with_name(cond_value, zero, "ifcond");
 
-                let else0 = fib_func.append_basic_block("else0");
-                let end = fib_func.append_basic_block("end");
-                builder.build_cond_br(condition0, end, else0);
-                builder.position_at_end(else0);
-                let condition1 = builder.build_icmp_eq(arg, ctx.UInt64(1));
-                let else1 = fib_func.append_basic_block("else1");
-                builder.build_cond_br(condition1, end, else1);
-                builder.position_at_end(else1);
-                let sub2 = builder.build_sub(arg, ctx.UInt64(2));
-                let mut args = [sub2];
-                let fib_sub2 = builder.build_tail_call(fib_func.as_ref(), &mut args);
-                let sub1 = builder.build_sub(arg, ctx.UInt64(1));
-                let mut args = [sub1];
-                let block = gen.builder.build_add();
-                let mut function = block.get_parent();
-                let mut then_block =
-                    function.append_basic_block_in_context(&mut context.context, "then");
-                let mut else_block =
-                    function.append_basic_block_in_context(&mut context.context, "else");
-                let mut merge_block =
-                    function.append_basic_block_in_context(&mut context.context, "ifcont");
-                context
-                    .builder
-                    .build_cond_br(ifcond, &then_block, &else_block);
+                let function = gen.get_current_function();
+                let then_block = gen.append_basic_block_in_context(function, "then");
+                let else_block = gen.append_basic_block_in_context(function, "else");
+                let merge_block = gen.append_basic_block_in_context(function, "ifcont");
+                gen.builder.build_cond_br(ifcond, then_block, else_block);
 
-                context.builder.position_at_end(&mut then_block);
-                let (then_value, _) = try!(then_expr.codegen(context, module));
-                context.builder.build_br(&merge_block);
-                let then_end_block = context.builder.get_insert_block();
+                gen.builder.position_at_end(then_block);
+                let then_value = then_expr.codegen(gen, module)?;
+                gen.builder.build_br(merge_block);
+                let then_end_block = gen.get_insert_block();
 
-                context.builder.position_at_end(&mut else_block);
-                let (else_value, _) = try!(else_expr.codegen(context, module));
-                context.builder.build_br(&merge_block);
-                let else_end_block = context.builder.get_insert_block();
+                gen.builder.position_at_end(else_block);
+                let else_value = else_expr.codegen(gen, module)?;
+                gen.builder.build_br(merge_block);
+                let else_end_block = gen.get_insert_block();
 
-                context.builder.position_at_end(&mut merge_block);
-
-                let mut phi = unsafe {
-                    PHINodeRef::from_ref(context.builder.build_phi(context.ty.to_ref(), "ifphi"))
-                };
-                phi.add_incoming(
-                    vec![then_value].as_mut_slice(),
-                    vec![then_end_block].as_mut_slice(),
-                );
-                phi.add_incoming(
-                    vec![else_value].as_mut_slice(),
-                    vec![else_end_block].as_mut_slice(),
-                );
-
-                Ok((phi.to_ref(), false))
+                gen.builder.position_at_end(merge_block);
+                let phi = gen.builder.build_phi_with_name(gen.ty, "ifphi");
+                phi.add_incoming(then_value, then_end_block);
+                phi.add_incoming(else_value, else_end_block);
+                Ok(phi.as_ref())
             }
 
-            &parser::LoopExpr {
+            parser::LoopExpr {
                 ref var_name,
                 ref start_expr,
                 ref end_expr,
                 ref step_expr,
                 ref body_expr,
             } => {
-                let (start_value, _) = try!(start_expr.codegen(context, module));
+                let start_value = start_expr.codegen(gen, module)?;
+                let preheader_block = gen.get_insert_block();
+                let function = gen.get_current_function();
+                let preloop_block = gen.append_basic_block_in_context(function, "preloop");
+                gen.builder.build_br(preloop_block);
+                gen.builder.position_at_end(preloop_block);
 
-                let preheader_block = context.builder.get_insert_block();
-                let mut function = preheader_block.get_parent();
+                let variable = gen.builder.build_phi_with_name(gen.ty, &var_name);
+                variable.add_incoming(start_value, preheader_block);
+                let old_value = gen.named_values.remove(var_name);
+                gen.named_values.insert(var_name.clone(), variable.as_ref());
 
-                let variable = create_entry_block_alloca(context, &function, var_name);
-                context.builder.build_store(start_value, variable);
-
-                let mut preloop_block =
-                    function.append_basic_block_in_context(&mut context.context, "preloop");
-                context.builder.build_br(&preloop_block);
-                context.builder.position_at_end(&mut preloop_block);
-
-                let old_value = context.named_values.remove(var_name);
-                context
-                    .named_values
-                    .insert(var_name.clone(), variable.to_ref());
-
-                let (end_value, _) = try!(end_expr.codegen(context, module));
-                let zero = RealConstRef::get(&context.ty, 0.0);
-                let end_cond =
-                    context
-                        .builder
-                        .build_fcmp(LLVMRealONE, end_value, zero.to_ref(), "loopcond");
-
-                let mut after_block =
-                    function.append_basic_block_in_context(&mut context.context, "afterloop");
-                let mut loop_block =
-                    function.append_basic_block_in_context(&mut context.context, "loop");
-
-                context
+                let end_value = end_expr.codegen(gen, module)?;
+                let zero = gen.context.Double(0f64);
+                let end_cond = gen
                     .builder
-                    .build_cond_br(end_cond, &loop_block, &after_block);
+                    .build_fcmp_one_with_name(end_value, zero, "loopcond");
 
-                context.builder.position_at_end(&mut loop_block);
-                try!(body_expr.codegen(context, module));
+                let after_block = gen.append_basic_block_in_context(function, "afterloop");
+                let loop_block = gen.append_basic_block_in_context(function, "loop");
 
-                let (step_value, _) = try!(step_expr.codegen(context, module));
+                gen.builder.build_cond_br(end_cond, loop_block, after_block);
 
-                let cur_value = context.builder.build_load(variable, var_name);
-                let next_value = context.builder.build_fadd(cur_value, step_value, "nextvar");
-                context.builder.build_store(next_value, variable);
+                gen.builder.position_at_end(loop_block);
+                body_expr.codegen(gen, module)?;
 
-                context.builder.build_br(&preloop_block);
+                let step_value = step_expr.codegen(gen, module)?;
+                let next_value =
+                    unsafe {
+                        let name = CStringManager::new_cstring_as_ptr("nextvar");
+                        llvm_sys::core::LLVMBuildFAdd(gen.builder.as_ref(),variable.as_ref(), step_value, name)
+                    };
+                    
+                let loop_end_block = gen.get_insert_block();
+                variable.add_incoming(next_value, loop_end_block);
 
-                context.builder.position_at_end(&mut after_block);
+                gen.builder.build_br(preloop_block);
 
-                context.named_values.remove(var_name);
+                gen.builder.position_at_end(after_block);
+
+                gen.named_values.remove(var_name);
                 match old_value {
                     Some(value) => {
-                        context.named_values.insert(var_name.clone(), value);
+                        gen.named_values.insert(var_name.clone(), value);
                     }
                     None => (),
                 };
 
-                Ok((zero.to_ref(), false))
-            }
-
-            &parser::VarExpr {
-                ref vars,
-                ref body_expr,
-            } => {
-                let mut old_bindings = Vec::new();
-                let function = context.builder.get_insert_block().get_parent();
-                for var in vars.iter() {
-                    let (ref name, ref init_expr) = *var;
-                    let (init_value, _) = try!(init_expr.codegen(context, module));
-                    let variable = create_entry_block_alloca(context, &function, name);
-                    context.builder.build_store(init_value, variable);
-                    old_bindings.push(context.named_values.remove(name));
-                    context.named_values.insert(name.clone(), variable);
-                }
-
-                let (body_value, _) = try!(body_expr.codegen(context, module));
-
-                let mut old_iter = old_bindings.iter();
-                for var in vars.iter() {
-                    let (ref name, _) = *var;
-                    context.named_values.remove(name);
-
-                    match old_iter.next() {
-                        Some(&Some(value)) => {
-                            context.named_values.insert(name.clone(), value);
-                        }
-                        _ => (),
-                    };
-                }
-
-                Ok((body_value, false))
+                Ok(zero)
             }
         }
     }

@@ -50,12 +50,6 @@ pub enum Expression {
         step_expr: Box<Expression>,
         body_expr: Box<Expression>,
     },
-
-    VarExpr {
-        vars: Vec<(String, Expression)>,
-        body_expr: Box<Expression>,
-    },
-
     CallExpr(String, Vec<Expression>),
 }
 
@@ -316,8 +310,6 @@ fn parse_primary_expr(
 
         Some(&For) => parse_loop_expr(tokens, settings),
 
-        Some(&Var) => parse_var_expr(tokens, settings),
-
         Some(&Operator(_)) => parse_unary_expr(tokens, settings),
 
         Some(&OpeningParenthesis) => parse_parenthesis_expr(tokens, settings),
@@ -468,35 +460,26 @@ fn parse_conditional_expr(
     )
 }
 
-fn parse_loop_expr(
-    tokens: &mut Vec<TokenType>,
-    settings: &mut ParserSettings,
-) -> PartParsingResult<Expression> {
+fn parse_loop_expr(tokens : &mut Vec<TokenType>, settings : &mut ParserSettings) -> PartParsingResult<Expression> {
     tokens.pop();
     let mut parsed_tokens = vec![For];
     let var_name = expect_token!(
         [Ident(name), Ident(name.clone()), name] <= tokens,
-        parsed_tokens,
-        "expected identifier after for"
-    );
+        parsed_tokens, "expected identifier after for");
 
     expect_token!(
         [Operator(op), Operator(op.clone()), {
             if op.as_str() != "=" {
-                return error("expected '=' after for");
+                return error("expected '=' after for")
             }
         }] <= tokens,
-        parsed_tokens,
-        "expected '=' after for"
-    );
+        parsed_tokens, "expected '=' after for");
 
     let start_expr = parse_try!(parse_expr, tokens, settings, parsed_tokens);
 
     expect_token!(
         [Comma, Comma, ()] <= tokens,
-        parsed_tokens,
-        "expected ',' after for start value"
-    );
+        parsed_tokens, "expected ',' after for start value");
 
     let end_expr = parse_try!(parse_expr, tokens, settings, parsed_tokens);
 
@@ -507,72 +490,11 @@ fn parse_loop_expr(
 
     expect_token!(
         [In, In, ()] <= tokens,
-        parsed_tokens,
-        "expected 'in' after for"
-    );
+        parsed_tokens, "expected 'in' after for");
 
     let body_expr = parse_try!(parse_expr, tokens, settings, parsed_tokens);
 
-    Good(
-        LoopExpr {
-            var_name,
-            start_expr: box start_expr,
-            end_expr: box end_expr,
-            step_expr: box step_expr,
-            body_expr: box body_expr,
-        },
-        parsed_tokens,
-    )
-}
-
-fn parse_var_expr(
-    tokens: &mut Vec<TokenType>,
-    settings: &mut ParserSettings,
-) -> PartParsingResult<Expression> {
-    tokens.pop();
-    let mut parsed_tokens = vec![Var];
-    let mut vars = Vec::new();
-
-    loop {
-        let var_name = expect_token!(
-            [Ident(name), Ident(name.clone()), name] <= tokens,
-            parsed_tokens,
-            "expected identifier list after var"
-        );
-
-        let init_expr = expect_token!(
-            [Operator(op), Operator(op.clone()), {
-                if op.as_str() != "=" {
-                    return error("expected '=' in variable initialization")
-                }
-                parse_try!(parse_expr, tokens, settings, parsed_tokens)
-            }]
-            else {LiteralExpr(0.0)}
-            <= tokens, parsed_tokens);
-
-        vars.push((var_name, init_expr));
-
-        expect_token!(
-            [Comma, Comma, ()]
-            else {break}
-            <= tokens, parsed_tokens);
-    }
-
-    expect_token!(
-        [In, In, ()] <= tokens,
-        parsed_tokens,
-        "expected 'in' after var"
-    );
-
-    let body_expr = parse_try!(parse_expr, tokens, settings, parsed_tokens);
-
-    Good(
-        VarExpr {
-            vars,
-            body_expr: box body_expr,
-        },
-        parsed_tokens,
-    )
+    Good(LoopExpr{var_name: var_name, start_expr: box start_expr, end_expr: box end_expr, step_expr: box step_expr, body_expr: box body_expr}, parsed_tokens)
 }
 
 fn parse_unary_expr(
