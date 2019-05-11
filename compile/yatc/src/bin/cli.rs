@@ -9,7 +9,7 @@ use yatc::driver::{main_loop, Tokens, AST, IR, Jit,Interpreter};
 
 use docopt::Docopt;
 
-const USAGE: &'static str = "
+const USAGE: &str = "
 Usage: iron_kaleidoscope [(-l | -p | -g | -j | -i)]
 Options:
     -l  Run only lexer and show its output.

@@ -32,23 +32,22 @@ pub struct Prototype {
 pub enum Expression {
     LiteralExpr(f64),
     VariableExpr(String),
-
     UnaryExpr(String, Box<Expression>),
-
     BinaryExpr(String, Box<Expression>, Box<Expression>),
-
     ConditionalExpr {
         cond_expr: Box<Expression>,
         then_expr: Box<Expression>,
         else_expr: Box<Expression>,
     },
-
     LoopExpr {
         var_name: String,
         start_expr: Box<Expression>,
         end_expr: Box<Expression>,
         step_expr: Box<Expression>,
         body_expr: Box<Expression>,
+    },
+    VarExpr {
+        vars: Vec<(String,Expression)>,body_expr: Box<Expression>
     },
     CallExpr(String, Vec<Expression>),
 }
@@ -309,7 +308,7 @@ fn parse_primary_expr(
         Some(&If) => parse_conditional_expr(tokens, settings),
 
         Some(&For) => parse_loop_expr(tokens, settings),
-
+        Some(&Var) => parse_var_expr(tokens,settings),
         Some(&Operator(_)) => parse_unary_expr(tokens, settings),
 
         Some(&OpeningParenthesis) => parse_parenthesis_expr(tokens, settings),
@@ -512,4 +511,41 @@ fn parse_unary_expr(
     let operand = parse_try!(parse_primary_expr, tokens, settings, parsed_tokens);
 
     Good(UnaryExpr(name, box operand), parsed_tokens)
+}
+
+fn parse_var_expr(tokens : &mut Vec<TokenType>, settings : &mut ParserSettings) -> PartParsingResult<Expression> {
+    tokens.pop();
+    let mut parsed_tokens = vec![Var];
+    let mut vars = Vec::new();
+
+    loop {
+        let var_name = expect_token!(
+            [Ident(name), Ident(name.clone()), name] <= tokens,
+            parsed_tokens, "expected identifier list after var");
+
+        let init_expr = expect_token!(
+            [Operator(op), Operator(op.clone()), {
+                if op.as_str() != "=" {
+                    return error("expected '=' in variable initialization")
+                }
+                parse_try!(parse_expr, tokens, settings, parsed_tokens)
+            }]
+            else {LiteralExpr(0.0)}
+            <= tokens, parsed_tokens);
+
+        vars.push((var_name, init_expr));
+
+        expect_token!(
+            [Comma, Comma, ()]
+            else {break}
+            <= tokens, parsed_tokens);
+    }
+
+    expect_token!(
+        [In, In, ()] <= tokens,
+        parsed_tokens, "expected 'in' after var");
+
+    let body_expr = parse_try!(parse_expr, tokens, settings, parsed_tokens);
+
+    Good(VarExpr{vars: vars, body_expr: box body_expr}, parsed_tokens)
 }

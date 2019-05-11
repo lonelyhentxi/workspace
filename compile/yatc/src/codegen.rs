@@ -126,6 +126,31 @@ impl Codegen {
     pub fn dump(value: LLVMValueRef) {
         unsafe { llvm_sys::core::LLVMDumpValue(value) }
     }
+
+    fn get_entry(function: LLVMValueRef) -> LLVMBasicBlockRef {
+        unsafe {
+            LLVMGetEntryBasicBlock(function)
+        }
+    }
+
+    fn get_first_instruction(basic_block: LLVMBasicBlockRef) -> LLVMValueRef {
+        unsafe {
+            LLVMGetFirstInstruction(basic_block)
+        }
+    }
+
+    fn position(&self,basic_block:LLVMBasicBlockRef,instruction:LLVMValueRef) {
+        unsafe {
+            LLVMPositionBuilder(self.builder.as_ref(),basic_block, instruction)
+        }
+    }
+
+    pub fn create_entry_block_alloca(&self,function: LLVMValueRef,var_name: &str) -> LLVMValueRef {
+        let bb = Codegen::get_entry(function);
+        let fi = Codegen::get_first_instruction(bb);
+        self.position(bb, fi);
+        self.builder.build_alloca_with_name(self.ty, var_name)
+    }
 }
 
 pub type IRBuildingResult = Result<LLVMValueRef, String>;
@@ -141,8 +166,8 @@ pub trait IRBuilder {
 impl IRBuilder for parser::ParsingResult {
     fn codegen(&self, context: &mut Codegen, module: &mut Module) -> IRBuildingResult {
         match self {
-            &Ok((ref ast, _)) => ast.codegen(context, module),
-            &Err(ref message) => Err(message.clone()),
+            Ok((ref ast, _)) => ast.codegen(context, module),
+            Err(ref message) => Err(message.clone()),
         }
     }
 }
@@ -204,7 +229,7 @@ impl IRBuilder for parser::Function {
 
         let function = self.prototype.codegen(gen, module)?;
         let fun_res = &module.get_function(&self.prototype.name);
-        if fun_res.is_some() && fun_res.unwrap().1==true {
+        if fun_res.is_some() && fun_res.unwrap().1 {
             return error("redefiniation of function");
         }
         let bb = gen.append_basic_block_in_context(function, "entry");
@@ -214,7 +239,9 @@ impl IRBuilder for parser::Function {
         for idx in 0..prototype.args.len() {
             let arg = &prototype.args[idx];
             let param = Codegen::get_func_param(function, idx);
-            gen.named_values.insert(arg.clone(), param);
+            let arg_alloca = gen.create_entry_block_alloca(function, arg);
+            gen.builder.build_store(param,arg_alloca);
+            gen.named_values.insert(arg.clone(), arg_alloca);
         }
 
         let body = match self.body.codegen(gen, module) {
@@ -237,7 +264,10 @@ impl IRBuilder for parser::Expression {
         match self {
             parser::LiteralExpr(ref value) => Ok(gen.context.Double(*value)),
             parser::VariableExpr(ref name) => match gen.named_values.get(name) {
-                Some(value) => Ok(*value),
+                Some(value) => {
+                    let var = gen.builder.build_load_with_name(*value, name);
+                    Ok(var)
+                }
                 None => error("unknown variable name"),
             },
             parser::UnaryExpr(ref operator, ref operand) => {
@@ -351,16 +381,17 @@ impl IRBuilder for parser::Expression {
                 ref body_expr,
             } => {
                 let start_value = start_expr.codegen(gen, module)?;
-                let preheader_block = gen.get_insert_block();
                 let function = gen.get_current_function();
+
+                let variable = gen.create_entry_block_alloca(function,var_name);
+                gen.builder.build_store(start_value,variable);
+
                 let preloop_block = gen.append_basic_block_in_context(function, "preloop");
                 gen.builder.build_br(preloop_block);
                 gen.builder.position_at_end(preloop_block);
 
-                let variable = gen.builder.build_phi_with_name(gen.ty, &var_name);
-                variable.add_incoming(start_value, preheader_block);
                 let old_value = gen.named_values.remove(var_name);
-                gen.named_values.insert(var_name.clone(), variable.as_ref());
+                gen.named_values.insert(var_name.clone(), variable);
 
                 let end_value = end_expr.codegen(gen, module)?;
                 let zero = gen.context.Double(0f64);
@@ -377,29 +408,52 @@ impl IRBuilder for parser::Expression {
                 body_expr.codegen(gen, module)?;
 
                 let step_value = step_expr.codegen(gen, module)?;
-                let next_value =
-                    unsafe {
-                        let name = CStringManager::new_cstring_as_ptr("nextvar");
-                        llvm_sys::core::LLVMBuildFAdd(gen.builder.as_ref(),variable.as_ref(), step_value, name)
-                    };
-                    
-                let loop_end_block = gen.get_insert_block();
-                variable.add_incoming(next_value, loop_end_block);
+                let cur_value = gen.builder.build_load_with_name(variable,var_name);
+                let next_value = unsafe {
+                    let next_var_name = CStringManager::new_cstring_as_ptr("nextvar");
+                    llvm_sys::core::LLVMBuildFAdd(gen.builder.as_ref(),cur_value, step_value, next_var_name)
+                };
+                gen.builder.build_store(next_value, variable);
 
                 gen.builder.build_br(preloop_block);
 
                 gen.builder.position_at_end(after_block);
 
                 gen.named_values.remove(var_name);
-                match old_value {
-                    Some(value) => {
-                        gen.named_values.insert(var_name.clone(), value);
-                    }
-                    None => (),
+
+                if let Some(value) = old_value {
+                    gen.named_values.insert(var_name.clone(), value);
                 };
 
                 Ok(zero)
             }
+            parser::VarExpr{ref vars, ref body_expr} => {
+                let mut old_bindings = vec![];
+                let function = gen.get_current_function();
+                for var in vars.iter() {
+                    let (ref name, ref init_expr) = *var;
+                    let init_value = init_expr.codegen(gen, module)?;
+                    let variable = gen.create_entry_block_alloca(function, name);
+                    gen.builder.build_store(init_value, variable);
+                    old_bindings.push(gen.named_values.remove(name));
+                    gen.named_values.insert(name.clone(), variable);
+                }
+
+                let body_value = body_expr.codegen(gen, module)?;
+
+                let mut old_iter = old_bindings.iter();
+                for var in vars.iter() {
+                    let (ref name, _) = *var;
+                    gen.named_values.remove(name);
+
+                    if let Some(Some(value)) = old_iter.next()
+                     {gen.named_values.insert(name.clone(), *value);
+                    };
+                }
+
+                Ok(body_value)
+            }
+
         }
     }
 }

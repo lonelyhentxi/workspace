@@ -41,10 +41,10 @@ impl Compiler {
 
         Compiler {
             ctx: context,
-            builder: builder,
-            module: module,
+            builder,
+            module,
             buffer: data,
-            ptr: ptr,
+            ptr,
             main_func: main_function
         }
     }
