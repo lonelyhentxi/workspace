@@ -39,7 +39,7 @@ static mut ZERO_BYTE_STRING: &str = "\0";
 
 impl CStringManager {
     pub fn new_cstring_as_ptr(string: &str) -> *const i8 {
-        if string.len() == 0 {
+        if string.is_empty() {
             return unsafe { ZERO_BYTE_STRING.as_ptr() as *const i8 };
         }
 

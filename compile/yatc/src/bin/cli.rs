@@ -5,27 +5,27 @@ extern crate rustc_serialize;
 extern crate serde;
 extern crate yatc;
 
-use yatc::driver::{main_loop, Tokens, AST, IR, Jit,Interpreter};
+use yatc::driver::{main_loop, Tokens, AST, Jit,Interpreter, Target};
 
 use docopt::Docopt;
 
 const USAGE: &str = "
-Usage: iron_kaleidoscope [(-l | -p | -g | -j | -i)]
+Usage: yatc [(-l | -p | -j | -i | -t)]
 Options:
     -l  Run only lexer and show its output.
     -p  Run only parser and show its output.
-    -g  Run only code generator and show its output.
     -j  Run only jit executor and show its output.
     -i  Run only interpreter executor and show its output.
+    -t  Run only cross-compiler and show its output.
 ";
 
 #[derive(PartialEq, Clone, Debug, Serialize, Deserialize, RustcDecodable)]
 struct Args {
     flag_l: bool,
     flag_p: bool,
-    flag_g: bool,
     flag_i: bool,
     flag_j: bool,
+    flag_t: bool,
 }
 
 fn main() {
@@ -37,12 +37,12 @@ fn main() {
         Tokens
     } else if args.flag_p {
         AST
-    } else if args.flag_g {
-        IR
     } else if args.flag_i {
         Interpreter
-    } else {
+    } else if args.flag_j {
         Jit
+    } else {
+        Target
     };
     main_loop(stage);
 }

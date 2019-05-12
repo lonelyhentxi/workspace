@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/target/debug/cli.exe",
             "preLaunchTask":"cargo_build",
-            "args": ["-j"],
+            "args": ["-i"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

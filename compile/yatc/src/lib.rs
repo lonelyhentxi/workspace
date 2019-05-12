@@ -9,10 +9,12 @@ extern crate llvm_sys;
 extern crate llvm_sys_wrapper;
 extern crate regex;
 extern crate serde;
+extern crate serde_json;
 
 pub mod codegen;
-pub mod cstring_manager;
+mod cstring_manager;
 pub mod driver;
 pub mod lexer;
 pub mod parser;
 pub mod target;
+mod util;

@@ -127,29 +127,30 @@ impl Codegen {
         unsafe { llvm_sys::core::LLVMDumpValue(value) }
     }
 
-    fn get_entry(function: LLVMValueRef) -> LLVMBasicBlockRef {
+    pub fn get_entry(function: LLVMValueRef) -> LLVMBasicBlockRef {
         unsafe {
             LLVMGetEntryBasicBlock(function)
         }
     }
 
-    fn get_first_instruction(basic_block: LLVMBasicBlockRef) -> LLVMValueRef {
+    pub fn get_first_instruction(basic_block: LLVMBasicBlockRef) -> LLVMValueRef {
         unsafe {
             LLVMGetFirstInstruction(basic_block)
         }
     }
 
-    fn position(&self,basic_block:LLVMBasicBlockRef,instruction:LLVMValueRef) {
+    pub fn position(builder: LLVMBuilderRef,basic_block:LLVMBasicBlockRef,instruction:LLVMValueRef) {
         unsafe {
-            LLVMPositionBuilder(self.builder.as_ref(),basic_block, instruction)
+            LLVMPositionBuilder(builder,basic_block, instruction)
         }
     }
 
     pub fn create_entry_block_alloca(&self,function: LLVMValueRef,var_name: &str) -> LLVMValueRef {
+        let temp_builder = self.context.create_builder();
         let bb = Codegen::get_entry(function);
         let fi = Codegen::get_first_instruction(bb);
-        self.position(bb, fi);
-        self.builder.build_alloca_with_name(self.ty, var_name)
+        Codegen::position(temp_builder.as_ref(), bb, fi);
+        temp_builder.build_alloca_with_name(self.ty, var_name)
     }
 }
 
@@ -253,6 +254,9 @@ impl IRBuilder for parser::Function {
         };
 
         gen.builder.build_ret(body);
+        unsafe {
+            LLVMDumpValue(function);
+        }
         module.run_function_pass(function);
         gen.named_values.clear();
         Ok(function)
@@ -278,6 +282,24 @@ impl IRBuilder for parser::Expression {
                 Ok(gen.builder.build_call_with_name(function.as_ref(), &mut args_value,"unop"))
             }
             parser::BinaryExpr(ref name, ref lhs, ref rhs) => {
+
+                if name.as_str() == "=" {
+                    let var_name = match **lhs {
+                        parser::VariableExpr(ref nm) => nm,
+                        _ => return error("destination of '=' must be a variable")
+                    };
+
+                    let value = rhs.codegen(gen, module)?;
+
+                    let variable = match gen.named_values.get(var_name) {
+                        Some(vl) => *vl,
+                        None => return error("unknown variable name")
+                    };
+
+                    gen.builder.build_store(value, variable);
+
+                    return Ok(value)
+                }
                 let lhs_value = lhs.codegen(gen, module)?;
                 let rhs_value = rhs.codegen(gen, module)?;
 
@@ -312,10 +334,13 @@ impl IRBuilder for parser::Expression {
                     }
                     op => {
                         let name = "binary".to_string() + op;
-                        let function = module.named_function(&name);
+                         let function = match module.get_function(&name) {
+                            Some((function,_)) => function,
+                            None => return error("binary operator not found")
+                        };
                         let mut args_value = vec![lhs_value, rhs_value];
                         Ok(gen.builder.build_call_with_name(
-                            function.as_ref(),
+                            function,
                             &mut args_value,
                             "binop",
                         ))

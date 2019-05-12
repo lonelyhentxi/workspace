@@ -103,11 +103,8 @@ pub fn parse(
 
     let mut ast = parsed_tree.to_vec();
 
-    loop {
-        let cur_token = match rest.last() {
-            Some(token) => token.clone(),
-            None => break,
-        };
+    while let Some(token) = rest.last() {
+        let cur_token = token.clone();
         let result = match cur_token {
             Def => parse_function(&mut rest, settings),
             Extern => parse_extern(&mut rest, settings),
@@ -547,5 +544,5 @@ fn parse_var_expr(tokens : &mut Vec<TokenType>, settings : &mut ParserSettings) 
 
     let body_expr = parse_try!(parse_expr, tokens, settings, parsed_tokens);
 
-    Good(VarExpr{vars: vars, body_expr: box body_expr}, parsed_tokens)
+    Good(VarExpr{vars, body_expr: box body_expr}, parsed_tokens)
 }
