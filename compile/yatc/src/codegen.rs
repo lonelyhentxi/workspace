@@ -7,21 +7,52 @@ use std::ops::Deref;
 use cstring_manager::CStringManager;
 use llvm_sys;
 use llvm_sys_wrapper::*;
+use llvm_sys::transforms::ipo::*;
+use llvm_sys::transforms::vectorize::*;
 use parser;
 
 pub struct Module {
     module: llvm_sys_wrapper::Module,
     function_passmanager: LLVMPassManagerRef,
+    module_passmanager: LLVMPassManagerRef,
 }
 
 impl Module {
     pub fn new(gen: &mut Codegen, name: &str) -> Module {
         let module = gen.context.create_module(name);
+        let module_passmanager = unsafe {
+            use llvm_sys::core::*;
+            use llvm_sys::transforms::scalar::*;
+            let passmanager = LLVMCreatePassManager();
+            LLVMAddSimplifyLibCallsPass(passmanager);
+            LLVMAddFunctionInliningPass(passmanager);
+            LLVMAddBasicAliasAnalysisPass(passmanager);
+            LLVMAddTailCallEliminationPass(passmanager);
+            LLVMAddLICMPass(passmanager);
+            LLVMAddLoopDeletionPass(passmanager);
+            LLVMAddLoopVectorizePass(passmanager);
+            LLVMAddLoopIdiomPass(passmanager);
+            LLVMAddPartiallyInlineLibCallsPass(passmanager);
+            LLVMAddInstructionCombiningPass(passmanager);
+            LLVMAddReassociatePass(passmanager);
+            LLVMAddGVNPass(passmanager);
+            LLVMAddCFGSimplificationPass(passmanager);
+            LLVMAddGlobalDCEPass(passmanager);
+            LLVMAddGlobalOptimizerPass(passmanager);
+            LLVMInitializeFunctionPassManager(passmanager);
+            passmanager
+        };
         let function_passmanager = unsafe {
             use llvm_sys::core::*;
             use llvm_sys::transforms::scalar::*;
             let function_passmanager = LLVMCreateFunctionPassManagerForModule(module.as_ref());
-            LLVMAddBasicAliasAnalysisPass(function_passmanager);
+            LLVMAddSimplifyLibCallsPass(function_passmanager);
+            LLVMAddTailCallEliminationPass(function_passmanager);
+            LLVMAddLICMPass(function_passmanager);
+            LLVMAddLoopDeletionPass(function_passmanager);
+            LLVMAddLoopVectorizePass(function_passmanager);
+            LLVMAddLoopIdiomPass(function_passmanager);
+            LLVMAddPartiallyInlineLibCallsPass(function_passmanager);
             LLVMAddInstructionCombiningPass(function_passmanager);
             LLVMAddReassociatePass(function_passmanager);
             LLVMAddGVNPass(function_passmanager);
@@ -29,8 +60,10 @@ impl Module {
             LLVMInitializeFunctionPassManager(function_passmanager);
             function_passmanager
         };
-        Module { module, function_passmanager }
+        Module { module, function_passmanager,module_passmanager }
     }
+
+
 
     pub fn get_function(&self, name: &str) -> Option<(LLVMValueRef, bool)> {
         let func_name_ptr = CString::new(name).unwrap();
@@ -51,6 +84,12 @@ impl Module {
     pub fn run_function_pass(&self, function: LLVMValueRef) -> bool {
         unsafe {
             LLVMRunFunctionPassManager(self.function_passmanager, function) > 0
+        }
+    }
+
+    pub fn run_module_pass(&self) -> bool {
+        unsafe {
+            LLVMRunPassManager(self.module_passmanager, self.module.as_ref()) > 0
         }
     }
 }
@@ -258,6 +297,7 @@ impl IRBuilder for parser::Function {
             LLVMDumpValue(function);
         }
         module.run_function_pass(function);
+        println!("{:?}",gen.named_values);
         gen.named_values.clear();
         Ok(function)
     }
@@ -463,7 +503,7 @@ impl IRBuilder for parser::Expression {
                     old_bindings.push(gen.named_values.remove(name));
                     gen.named_values.insert(name.clone(), variable);
                 }
-
+                println!("{:?}",gen.named_values);
                 let body_value = body_expr.codegen(gen, module)?;
 
                 let mut old_iter = old_bindings.iter();
@@ -475,7 +515,6 @@ impl IRBuilder for parser::Expression {
                      {gen.named_values.insert(name.clone(), *value);
                     };
                 }
-
                 Ok(body_value)
             }
 

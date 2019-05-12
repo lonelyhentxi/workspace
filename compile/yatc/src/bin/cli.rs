@@ -16,7 +16,7 @@ Options:
     -p  Run only parser and show its output.
     -j  Run only jit executor and show its output.
     -i  Run only interpreter executor and show its output.
-    -t  Run only cross-compiler and show its output.
+    -t  Run only compiler and show its output.
 ";
 
 #[derive(PartialEq, Clone, Debug, Serialize, Deserialize, RustcDecodable)]

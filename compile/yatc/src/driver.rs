@@ -187,11 +187,12 @@ pub fn main_loop(stage: Stage) {
     let main_func = ir_container.add_function("main", void_type);
     let main_block = main_func.append_basic_block("entry");
     gen.builder.position_at_end(main_block);
-    for fun in statements {
+    for fun in &statements {
         let mut args = [];
-        gen.builder.build_call(fun, &mut args);
+        gen.builder.build_call(*fun, &mut args);
     }
     gen.builder.build_ret_void();
+    ir_container.run_module_pass();
     ir_container.dump();
     ir_container.print_module_to_file("assets/compiler.ll")
     .unwrap_or_else(|err| 
