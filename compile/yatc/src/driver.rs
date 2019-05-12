@@ -9,6 +9,7 @@ use crate::codegen::{Codegen, IRBuilder, Module};
 use crate::lexer::*;
 use crate::parser::*;
 use crate::util;
+use crate::target::write_asm_code;
 use llvm_sys_wrapper::{fn_type,LLVMFunctionType,LLVM};
 
 pub use self::Stage::*;
@@ -61,7 +62,7 @@ pub fn main_loop(stage: Stage) {
 
     {
             let printlf_type = fn_type!(gen.context.DoubleType(),gen.context.DoubleType());
-            let printlf_func = ir_container.add_function("printlf", printlf_type);
+            let printlf_func = ir_container.add_function("show", printlf_type);
             let printlf_block = printlf_func.append_basic_block("entry");
             gen.builder.position_at_end(printlf_block);
             let fmt_d = gen.builder.build_global_string_ptr("%lf\n");
@@ -153,7 +154,7 @@ pub fn main_loop(stage: Stage) {
                                     let ret = gen.builder.build_call(value,&mut empty_args);
                                     if i==ast.len()-1 {
                                         let mut printlf_args = [ret];
-                                        gen.builder.build_call(ir_container.named_function("printlf").as_ref(), &mut printlf_args);
+                                        gen.builder.build_call(ir_container.named_function("show").as_ref(), &mut printlf_args);
                                     }
                                     let mut anoy_args = [];
                                     gen.builder.build_ret_void();
@@ -210,4 +211,7 @@ pub fn main_loop(stage: Stage) {
         }
         return;
     } 
+    if stage == Target {
+        write_asm_code(ir_container, "assets/target.s", "write asm failed.")
+    }
 }
