@@ -1,6 +1,6 @@
 use clap::ArgMatches;
 use cparser::grammars::gen_cgrammars;
-use lr1::{IToken, Parser};
+use clr1::{IToken, Parser};
 use serde_json;
 use std::collections::HashMap;
 use std::fs::{File, OpenOptions};

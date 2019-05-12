@@ -1,4 +1,4 @@
-use lr1::Grammar;
+use clr1::Grammar;
 
 pub fn gen_cgrammars() -> Grammar {
     let mut cases: Vec<(&str, Vec<&str>)> = vec![];

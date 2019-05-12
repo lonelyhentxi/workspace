@@ -17,6 +17,6 @@ version = "0.2.0"
 path = "./cparser"
 version = "0.0.2"
 
-[dependencies.lr1]
-path = "./lr1"
+[dependencies.clr1]
+path = "./clr1"
 version = "0.0.2"
