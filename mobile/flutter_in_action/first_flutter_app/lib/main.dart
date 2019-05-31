@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import './new_route.dart';
+import './random_words.dart';
 
 void main() => runApp(new MyApp());
 
@@ -11,6 +12,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      routes: {
+        "new_page": (context) => NewRoute(),
+      },
       home: MyHomePage(title: 'My First Flutter app'),
     );
   }
@@ -26,13 +30,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-
   void _incrementCounter() {
     setState(() {
       _counter++;
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,12 +56,10 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text("open new route"),
               textColor: Colors.blue,
               onPressed: () {
-                Navigator.push(context,
-                new MaterialPageRoute(builder: (context) {
-                  return new NewRoute();
-                }));
+                Navigator.pushNamed(context, "new_page", arguments: "hi");
               },
-            )
+            ),
+            RandomWordsWidget(),
           ],
         ),
       ),
