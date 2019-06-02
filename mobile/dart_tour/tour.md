@@ -407,3 +407,380 @@ switch (command) {
 assert(condition, optionalMessage)
 ```
 
+## 异常
+
+Dart 能够使用 `throw catch` 模式，
+
+### Throw
+
+```dart
+throw FormatExpection('Expected at least 1 section.');
+throw 'Out of llamas';
+```
+
+### Catch
+
+```dart
+try {
+  breedMoreLlamas();
+} on OutOfLlamasException {
+  buyMoreLlamas();
+} on Exception catch (e) {
+  print('Unknown exception: $e');
+} catch (e,s) {
+  print('Something really unknown: $e');
+}
+```
+
+其中 `catch` 函数的第二个参数是 `StackTrace`。
+
+### Finally
+
+保证一定会执行。
+
+## 类
+
+Dart 是一门基于混入的面向对象语言。
+
+### 使用类成员
+
+`.` 操作符，`?.` 操作符可以在 `null` 时短路。
+
+### 使用构造器
+
+1. 不同于其他`类 C` 面向对象语言，使用 `new` 操作符和不使用都可以，并且有相同的效果。
+2. 静态工厂函数也可以被视为构造函数。
+
+```dart
+var p1 = Point(2, 2);
+var p2 = Point.fromJson({'x': 1, 'y': 2});
+var p1 = new Point(2, 2);
+var p2 = new Point.fromJson({'x': 1, 'y': 2});
+```
+
+某些类提供了常量构造器。为了创建编译期常量，需要在构造器名前使用 `const` 关键字：
+
+```dart
+var a = const ImmutablePoint(1,1);
+const pointAndLine = const {
+    'point': const [const ImmutablePoint(0,0)],
+    'line': const [const ImmutablePoint(1,10),const ImmutablePoint(-2,11)],
+};
+const pointAndLine = {
+  'point': [ImmutablePoint(0, 0)],
+  'line': [ImmutablePoint(1, 10), ImmutablePoint(-2, 11)],
+};
+```
+
+由于常量要求所有成员都是常量，可以只在变量修饰符上声明为常量。
+
+### 获得对象类型
+
+```dart
+print('The type of a is ${a.runtimeType}');
+```
+
+得到运行时类型，其类型为 `Type`。
+
+### 实例变量
+
+类内字段在未初始化的情况下将为 `null`。
+
+### 构造器
+
+```dart
+class Point {
+    num  x, y;
+
+    Point(num x,num y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+```
+
+#### 默认构造器
+
+无参数。
+
+#### 构造器不可继承                                                            
+
+#### 命名构造器
+
+```dart
+class Point {
+  num x, y;
+
+  Point(this.x, this.y);
+
+  Point.origin() {
+    x = 0;
+    y = 0;
+  }
+}
+```
+
+#### 触发非默认超类构造器
+
+```dart
+class Person {
+    String firstName;
+    
+    Person.fromJson(Map data) {
+        print('in Person');
+    }
+}
+
+class Employee extends Person {
+    Employee.fromJson(Map data): super.fromJson(data) {
+        print('in Employee');
+    }
+}
+
+main() {
+    var emp = new Employee.fromJson({});
+    if(emp is Person) {
+        emp.firstName = "Bob";
+    }
+    (emp as Person).firstName = "Bob";
+}
+```
+
+#### 初始化列表
+
+```dart
+Point.fromJson(Map<String, num> json)
+    : x = json['x'],
+      y = json['y'] {
+  print('In Point.fromJson(): ($x, $y)');
+}
+```
+
+在开发期，还可使用 `assert` 帮助排除问题。
+
+#### 常量构造器
+
+```dart
+class ImmutablePoint {
+    static final ImmutablePoint origin =
+        const ImmutablePoint(0,0);
+    
+    final num x, y;
+
+    const ImmutablePoint(this.x, this.y);
+}
+```
+
+#### 工厂函数
+
+可以使用 `factory` 关键字来创建工厂函数。
+
+```dart
+class Logger {
+    final String name;
+    bool mute = false;
+    static final Map<String, Logger> _cache = <String, Logger>();
+    factory Logger(String name) {
+        if(__cache.containsKey(name)) {
+            return _cache[name];
+        } else {
+            final logger = Logger._internal(name);
+            _cache[name] = logger;
+            return logger;
+        }
+    }
+    Logger._internal(this.name);
+    void log(String msg) {
+        if(!mute) print(msg);
+    }
+}
+```
+
+### 方法
+
+#### 实例方法
+
+略
+
+#### 访问器
+
+```dart
+class Rectange {
+  num left, top, width, height;
+
+  Rectangle(this.left, this.top, this.width, this.height);
+
+  num get right => left + width;
+  set right(num value) => left = value - width;
+  num get bottom => top + height;
+  set bottom(num value) => top = value - height;
+}
+```
+
+#### 抽象方法
+
+```dart
+abstract class Doer {
+    void doSomething();
+
+}
+
+class EffectiveDoer extends Doer {
+    void doSomething() {}
+}
+```
+
+### 抽象类
+
+使用 `abstract` 修饰符修饰的类是抽象类，表示该类不能被实例化。抽象类用于拥有某些实现的接口。如果想要初始化抽象类，可以使用工厂构造器。
+
+```dart
+abstract class AbstractContainer {
+    void updateChildren();
+}
+```
+
+### 隐式接口
+
+每个类都会隐式的实现一个含有自己全部函数签名的接口。
+
+```dart
+class Person {
+    final _name;
+    Person(this._name);
+    String greet(String who) => 'Hello, $who. I am $_name.';
+}
+
+class Impostor implements Person {
+    get _name => '';
+    String greet(String who) => 'Hi $who. Do you know who I am?';
+}
+
+String greetBob(Person person) => person.greet('Bob');
+```
+
+### 拓展类
+
+```dart
+class Television {
+  void turnOn() {
+    _illuminateDisplay();
+    _activateIrSensor();
+  }
+}
+class SmartTelevision {
+  void turnOn() {
+    super.turnOn();
+    _bootNetworkInterface();
+    _initializeMemory();
+    _upgradeApps();
+  }
+}
+```
+
+#### 覆盖方法
+
+超类可以覆盖实例方法，访问器、设置器。可以使用 `@override` 标记来显式标记覆盖一个成员函数。
+
+```dart
+class SmartTelevision extends Television {
+    @override
+    void turnOn() { ... }
+}
+```
+
+#### 覆盖操作符
+
+```dart
+class Vector {
+  final int x, y;
+
+  Vector(this.x, this.y);
+
+  Vector operator +(Vector v) => Vector(x + v.x, y + v.y);
+  Vector operator -(Vector v) => Vector(x - v.x, y - v.y);
+}
+```
+
+#### noSuchMethod
+
+类似 `ruby` 里的类似方法，代理所有的未找到方法。
+
+```dart
+class A {
+    @override
+    void noSuchMethod(Invocation invocation) {
+        print('You tried to use a non-existent member: ' + 
+            '${invocation.memberName}'
+        );
+    }
+}
+```
+
+你只能在存在以下某个条件时才能够唤起未实现方法：
+
+- 接受者含有静态类型 dynamic
+- 接受者定义了未实现的方法（或者抽象方法）、并且动态类实现了 `noSuchMethod`。
+
+### 枚举类型
+
+默认情况下，`enum` 其值为整数，可以使用 `enum.value.index` 获取器获取其值。
+
+**注意**
+
+1. 不能作为超类，混入，实现。
+2. 不能显式实现 `enum` 的超类。
+
+### 混入
+
+混入是一种向多类架构中重用类代码的方法。
+
+```dart
+mixin Musical {
+    bool canPlayPiano = false;
+  bool canCompose = false;
+  bool canConduct = false;
+
+  void entertainMe() {
+    if (canPlayPiano) {
+      print('Playing piano');
+    } else if (canConduct) {
+      print('Waving hands');
+    } else {
+      print('Humming to self');
+    }
+  }
+
+class Musician extends Performer with Musical {}
+
+class Maestro extends Person with Musical, Aggressive, Demented {
+    Maestro(String maestroName) {
+        name = maestroName;
+        canConduct = true;
+    }
+}
+```
+
+混入也可拓展
+
+```dart
+mixin MusicalPerformer on Musician {
+    // ...
+}
+```
+
+### 类变量和方法
+
+使用 `static` 关键字来实现类级别的变量和方法。
+
+#### 静态变量
+
+```dart
+class Queue {
+  static const initialCapacity = 16;
+}
+```
+
+#### 静态方法
+
+略
