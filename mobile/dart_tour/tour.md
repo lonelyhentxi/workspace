@@ -258,3 +258,152 @@ Function makeAddr(num addBy) {
 ### 返回值
 
 如果没有返回值，则为 `null`;
+
+## 操作符
+
+### 算术操作符
+
+- \+
+- \-
+- \-expr
+- \*
+- /
+- \\
+- ~/ (整除)
+- %
+
+### 相等性和关系操作符
+
+- ==
+- !=
+- \>
+- \<
+- \>=
+- \<=
+
+### 类型测试操作符
+
+- as 类型转换
+- is 类型检真
+- is! 类型检假
+
+### 赋值操作符
+
+- =
+- -=
+- /=
+- %=
+- \>\>=
+- ^=
+- +=
+- *=
+- ~/=
+- /</<=
+- &=
+- |=
+
+### 逻辑操作符
+
+- !expr
+- ||
+- &&
+
+### 位和位移运算符
+
+- &
+- |
+- ^
+- ~expr
+- \<\<
+- \>\>
+
+### 条件运算符
+
+- condition ? expr1 : expr2
+- expr1 ?? expr2
+
+### 级联标记
+
+```dart
+querySelector('#confirm')
+  ..text = 'Confirm'
+  ..classes.add('important')
+  ..onClick.listen((e)=>window.alert('Confirmed!'))
+```
+
+可以将再一个对象上的多个操作连接起来。
+
+### 其他运算符
+
+- \(\) 函数应用
+- \[\] 列表访问
+- \. 成员访问
+- ?. 存在性访问
+
+## 控制流语句
+
+### If Else
+
+```dart
+if (isRaining()) {
+  you.bringRainCoat();
+} else if (isSnowing()) {
+  you.wearJacket();
+} else {
+  car.putTopDown();
+}
+```
+
+### For Loops
+
+```dart
+for(var i=0;i<5;i++) {
+    message.write("!");
+}
+```
+
+**注意**：循环闭包表现相当于 `es6` 中的 `let`、`const`，而非 `var`，每次都会视为一个新的值。
+
+可迭代对象也会有 `forEach` 方法。
+
+### While 和 Do While
+
+`类 C`。
+
+### Break 和 Continue
+
+`类 C`，其中 `continue` 操作一般可以用可迭代对象替代。
+
+### Switch 和 Case
+
+`Dart` 中使用 `==` 比较整数、字符串、和运行时常量等。比较的两方必须是同种类型。`枚举类型` 可以在 `Switch` 语句中工作良好。
+
+```dart
+var command = 'OPEN';
+switch (command) {
+  case 'CLOSED':
+    executeClosed();
+    break;
+  case 'PENDING':
+    executePending();
+    break;
+  case 'APPROVED':
+    executeApproved();
+    break;
+  case 'DENIED':
+    executeDenied();
+    break;
+  case 'OPEN':
+    executeOpen();
+    break;
+  default:
+    executeUnknown();
+}
+```
+
+### Assert
+
+```dart
+assert(condition, optionalMessage)
+```
+
