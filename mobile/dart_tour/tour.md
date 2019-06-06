@@ -784,3 +784,56 @@ class Queue {
 #### 静态方法
 
 略
+
+## 泛型
+
+### 为何使用泛型
+
+- 为了类型安全，泛型通常是必要的
+- 减少代码重复
+- 适当的声明泛型可能导致更好的代码生成
+
+### 使用集合字面值
+
+```dart
+var names = <String>['Seth','Kathy','Lars'];
+var uniqueNames = <String>{'Seth','Kathy','Lars'};
+var pages = <String, String>{
+  'index.html': 'Homepage',
+  'robots.txt': 'Hints for web robots',
+  'humans.txt': 'We are people, not machines'
+};
+```
+
+#### 使用参数类型构造器
+
+```dart
+var nameSet = Set<String>.from(names);
+var views = Map<int,View>();
+```
+
+#### 泛型容器及其包含
+
+```dart
+var names = List<String>();
+names.addAll(['Seth', 'Kathy', 'Lars']);
+print(names is List<String>); // true
+```
+
+java 的虚拟机对泛型采用擦除，在 Java 中只能测试类型是否是 `List` 而不能测试 `List<String>`。
+
+#### 限制参数化类型
+
+```dart
+class Foo<T extends SomeBaseClass> {
+  // Implementation goes here...
+  String toString() => "Instance of 'Foo<$T>'";
+}
+```
+
+### 使用泛型方法
+
+T first<T>(List<T> ts) {
+  T tmp = ts[0]
+  return tmp;
+}
