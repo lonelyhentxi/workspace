@@ -35,7 +35,7 @@ namespace LearnLibs.Tests
             using var repo = new Repository(Path.Combine(Config.RepoRoot,"clone-test"));
             var currentCommit = repo.Lookup<Commit>("b11f6bc38ff60b10d61ee9d99d8c0b6959fdcb96");
             var lastCommit = repo.Lookup<Commit>("77e8c01d821d626ddc09c913bbc28de068c31ffd");
-            var differences = repo.Diff.Compare<Patch>(currentCommit.Tree, lastCommit.Tree);
+            var differences = repo.Diff.Compare<Patch>(lastCommit.Tree,currentCommit.Tree);
             Assert.True(differences.FirstOrDefault(e => e.Path.Contains("i18n-src.js"))!=null);
         }
 
