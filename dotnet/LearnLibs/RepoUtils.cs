@@ -62,7 +62,7 @@ namespace LearnLibs
                     Directory.Delete(path, true);
                 }
             }
-            catch (UnauthorizedAccessException _e)
+            catch (UnauthorizedAccessException _)
             {
                 _fsSafeDelete(path);
             }
