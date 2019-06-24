@@ -833,7 +833,92 @@ class Foo<T extends SomeBaseClass> {
 
 ### 使用泛型方法
 
+```dart
 T first<T>(List<T> ts) {
   T tmp = ts[0]
   return tmp;
 }
+```
+
+## 库和可见性
+
+`import` 和 `library` 指令能够帮助创建模块化和共享的代码库。库不仅提供 API，而且也提供一系列隐私。开始于 `_` 的标识符的可见性是库级别的。每一个 dart 应用都是一个库，即时不使用 `library` 指令。
+
+### 导入库
+
+import 声明了如何从另一个库中导入一个命名空间。例如：
+
+```dart
+import 'dart:html';
+```
+
+唯一需要的参数是库的 URI，对于内置库，需要 `dart:` 格式。对于其他的库，需要文件系统路径或者包名格式，例如：
+
+```dart
+import `package:test/test.dart`;
+```
+
+### 重定向
+
+其中可以使用 `as` 来重命名。使用 `show`、`hide` 来进行部分导入。
+
+#### 懒加载
+
+懒加载的原因：
+
+- 减少程序初始化时间
+- 尝试替代性算法
+- 载入很少使用的功能
+
+```dart
+import 'package:greeting/hello.dart' deferred as hello;
+
+Future greet() async {
+  await hello.loadLibrary();
+  hello.printGreeting();
+}
+```
+
+多遍加载仍然只会加载一次，注意以下问题：
+
+- 延迟加载库的常量在导入的时候是不可用的。 只有当库加载完毕的时候，库中常量才可以使用。
+- 在导入文件的时候无法使用延迟加载库中的类型，如果需要使用类型，考虑把接口类移动到另外一个库中，让两个库都分别导入这个类。
+- dart 隐含地导入了 `loadLibrary` 方法，该方法返回一个 `Future`.
+
+## 异步支持
+
+dart 中有很多返回 `Future` 和 `Stream` 的函数，这些函数是异步的。当他们收拾好一些耗时的操作之后返回，而不去等待操作完成。
+
+`await` 和 `async` 关键词支持异步编程，帮助写出类似同步的代码。
+
+### 处理 `Future`
+
+```dart
+Future main() async {
+  checkVersion();
+  print('In main: version is ${await lookUpVersion}');
+}
+```
+
+### 处理 `Stream`
+
+当需要异步流时，有两种选择：
+
+- 使用循环 `await`（`await for`）
+- 使用 `Stream API`
+
+使用 `async for` 之前，确认它确实能够使得代码更加清楚，并且你确实希望要等待所有结果。例如，UI 事件监听器请不要使用，因为它没有终点。
+
+```dart
+await for (varOrType identifier in expression) {
+  // Execute each time the stream emits a value.
+}
+```
+
+执行过程如下：
+
+1. 等待流发出一个值。
+2. 执行循环体。
+3. 重复 1 和 2 直到流被关闭。
+
+只有 `break` 和 `return` 可以改变控制流。
