@@ -922,3 +922,69 @@ await for (varOrType identifier in expression) {
 3. 重复 1 和 2 直到流被关闭。
 
 只有 `break` 和 `return` 可以改变控制流。
+
+## 生成器
+
+当需要延迟产生一个值序列的时候，考虑使用生成器函数。
+
+- 同步生成器：返回一个可迭代对象。
+- 异步生成器：返回一个流对象。
+
+```dart
+// 同步
+Iterable<int> naturralsTo(int n) sync* {
+  int k = 0;
+  while(k < n) yield k++;
+}
+// 异步
+Stream<int> asynchronousNaturalsTo(int n) async * {
+  if (n>0) {
+    yield n;
+    yield* naturalsDownFrom(n-1);
+  }
+}
+```
+
+当函数是递归的时候，可以使用 `yield*` 以提升性能：
+
+```dart
+Iterable<int> naturalsDownFrom(int n) sync* {
+  if(n>0) {
+    yield n;
+    yield* naturalsDownFrom(n-1);
+  }
+}
+```
+
+## 可调用类
+
+实现 `call` 方法的类可以被调用。
+
+## Isolates
+
+多数计算机，甚至移动平台上，有着多核 CPU。为了充分利用这些核心，开发者传统上使用共享内存线程的方法来运行并发。然而，多线程共享数据通常会导致很多潜在的问题，并导致代码运行出错。
+
+所有的 dart 代码运行在 isolates 中而不是线程。每个 isolate 都有自己的堆内存，并且确定状态不能被其他 isolate访问。
+
+## Typedefs
+
+typedef 用以为函数类型命名或者重命名，防止其类型丢失。
+
+```dart
+typedef int Compare(Object a, Object b);
+
+class SortedCollection {
+  Compare compare;
+
+  SortedCollection(this.compare);
+}
+
+ // Initial, broken implementation.
+ int sort(Object a, Object b) => 0;
+
+main() {
+  SortedCollection coll = new SortedCollection(sort);
+  assert(coll.compare is Function);
+  assert(coll.compare is Compare);
+}
+```
