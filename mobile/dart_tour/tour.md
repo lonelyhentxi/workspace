@@ -988,3 +988,45 @@ main() {
   assert(coll.compare is Compare);
 }
 ```
+
+## 元数据
+
+使用元数据可以为代码添加其他额外信息，元数据注解是以 `@` 为开头，后面是一个编译期常量或者调用一个常量构造函数。有三个注解所有的 dart 代码都可以使用，他们是 `@deprecated`、 `@override` 和 `@proxy`。
+
+```dart
+class Television {
+  @deprecated
+  void activate() {
+    turnOn();
+  }
+
+  void turnOn() {
+    print('on!');
+  }
+}
+```
+
+可以定义并使用自己的注解
+
+```dart
+library todo;
+class todo {
+  final String who;
+  final String what;
+
+  const todo(this.who, this.what);
+}
+
+@todo('seth','make this do something')
+void doSomething() {
+  print('do something');
+}
+```
+
+## 注释
+
+单号注释和多行注释和 C++ 类似，多行注释可以嵌套。
+
+### 文档注释
+
+以 `///` 开始，和 java 类似，具体参考 [Dart 文档生成指南](https://dart.dev/guides/language/effective-dart/documentation)
