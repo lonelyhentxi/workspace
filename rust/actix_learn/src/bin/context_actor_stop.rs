@@ -36,11 +36,10 @@ fn main() {
     let res = addr.send(Ping(6));
 
     Arbiter::spawn(
-        res.map(move |_res| {
-            assert!(addr_2.try_send(Ping(6)).is_err());
-            System::current().stop();
-        })
-        .map_err(|_| ()));
-
+    res.map(move |_res| {
+        assert!(addr_2.try_send(Ping(6)).is_err());
+        System::current().stop();
+    })
+    .map_err(|_| ()));
     system.run();
 }
