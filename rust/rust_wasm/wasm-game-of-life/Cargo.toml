@@ -4,9 +4,6 @@ version = "0.1.0"
 authors = ["lonelyhentai <master@evernightfireworks.com>"]
 edition = "2018"
 
-[package.metadata.scripts]
-wasm = "wasm-pack build --scope lonelyhentai"
-
 [lib]
 crate-type = ["cdylib", "rlib"]
 
@@ -25,3 +22,7 @@ wasm-bindgen-test = "0.2"
 
 [profile.release]
 opt-level = "s"
+
+[package.metadata.scripts]
+wasm = "wasm-pack build --scope lonelyhentai"
+wasm-test = "wasm-pack test --firefox --headless"
