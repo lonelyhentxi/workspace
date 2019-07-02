@@ -1,6 +1,6 @@
 extern crate js_sys;
 extern crate fixedbitset;
-
+#[macro_use]
 mod utils;
 
 use wasm_bindgen::prelude::*;
@@ -110,12 +110,17 @@ impl Universe {
 
     pub fn random(&mut self) {
         for i in 0..self.size() {
-            let cell_status = if js_sys::Math::random() < 0.5 {
+            let cell = if js_sys::Math::random() < 0.5 {
                 true
             } else {
                 false
             };
-            self.cells.set(i, cell_status);
+            log!(
+                "cell[{}] is initially {:?}",
+                i,
+                if cell { Cell::Alive } else { Cell::Dead }
+             );
+            self.cells.set(i, cell);
         }
     }
 
