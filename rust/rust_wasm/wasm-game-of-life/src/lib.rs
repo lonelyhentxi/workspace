@@ -139,6 +139,11 @@ impl Universe {
             cells,
         }
     }
+
+    pub fn toggle_cell(&mut self, row: u32, column: u32) {
+        let idx = self.get_index(row, column);
+        self.cells.set(idx, !self.cells[idx]);
+    }
 }
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global

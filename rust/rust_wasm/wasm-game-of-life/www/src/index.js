@@ -5,8 +5,35 @@ const CELL_SIZE = 5;
 const GRID_COLOR = "#ccc";
 const DEAD_COLOR = "#FFF";
 const ALIVE_COLOR = "#000";
+let animationId = null;
+
+const isPaused = () => {
+    return animationId === null;
+};
+
+const playPauseButton = document.getElementById("play-pause");
+
+const play = () => {
+    playPauseButton.textContent = "||";
+    canvasRenderLoop();
+};
+
+const pause = () => {
+    playPauseButton.textContent = "▶";
+    cancelAnimationFrame(animationId);
+    animationId = null;
+};
+
+playPauseButton.addEventListener("click", ev => {
+    if(isPaused()) {
+        play();
+    } else {
+        pause();
+    }
+});
 
 const canvas = document.getElementById("game-of-life-canvas");
+
 const universe = Universe.new();
 const width = universe.width();
 const height = universe.height();
@@ -49,17 +76,24 @@ const drawCells = () => {
     ctx.stroke();
 };
 
+canvas.addEventListener("click",ev => {
+    const boundingRect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / boundingRect.width;
+    const scaleY = canvas.height / boundingRect.height;
+    const canvasLeft = (ev.clientX - boundingRect.left) * scaleX;
+    const canvasTop = (ev.clientY - boundingRect.top) * scaleY;
+    const row = Math.min(Math.floor(canvasTop / (CELL_SIZE+1)),height-1);
+    const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE+1)), width-1);
+    universe.toggle_cell(row,col);
+    drawGrid();
+    drawCells();
+});
+
 const canvasRenderLoop = () => {
+    drawGrid();
+    drawCells();
     universe.tick();
-    drawGrid();
-    drawCells();
-    requestAnimationFrame(canvasRenderLoop);
+    animationId = requestAnimationFrame(canvasRenderLoop);
 };
 
-const startCanvasMode = () => {
-    drawGrid();
-    drawCells();
-    requestAnimationFrame(canvasRenderLoop);
-};
-
-startCanvasMode();
+play();
