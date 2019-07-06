@@ -1,0 +1,66 @@
+<div nz-row style="padding-top: 20px;">
+  <div nz-col [nzSpan]="18" [nzOffset]="3">
+    <nz-card *ngIf="post===null" nzTitle="文章不存在"><p>
+      文章不存在
+    </p>
+    </nz-card>
+    <nz-card *ngIf="post!==null" [nzTitle]="'标题：'+ post.Title">
+      <nz-card-meta
+        [nzTitle]="'作者：'+post.User.Name"
+        [nzDescription]="post.User.Description + ' | ' + post.User.Url"
+        [nzAvatar]="avatarTemplate"
+      ></nz-card-meta>
+      <br>
+      <p>{{post.Description}}</p>
+    </nz-card>
+    <ng-template #avatarTemplate>
+      <nz-avatar [nzSrc]="post.User.Avatar"></nz-avatar>
+    </ng-template>
+  </div>
+</div>
+<div nz-row>
+  <div nz-col [nzSpan]="18" [nzOffset]="3">
+    <nz-card nzTitle="评论">
+      <nz-list *ngFor="let comment of commentsTree">
+        <ng-template [ngTemplateOutlet]="commentTemplateRef"
+                     [ngTemplateOutletContext]="{ comment: comment }"></ng-template>
+      </nz-list>
+      <nz-comment>
+        <nz-avatar nz-comment-avatar nzIcon="user" [nzSrc]="user.avatar"></nz-avatar>
+        <nz-comment-content>
+          <p *ngIf="parentId" style="background: rgba(45, 183, 245 ,0.1); padding: 5px;">回复 - {{parentText}}</p>
+          <nz-form-item>
+            <textarea [(ngModel)]="inputValue" nz-input rows="4"></textarea>
+          </nz-form-item>
+          <nz-form-item>
+            <button nz-button nzType="primary" [nzLoading]="submitting" [disabled]="!inputValue"
+                    (click)="handleSubmit()">
+              添加评论
+            </button>
+          </nz-form-item>
+        </nz-comment-content>
+      </nz-comment>
+    </nz-card>
+  </div>
+</div>
+<ng-template #commentTemplateRef let-comment="comment">
+  <nz-comment [nzAuthor]="comment.author" [nzDatetime]="comment.createTime">
+    <nz-avatar nz-comment-avatar nzIcon="user" [nzSrc]="comment.avatar"
+    ></nz-avatar>
+    <nz-comment-content>
+      <p>{{ comment.content }}</p>
+    </nz-comment-content>
+
+    <nz-comment-action>
+        <span (click)="setParent(comment)">
+          回复
+        </span>
+    </nz-comment-action>
+    <ng-container *ngIf="comment.children && comment.children.length">
+      <ng-template ngFor let-child [ngForOf]="comment.children">
+        <ng-template [ngTemplateOutlet]="commentTemplateRef" [ngTemplateOutletContext]="{ comment: child }">
+        </ng-template>
+      </ng-template>
+    </ng-container>
+  </nz-comment>
+</ng-template>

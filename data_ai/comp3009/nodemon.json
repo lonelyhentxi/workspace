@@ -1,0 +1,10 @@
+{
+  "watch": [
+    "src/lab2"
+  ],
+  "ext": "ts",
+  "ignore": [
+    "src/**/*.spec.ts"
+  ],
+  "exec": "ts-node -r tsconfig-paths/register src/lab2/main.ts"
+}

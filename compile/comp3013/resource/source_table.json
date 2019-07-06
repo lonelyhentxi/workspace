@@ -1,0 +1,392 @@
+[
+  {
+    "21": [
+      "register",
+      "keyword"
+    ],
+    "26": [
+      "const",
+      "keyword"
+    ],
+    "84": [
+      ">>",
+      "operator"
+    ],
+    "66": [
+      "=",
+      "operator"
+    ],
+    "77": [
+      ">>=",
+      "operator"
+    ],
+    "59": [
+      ":>",
+      "operator"
+    ],
+    "30": [
+      "volatile",
+      "keyword"
+    ],
+    "6": [
+      "unsigned",
+      "keyword"
+    ],
+    "3": [
+      "while",
+      "keyword"
+    ],
+    "52": [
+      "->",
+      "operator"
+    ],
+    "31": [
+      "char",
+      "keyword"
+    ],
+    "7": [
+      "default",
+      "keyword"
+    ],
+    "94": [
+      "\t",
+      "keyword"
+    ],
+    "42": [
+      "-=",
+      "operator"
+    ],
+    "35": [
+      "dec",
+      "constant"
+    ],
+    "64": [
+      ",",
+      "operator"
+    ],
+    "43": [
+      "%>",
+      "operator"
+    ],
+    "5": [
+      "typedef",
+      "keyword"
+    ],
+    "34": [
+      "oct",
+      "constant"
+    ],
+    "17": [
+      "union",
+      "keyword"
+    ],
+    "53": [
+      "--",
+      "operator"
+    ],
+    "33": [
+      "hex",
+      "constant"
+    ],
+    "36": [
+      "defs",
+      "constant"
+    ],
+    "50": [
+      ">=",
+      "operator"
+    ],
+    "82": [
+      "%",
+      "operator"
+    ],
+    "93": [
+      " ",
+      "keyword"
+    ],
+    "56": [
+      "<:",
+      "operator"
+    ],
+    "67": [
+      "+=",
+      "operator"
+    ],
+    "19": [
+      "goto",
+      "keyword"
+    ],
+    "41": [
+      "^",
+      "operator"
+    ],
+    "1": [
+      "continue",
+      "keyword"
+    ],
+    "48": [
+      "!=",
+      "operator"
+    ],
+    "86": [
+      "|=",
+      "operator"
+    ],
+    "2": [
+      "switch",
+      "keyword"
+    ],
+    "88": [
+      "/=",
+      "operator"
+    ],
+    "65": [
+      "...",
+      "operator"
+    ],
+    "11": [
+      "double",
+      "keyword"
+    ],
+    "71": [
+      "&",
+      "operator"
+    ],
+    "28": [
+      "long",
+      "keyword"
+    ],
+    "73": [
+      ".",
+      "operator"
+    ],
+    "25": [
+      "extern",
+      "keyword"
+    ],
+    "76": [
+      "/",
+      "operator"
+    ],
+    "78": [
+      ":",
+      "operator"
+    ],
+    "87": [
+      "<<",
+      "operator"
+    ],
+    "12": [
+      "return",
+      "keyword"
+    ],
+    "46": [
+      "*=",
+      "operator"
+    ],
+    "85": [
+      "<=",
+      "operator"
+    ],
+    "62": [
+      ";",
+      "operator"
+    ],
+    "29": [
+      "do",
+      "keyword"
+    ],
+    "57": [
+      ">",
+      "operator"
+    ],
+    "15": [
+      "void",
+      "keyword"
+    ],
+    "27": [
+      "short",
+      "keyword"
+    ],
+    "49": [
+      "(",
+      "operator"
+    ],
+    "55": [
+      "^=",
+      "operator"
+    ],
+    "92": [
+      "\r",
+      "keyword"
+    ],
+    "83": [
+      "!",
+      "operator"
+    ],
+    "39": [
+      "char_literal",
+      "constant"
+    ],
+    "14": [
+      "break",
+      "keyword"
+    ],
+    "69": [
+      "%=",
+      "operator"
+    ],
+    "4": [
+      "else",
+      "keyword"
+    ],
+    "89": [
+      "~",
+      "operator"
+    ],
+    "0": [
+      "sizeof",
+      "keyword"
+    ],
+    "54": [
+      "|",
+      "operator"
+    ],
+    "51": [
+      "?",
+      "operator"
+    ],
+    "38": [
+      "rdefs",
+      "constant"
+    ],
+    "20": [
+      "struct",
+      "keyword"
+    ],
+    "16": [
+      "int",
+      "keyword"
+    ],
+    "75": [
+      "==",
+      "operator"
+    ],
+    "81": [
+      "<%",
+      "operator"
+    ],
+    "47": [
+      "&=",
+      "operator"
+    ],
+    "40": [
+      "string_literal",
+      "constant"
+    ],
+    "37": [
+      "pdefs",
+      "constant"
+    ],
+    "90": [
+      "{",
+      "operator"
+    ],
+    "72": [
+      "*",
+      "operator"
+    ],
+    "9": [
+      "case",
+      "keyword"
+    ],
+    "79": [
+      "<<=",
+      "operator"
+    ],
+    "91": [
+      "\n",
+      "keyword"
+    ],
+    "63": [
+      "<",
+      "operator"
+    ],
+    "18": [
+      "auto",
+      "keyword"
+    ],
+    "23": [
+      "signed",
+      "keyword"
+    ],
+    "32": [
+      "identifier",
+      "identifier"
+    ],
+    "24": [
+      "enum",
+      "keyword"
+    ],
+    "45": [
+      "]",
+      "operator"
+    ],
+    "80": [
+      "++",
+      "operator"
+    ],
+    "70": [
+      ")",
+      "operator"
+    ],
+    "60": [
+      "-",
+      "operator"
+    ],
+    "74": [
+      "||",
+      "operator"
+    ],
+    "61": [
+      "}",
+      "operator"
+    ],
+    "58": [
+      "+",
+      "operator"
+    ],
+    "68": [
+      "[",
+      "operator"
+    ],
+    "44": [
+      "&&",
+      "operator"
+    ],
+    "10": [
+      "float",
+      "keyword"
+    ],
+    "13": [
+      "for",
+      "keyword"
+    ],
+    "22": [
+      "static",
+      "keyword"
+    ],
+    "8": [
+      "if",
+      "keyword"
+    ]
+  },
+  {
+    "0": [
+      "main"
+    ],
+    "1": [
+      "printf"
+    ]
+  }
+]
