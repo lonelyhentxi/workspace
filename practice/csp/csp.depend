@@ -1,0 +1,22 @@
+# depslib dependency file v1.0
+1552798421 source:d:\workspace\impls\impls-practice\practice\csp\src\201312\isbn_number_submit.cpp
+	<string>
+	<cstdint>
+	<cstdlib>
+	<sstream>
+	<vector>
+	<iostream>
+
+1552791903 source:d:\workspace\impls\impls-practice\practice\csp\src\201312\most_digit_submit.cpp
+	<unordered_map>
+	<cstdint>
+	<iostream>
+	<limits>
+
+1552921900 source:d:\workspace\impls\impls-practice\practice\csp\src\201312\max_rectangle_submit.cpp
+	<cstdint>
+	<vector>
+	<limits>
+	<algorithm>
+	<iostream>
+

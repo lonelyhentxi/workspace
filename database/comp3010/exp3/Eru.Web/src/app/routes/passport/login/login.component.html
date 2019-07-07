@@ -1,0 +1,37 @@
+<form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
+  <nz-tabset [nzAnimated]="false" class="tabs" (nzSelectChange)="switch($event)">
+    <nz-tab [nzTitle]="'app.login.tab-login-credentials' | translate">
+      <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
+      <nz-form-item>
+        <nz-form-control>
+          <nz-input-group nzSize="large" nzPrefixIcon="anticon anticon-user">
+            <input nz-input formControlName="userName" placeholder="请输入用户名">
+          </nz-input-group>
+          <nz-form-explain *ngIf="userName.dirty && userName.errors">
+            {{ '请输入正确的用户名!' }}
+          </nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control>
+          <nz-input-group nzSize="large" nzPrefixIcon="anticon anticon-lock">
+            <input nz-input type="password" formControlName="password" placeholder="请输入密码">
+          </nz-input-group>
+          <nz-form-explain *ngIf="password.dirty && password.errors">
+            {{ '请输入正确的密码!' }}
+          </nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+    </nz-tab>
+  </nz-tabset>
+  <nz-form-item>
+    <button nz-button type="submit" nzType="primary" nzSize="large" [nzLoading]="http.loading" nzBlock>
+      {{ 'app.login.login' | translate }}
+    </button>
+  </nz-form-item>
+</form>
+<div class="other">
+  {{ 'app.login.sign-in-with' | translate }}
+  <i nz-tooltip="开发中" (click)="msg.error('开发中')" nz-icon type="github" class="icon"></i>
+  <a class="register" routerLink="/passport/register">{{ 'app.login.signup' | translate }}</a>
+</div>

@@ -1,0 +1,19 @@
+describe("static method", () => {
+    it("can not used by its instance", () => {
+        expect(() => {
+            class Chameleon {
+                static colorChange(newColor) {
+                    this.newColor = newColor;
+                    return this.newColor;
+                }
+
+                constructor({newColor = "green"} = {}) {
+                    this.newColor = newColor;
+                }
+            }
+
+            const freddie = new Chameleon({newColor: "purple"});
+            freddie.colorChange("orange");
+        }).toThrowError(TypeError);
+    });
+});

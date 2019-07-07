@@ -1,0 +1,2 @@
+*.ipynb linguist-language=python
+data_ai/* linguist-detectable=false
