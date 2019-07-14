@@ -33,3 +33,4 @@ opt-level = "s"
 [package.metadata.scripts]
 wasm = "wasm-pack build --scope lonelyhentai"
 wasm-test = "wasm-pack test --firefox --headless"
+wasm-bench = "cargo bench | tee benches/before.log"
