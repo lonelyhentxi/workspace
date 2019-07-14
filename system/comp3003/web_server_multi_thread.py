@@ -35,5 +35,5 @@ with ThreadPoolExecutor(max_workers=1) as executor:
     while True:
         print('waiting for connection...')
         tcp_client_socket, addr = tcp_server_socket.accept()
-        executor.map(common_send,tcp_client_socket,timeout=60)
+        executor.map(common_send, tcp_client_socket, timeout=60)
     tcp_server_socket.close()
