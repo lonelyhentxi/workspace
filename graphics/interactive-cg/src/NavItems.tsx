@@ -7,7 +7,7 @@ export const getItems = () => {
             links: [
                 {
                     name: 'Basic',
-                    url: '/:',
+                    url: '/',
                     key: 'home',
                     exact: true,
                     main: () => <Basic/>

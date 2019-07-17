@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import {Nav, INavLink, INavLinkGroup} from "office-ui-fabric-react/lib";
+import {Nav,INavLinkGroup} from "office-ui-fabric-react/lib";
 import {Route,BrowserRouter} from 'react-router-dom';
 
 export const PlainLayoutContainer: React.FC<({ className: string, sidebarItems: INavLinkGroup[] })> = ({className, sidebarItems}) => {
