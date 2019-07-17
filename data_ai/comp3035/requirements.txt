@@ -1,0 +1,4 @@
+mpl_finance
+matplotlib
+pandas
+scrapy
