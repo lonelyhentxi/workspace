@@ -1,0 +1,1 @@
+./wavelet --wallet ./wallet/wallet3.txt --db ./db/db3 --port 3003 --api.port 9003 --genesis '{"400056ee68a7cc2695222df05ea76875bc27ec6e61e8e62317c336157019c405": {"balance": 18446744073709551615}}' 127.0.0.1:3001
