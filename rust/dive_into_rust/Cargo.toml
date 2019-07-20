@@ -3,7 +3,24 @@ name = "dive_into_rust"
 version = "0.1.0"
 authors = ["lonelyhentai <master@evernightfireworks.com>"]
 edition = "2018"
+build = "./build.rs"
+# links = "rslib"
 
 [dependencies]
 hello_macro = { path = "./hello_macro" }
 hello_macro_derive = { path = "./hello_macro_derive" }
+scoped_threadpool = "^0.1.9"
+dirs = "^1.0.4"
+threadpool = "^1.7.1"
+parking_lot = "^0.6.4"
+crossbeam = "^0.4.1"
+crossbeam-channel = "^0.2.6"
+rayon = "^1.0.2"
+failure = "^0.1.2"
+
+[features]
+# 默认的功能开关
+default = ["my_feature_name"]
+# 定义一个新的功能开关，以及它所依赖的其它功能
+# 我们定义的开关不依赖其它功能，默认不开启
+my_feature_name = []

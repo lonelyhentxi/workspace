@@ -1,0 +1,26 @@
+{
+  "name": "webapi",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "local_worker": "tsc --build local_worker/tsconfig.json && node -r tsconfig-paths/register local_worker/dist/master.js",
+    "fetch": "tsc --build fetch/tsconfig.json && ts-node ./index.ts -w ./fetch/index.html && ts-node ./fetch/src/mock.server.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^11.13.4",
+    "@types/yargs": "^13.0.0",
+    "ts-node": "^8.0.3",
+    "tsconfig-paths": "^3.8.0",
+    "typescript": "^3.4.3"
+  },
+  "dependencies": {
+    "@types/body-parser": "^1.17.0",
+    "@types/express": "^4.16.1",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "yargs": "^13.2.2"
+  }
+}

@@ -1,0 +1,39 @@
+name:                haskell-for-fun
+version:             0.0.1.0
+github:              "githubuser/haskell-for-fun"
+license:             BSD3
+author:              "Author name here"
+maintainer:          "example@example.com"
+copyright:           "2019 Author name here"
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Learn haskell-for-fun
+
+dependencies:
+- base >= 4.7 && < 5
+- containers
+- random
+- bytestring
+- mtl
+
+library:
+  source-dirs: src
+
+tests:
+  haskell-for-fun-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - haskell-for-fun
+    - hspec
+    - hspec-discover

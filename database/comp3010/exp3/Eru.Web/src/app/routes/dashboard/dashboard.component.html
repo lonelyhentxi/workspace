@@ -1,0 +1,9 @@
+<div style="padding: 30px 0;">
+    <div nz-row *ngFor="let post of posts">
+      <div nz-col [nzSpan]="18" [nzOffset]="3">
+        <nz-card [nzTitle]="post.Title" [routerLink]="['/posts',post.Id]" [nzHoverable]="true">
+          <p>{{post.Description}}</p>
+        </nz-card>
+      </div>
+    </div>
+</div>

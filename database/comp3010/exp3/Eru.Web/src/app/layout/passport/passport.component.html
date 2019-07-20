@@ -1,0 +1,18 @@
+<div class="container">
+  <!--<header-i18n showLangText="false" class="langs"></header-i18n>-->
+  <div class="wrap">
+    <div class="top">
+      <div class="head">
+        <img class="logo" src="./assets/logo-color.svg">
+        <span class="title">永夜华火</span>
+      </div>
+      <div class="desc">相遇最是猝不及防，重逢亦有别样欢欣</div>
+    </div>
+    <router-outlet></router-outlet>
+    <global-footer [links]="links">
+      Copyright
+      <i class="anticon anticon-copyright"></i> {{now.getFullYear()}}
+      <a href="//github.com/lonelyhentai" target="_blank">永夜华火</a>出品
+    </global-footer>
+  </div>
+</div>

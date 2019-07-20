@@ -1,3 +1,9 @@
 [submodule "system/comp3026/wavelet"]
 	path = system/comp3026/wavelet
 	url = git@github.com:perlin-network/wavelet.git
+[submodule "data_ai/comp3006/fastText"]
+	path = data_ai/comp3006/fastText
+	url = git@github.com:facebookresearch/fastText.git
+[submodule "data_ai/comp3005"]
+	path = data_ai/comp3005
+	url = git@github.com:dreamerlin/AI_EX_2.git

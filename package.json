@@ -1,0 +1,49 @@
+{
+  "name": "impls",
+  "version": "0.1.0",
+  "description": "Implementation of books, docs, tutorials, reference.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "commit": "git-cz"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lonelyhentai/impls.git"
+  },
+  "keywords": [
+    "exprimental",
+    "trial",
+    "template",
+    "exercise",
+    "study"
+  ],
+  "author": "lonelyhentai <master@evernightfireworks.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lonelyhentai/impls/issues"
+  },
+  "homepage": "https://github.com/lonelyhentai/impls#readme",
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "lint-staged": {
+    "ignore": "assets"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^8.0.0",
+    "@commitlint/config-conventional": "^8.0.0",
+    "commitizen": "^3.1.1",
+    "cz-conventional-changelog": "^2.1.0",
+    "husky": "^3.0.0",
+    "lint-staged": "^9.2.0"
+  }
+}

@@ -1,0 +1,1 @@
+export declare function maxSequence(arr: number[]): number;

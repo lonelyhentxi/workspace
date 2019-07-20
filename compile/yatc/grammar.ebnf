@@ -1,0 +1,14 @@
+program          : [[statement | expression] Delimiter ? ]*;
+statement        : [declaration | definition];
+declaration      : Extern prototype;
+definition       : Def prototype expression;
+prototype        : Ident | Binary Op Number ? | Unary Op 
+OpeningParenthesis [Ident Comma ?]* ClosingParenthesis;
+expression       : [primary_expr (Op primary_expr)*];
+primary_expr     : [Ident | Number | call_expr | parenthesis_expr | conditional_expr | loop_expr | - unary_expr | var_expr
+call_expr        : Ident OpeningParenthesis [expression Comma ?]* ClosingParenthesis;
+parenthesis_expr : OpeningParenthesis expression ClosingParenthesis;
+conditional_expr : If expression Then expression Else expression;
+loop_expr        : For Ident Op= expression Comma expression [Comma expression]? In expression;
+unary_expr:      : Op primary_expr;
+var_expr         : Var Ident [Op= expression]? [Comma Ident [Op= expression]?]* In expression;
