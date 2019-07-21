@@ -6,7 +6,11 @@
       <sourceFolder url="file://$MODULE_DIR$/../my-first-contract\examples" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../my-first-contract\tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/../my-first-contract\benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../bank-contract\examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../bank-contract\tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../bank-contract\benches" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
+      <excludeFolder url="file://$MODULE_DIR$/../bank-contract\target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

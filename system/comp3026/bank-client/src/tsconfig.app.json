@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../out-tsc/app",
+    "module": "esnext",
+    "baseUrl": "",
+    "types": [],
+    "paths": {
+      "@app/*": ["app/*"],
+      "@core/*": ["app/core/*"],
+      "@shared/*": ["app/shared/*"],
+      "@assets/*": ["assets/*"]
+    }
+  },
+  "exclude": [
+    "**/*.spec.ts"
+  ]
+}
