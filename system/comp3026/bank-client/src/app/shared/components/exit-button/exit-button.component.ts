@@ -28,6 +28,7 @@ import {ElectronService} from '@core/services/electron/electron.service';
         height: 20px;
       }
 
+      
       .app-exit img {
           position: fixed;
           height: 20px;

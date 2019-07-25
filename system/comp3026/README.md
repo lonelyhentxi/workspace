@@ -31,4 +31,5 @@ A system which is not working will have no more than 50% of the total mark; and 
 
 ## Attention: 
 
-`wavelet v0.2.0` has severe bugs, whose syncing function always not works, please use `v0.1.1`.
+- `wavelet v0.2.0` has severe bugs, whose syncing function always not works, please use `v0.1.1`.
+- In angular, `import 'zone.js/dist/zone'`(in `polyfills.ts`) must be import after `import 'app.module'`

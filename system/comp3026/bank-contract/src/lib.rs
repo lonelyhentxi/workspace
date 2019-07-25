@@ -313,4 +313,11 @@ impl Bank {
             .collect::<Vec<String>>().join("\n"));
         Ok(())
     }
+
+    pub fn get_actor(&mut self, params: &mut Parameters) -> Result<(), String> {
+        let requester = params.sender;
+        let actor = BankUtil::get_actor(&self, &requester)?;
+        log(&actor.to_string());
+        Ok(())
+    }
 }

@@ -1,0 +1,63 @@
+<div nz-row>
+  <div nz-col nzSpan="10" nzOffset="2">
+    <div class="login-welcome">
+      <h1>Welcome to Chainbank</h1>
+      <h3>Please enter your wallet's private key,
+        and ensure your Chainbank node HTTPS API address to continue</h3>
+    </div>
+  </div>
+  <div nz-col nzSpan="10" nzOffset="1">
+    <nz-card class="transparent-bg" nzTitle="Login">
+      <div class="login-panel">
+        <div>
+          <h4>Private Key</h4>
+        </div>
+        <div>
+                      <textarea class="transparent-bg"
+                                nz-input
+                                placeholder="Please enter your private key"
+                                [(ngModel)]="privateKey"
+                                [nzAutosize]="{ minRows: 3, maxRows: 3 }"
+                      ></textarea>
+        </div>
+        <div>
+          <nz-upload [nzBeforeUpload]="beforeImport">
+            <button nz-button>Import File</button>
+          </nz-upload>
+        </div>
+        <div *ngIf="detailedSetting==true">
+          <h4>Contract Address</h4>
+        </div>
+        <div *ngIf="detailedSetting==true">
+                          <textarea class="transparent-bg"
+                                    nz-input
+                                    placeholder="Please enter your contract address"
+                                    [nzAutosize]="{ minRows: 2, maxRows: 2 }"
+                                    [(ngModel)]="contract">
+                          </textarea>
+        </div>
+        <div>
+          <h4>Node Address</h4>
+        </div>
+        <div>
+          <input class="transparent-bg"
+                 nz-input [readOnly]="detailedSetting==false"
+                 placeholder="Please enter your API address"
+                 [(ngModel)]="api"/>
+        </div>
+        <div class="login-panel-control">
+          <button nz-button nzType="primary" (click)="login()">Login</button>
+          <button nz-button (click)="toggleSetting()">
+            {{detailedSetting ? 'Hide' : 'Detailed Setting'}}
+          </button>
+          <button nz-button *ngIf="detailedSetting==true" (click)="saveSetting()">
+            Save Setting
+          </button>
+          <button nz-button *ngIf="detailedSetting==true" (click)="resetSetting()">
+            Reset
+          </button>
+        </div>
+      </div>
+    </nz-card>
+  </div>
+</div>
