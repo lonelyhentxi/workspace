@@ -16,6 +16,8 @@ export class LoginComponent implements OnInit {
   privateKey = '87a6813c3b4cf534b6ae82db9b1409fa7dbd5c13dba5858970b56084c4a930eb400056ee68a7cc2695222df05ea76875bc27ec6e61e8e62317c336157019c405';
   api = '';
   contract = '';
+  loading = false;
+  loadingPrompt = '';
 
   constructor(
     private readonly localStorage: LocalStorageService,
@@ -93,6 +95,8 @@ export class LoginComponent implements OnInit {
   }
 
   async login() {
+    this.loading = true;
+    this.loadingPrompt = 'checking format of settings...';
     if (!this.chainbank.validateKeyFormat(this.privateKey)) {
       this.alertInvalidKey();
     } else if (!this.chainbank.validateContractFormat(this.contract)) {
@@ -101,13 +105,17 @@ export class LoginComponent implements OnInit {
       this.alertInvalidApi();
     } else {
       try {
-        await this.chainbank.login(this.privateKey, this.api, this.contract);
+        for await (const prompt of this.chainbank.login(this.privateKey, this.api, this.contract)) {
+          console.log(prompt);
+          this.loadingPrompt = prompt;
+        }
       } catch (e) {
         if (e instanceof ActorNotExistsException) {
           this.messageService.error(e.message);
         }
         console.log(e);
       }
+      this.loadingPrompt = 'successfully logged in, jumping...';
       const consoleUrl = `/${this.chainbank.actor.privilege === Privilege.Customer ? 'customer' : 'clerk'}`;
       this.router.navigateByUrl(consoleUrl);
     }

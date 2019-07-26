@@ -1,4 +1,4 @@
-<div nz-row>
+<div  *ngIf="loading==false" nz-row>
   <div nz-col nzSpan="10" nzOffset="2">
     <div class="login-welcome">
       <h1>Welcome to Chainbank</h1>
@@ -13,12 +13,14 @@
           <h4>Private Key</h4>
         </div>
         <div>
-                      <textarea class="transparent-bg"
-                                nz-input
-                                placeholder="Please enter your private key"
-                                [(ngModel)]="privateKey"
-                                [nzAutosize]="{ minRows: 3, maxRows: 3 }"
-                      ></textarea>
+          <label>
+<textarea class="transparent-bg"
+          nz-input
+          placeholder="Please enter your private key"
+          [(ngModel)]="privateKey"
+          [nzAutosize]="{ minRows: 3, maxRows: 3 }"
+></textarea>
+          </label>
         </div>
         <div>
           <nz-upload [nzBeforeUpload]="beforeImport">
@@ -59,5 +61,10 @@
         </div>
       </div>
     </nz-card>
+  </div>
+</div>
+<div class="login-loading" *ngIf="loading==true">
+  <div class="login-loading-content">
+    <nz-spin [nzTip]="loadingPrompt" nzSize="large"></nz-spin>
   </div>
 </div>

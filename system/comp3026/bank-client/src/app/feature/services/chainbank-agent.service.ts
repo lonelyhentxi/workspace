@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Wavelet, Contract } from 'wavelet-client';
 import JSBI from 'jsbi';
+import {LocalStorageService} from '@app/feature/services/local-storage.service';
+import {AppConfig} from '@app/../environments/environment';
 
 export class ActorNotExistsException {
   name: string;
@@ -10,9 +12,9 @@ export class ActorNotExistsException {
 }
 
 export enum Privilege {
-  Admin = 0,
-  Clerk = 1,
-  Customer = 2
+  Admin = 'Admin',
+  Clerk = 'Clerk',
+  Customer = 'Customer'
 }
 
 export class Actor {
@@ -55,9 +57,6 @@ export class Actor {
       throw new TypeError('error boolean');
     }
   }
-
-
-
 }
 
 @Injectable()
@@ -67,13 +66,18 @@ export class ChainbankAgentService {
   readonly defaultApi = 'blockchain.evernightfireworks.com';
   readonly defaultContract = '5c96230b6fffeaeb7434cce26e1b52dd07cbc82257ff9a4854840432bea81373';
 
-
   wallet;
   contract: Contract;
   wavelet: Wavelet;
   actor: Actor = null;
 
-  constructor() { }
+  constructor(
+    private readonly localStorage: LocalStorageService,
+  ) {
+    if(!AppConfig.production) {
+      this.actor = localStorage.getItem<Actor>('dev_actor');
+    }
+  }
 
   validateKeyFormat(key: string): boolean {
     return this.validateU8Array(key, 64);
@@ -101,15 +105,22 @@ export class ChainbankAgentService {
     return true;
   }
 
-  async login(privateKey: string, apiAddress: string, contractAddress: string) {
+  async *login(privateKey: string, apiAddress: string, contractAddress: string) {
+    yield 'linking to chain nodes...';
     const client = new Wavelet('https://' + apiAddress);
+    yield 'loading wallet...';
     const wallet = Wavelet.loadWalletFromPrivateKey(privateKey);
+    yield 'loading contract...';
     const contract = new Contract(client, contractAddress);
     await contract.init();
+    yield 'init your actor...';
     this.wavelet = client;
     this.wallet = wallet;
     this.contract = contract;
     this.fetchActor();
+    if(!AppConfig.production) {
+      this.localStorage.setItem('dev_actor', this.actor);
+    }
   }
 
   fetchActor() {

@@ -1,3 +1,50 @@
-<p>
-  clerk-console works!
-</p>
+<div nz-row class="console-main">
+  <div nz-col nzSpan="5" nzOffset="1">
+    <nz-card nzHoverable [nzCover]="coverTemplate" class="transparent-bg console-actor">
+      <nz-card-meta [nzTitle]="'Actor'+' '+chainbank.actor.privilege"
+                    [nzDescription]="accountAddressTemplate">
+      </nz-card-meta>
+    </nz-card>
+    <ng-template #coverTemplate>
+      <canvas  #coverCanvas style="margin: auto;"></canvas>
+    </ng-template>
+    <ng-template #accountAddressTemplate>
+      <div style="word-break: break-all;">
+        {{chainbank.actor.identity}}
+      </div>
+    </ng-template>
+  </div>
+  <div nz-col nzSpan="16" nzOffset="1">
+    <div class="console-feature">
+      <button nz-button (click)="enableClerk()" nzType="primary">Enable Clerk</button>
+      <button nz-button (click)="enableCustomer()" nzType="primary">Enable Customer</button>
+      <button nz-button nzType="primary">Check Transactions</button>
+      <button nz-button nzType="primary">Check Balance</button>
+      <button nz-button nzType="primary">Transfer</button>
+      <nz-table #editRowTable nzBordered [nzData]="listOfData" [nzPageSize]="5">
+        <thead>
+        <tr>
+          <th nzWidth="450px">Identity</th>
+          <th nzWidth="100px">Privilege</th>
+          <th nzWidth="100px">Enabled</th>
+          <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of editRowTable.data" class="editable-row">
+          <td>
+            <div style="word-break: break-all;">
+              {{data.identity}}
+            </div>
+          </td>
+          <td>{{ data.privilege }}</td>
+          <td>{{ data.enabled }}</td>
+          <td>
+            <a *ngIf="canDisable(data.privilege)" nz-popconfirm nzTitle="Sure to Disable?" (nzOnConfirm)="disableActor(data)">Delete</a>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>

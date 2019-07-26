@@ -4,13 +4,13 @@ import {Router} from '@angular/router';
 @Component({
   selector: 'app-frame-logo',
   template: `
-      <div class="frame-logo" (click)="toHome()">
-          <embed src="../../../../assets/img/chainbank_logo.svg" width="40" height="40"
-                 type="image/svg+xml"
-                 pluginspage="http://www.adobe.com/svg/viewer/install/"/>
-          <embed src="../../../../assets/img/chainbank_title.svg" width="156" height="48"
-                 type="image/svg+xml"
-                 pluginspage="http://www.adobe.com/svg/viewer/install/"/>
+      <div class="frame-logo">
+          <div (click)="toHome()">
+              <img src="../../../../assets/img/chainbank_logo.svg" width="40" height="40"/>
+          </div>
+          <div (click)="toHome()">
+              <img src="../../../../assets/img/chainbank_title.svg" width="156" height="48"/>
+          </div>
       </div>
   `,
   styles: [`
@@ -20,12 +20,9 @@ import {Router} from '@angular/router';
           left: 16px;
           width: 104px;
           height: 48px;
-          cursor: pointer;
-          -webkit-app-region: no-drag;
-          z-index: 100;
       }
 
-      .frame-logo > embed:nth-child(1) {
+      .frame-logo > div:nth-child(1) {
           display: block;
           position: absolute;
           top: 12px;
@@ -35,9 +32,10 @@ import {Router} from '@angular/router';
           font-weight: bolder;
           -webkit-app-region: no-drag;
           cursor: pointer;
+          z-index: 100;
       }
 
-      .frame-logo > embed:nth-child(2) {
+      .frame-logo > div:nth-child(2) {
           display: block;
           position: absolute;
           top: 8px;
@@ -45,6 +43,7 @@ import {Router} from '@angular/router';
           height: 48px;
           -webkit-app-region: no-drag;
           cursor: pointer;
+          z-index: 100;
       }
   `]
 })
@@ -56,7 +55,6 @@ export class FrameLogoComponent {
   }
 
   toHome() {
-    this.router.navigateByUrl('/').then(() => {
-    });
+    this.router.navigateByUrl('/');
   }
 }
