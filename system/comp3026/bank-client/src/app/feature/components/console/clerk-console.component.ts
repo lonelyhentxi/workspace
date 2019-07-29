@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {toCanvas} from 'qrcode';
-import {Actor, ChainbankAgentService, Privilege} from '@app/feature/services/chainbank-agent.service';
+import {Actor, ChainbankAgentService, Privilege} from '@app/feature/services/chainbank-agent';
 
 @Component({
   selector: 'app-clerk-console',

@@ -21,7 +21,7 @@ import en from '@angular/common/locales/en';
 import {LoginComponent} from '@app/feature/components/login/login.component';
 import {CustomerConsoleComponent} from '@app/feature/components/console/customer-console.component';
 import {ClerkConsoleComponent} from '@app/feature/components/console/clerk-console.component';
-import {ChainbankAgentService} from '@app/feature/services/chainbank-agent.service';
+import {ChainbankAgentService} from '@app/feature/services/chainbank-agent/chainbank-agent.service';
 import {LocalStorageService} from '@app/feature/services/local-storage.service';
 
 registerLocaleData(en);

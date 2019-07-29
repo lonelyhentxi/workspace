@@ -1,7 +1,9 @@
 import {Component, NgZone, OnInit} from '@angular/core';
 import {LocalStorageService} from '../../services/local-storage.service';
 import {NzMessageService} from 'ng-zorro-antd';
-import {ActorNotExistsException, ChainbankAgentService, Privilege} from '../../services/chainbank-agent.service';
+import {ChainbankAgentService} from '@app/feature/services/chainbank-agent/chainbank-agent.service';
+import {ActorNotExistsException} from '@app/feature/services/chainbank-agent/chainbank.exceptions';
+import {Privilege} from '@app/feature/services/chainbank-agent/chainbank.interfaces';
 import {Router} from '@angular/router';
 
 
