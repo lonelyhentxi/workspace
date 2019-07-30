@@ -6,7 +6,7 @@
       </nz-card-meta>
     </nz-card>
     <ng-template #coverTemplate>
-      <canvas  #coverCanvas style="margin: auto;"></canvas>
+      <canvas #coverCanvas style="margin: auto;"></canvas>
     </ng-template>
     <ng-template #accountAddressTemplate>
       <div style="word-break: break-all;">
@@ -16,11 +16,8 @@
   </div>
   <div nz-col nzSpan="16" nzOffset="1">
     <div class="console-feature">
-      <button nz-button (click)="enableClerk()" nzType="primary">Enable Clerk</button>
-      <button nz-button (click)="enableCustomer()" nzType="primary">Enable Customer</button>
-      <button nz-button nzType="primary">Check Transactions</button>
-      <button nz-button nzType="primary">Check Balance</button>
-      <button nz-button nzType="primary">Transfer</button>
+      <button nz-button (click)="toggleCreateClerk()" nzType="primary" *ngIf="chainbank.canEditClerk()">Create Clerk</button>
+      <button nz-button (click)="toggleCreateCustomer()" nzType="primary">Create Customer</button>
       <nz-table #editRowTable nzBordered [nzData]="listOfData" [nzPageSize]="5">
         <thead>
         <tr>
@@ -40,11 +37,45 @@
           <td>{{ data.privilege }}</td>
           <td>{{ data.enabled }}</td>
           <td>
-            <a *ngIf="canDisable(data.privilege)" nz-popconfirm nzTitle="Sure to Disable?" (nzOnConfirm)="disableActor(data)">Delete</a>
+            <button nz-button style="margin-right: 5px;" *ngIf="data.enabled" nz-popconfirm nzTitle="Sure to check?"
+                    (nzOnConfirm)="checkActor(data)">
+              Check
+            </button>
+            <button nz-button *ngIf="canEdit(data.privilege) && data.enable" nz-popconfirm nzTitle="Sure to disable?"
+                    (nzOnConfirm)="disableActor(data)">
+              Disable
+            </button>
+            <button nz-button *ngIf="canEdit(data.privilege) && !data.enable" nz-popconfirm nzTitle="Sure to enable?"
+                    (nzOnConfirm)="enableActor(data)">
+              Enable
+            </button>
           </td>
         </tr>
         </tbody>
       </nz-table>
+    </div>
+    <div>
+      <nz-modal [(nzVisible)]="createClerkVisible" nzTitle="Create or Enable Clerk"
+                (nzOnOk)="confirmCreateClerk(clerkAddressToCreate)" [nzMaskClosable]="false"
+                (nzOnCancel)="toggleCreateClerk()"
+                [nzOkDisabled]="!chainbank.validateAddressFormat(clerkAddressToCreate)">
+        <input nz-input [(ngModel)]="clerkAddressToCreate"
+               placeHolder="Please enter clerk address to create or enable"/>
+        <div class="ant-form-explain validation-error"
+             *ngIf="clerkAddressToCreate!==''&&!chainbank.validateAddressFormat(clerkAddressToCreate)">
+          Address should be 64 characters hex string
+        </div>
+      </nz-modal>
+      <nz-modal [(nzVisible)]="createCustomerVisible" nzTitle="Create or Enable Customer"
+                (nzOnCancel)="toggleCreateCustomer()"
+                [nzOkDisabled]="!chainbank.validateAddressFormat(customerAddressToCreate)"
+                (nzOnOk)="confirmCreateCustomer(customerAddressToCreate)" [nzMaskClosable]="false">
+        <input nz-input [(ngModel)]="customerAddressToCreate" placeHolder="Please enter customer address to create or enable"/>
+        <div class="ant-form-explain validation-error"
+             *ngIf="customerAddressToCreate!==''&&!chainbank.validateAddressFormat(customerAddressToCreate)">
+          Address should be 64 characters hex string
+        </div>
+      </nz-modal>
     </div>
   </div>
 </div>

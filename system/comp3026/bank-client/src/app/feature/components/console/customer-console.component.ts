@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {ChainbankAgentService} from '@app/feature/services/chainbank-agent';
 
 @Component({
   selector: 'app-customer-console',
@@ -7,9 +9,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CustomerConsoleComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly chainbank: ChainbankAgentService,
+  ) { }
+
+  identity: string;
 
   ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    this.identity = id?id:this.chainbank.actor.identity;
   }
 
 }

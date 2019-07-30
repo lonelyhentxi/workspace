@@ -4,17 +4,20 @@ import JSBI from 'jsbi';
 import {LocalStorageService} from '@app/feature/services/local-storage.service';
 import {AppConfig} from '@app/../environments/environment';
 import {ActorNotExistsException, PermissionDeniedException, TimeoutException} from './chainbank.exceptions';
-import {Actor, Transaction} from './chainbank.interfaces';
+import {Actor, Privilege, Transaction} from './chainbank.interfaces';
 import {Subject} from 'rxjs';
-
-const GAS_LIMIT = 100;
 
 @Injectable()
 export class ChainbankAgentService {
 
-  private static hexCharSet = new Set('1234567890abcdefABCDEF');
+  static GAS_LIMIT = 250000;
+  static formatFactor = 2;
+  static keyLength = 64;
+  static addressLength = 32;
+  static hexCharSet = '[\\da-fA-F]';
   readonly defaultApi = 'blockchain.evernightfireworks.com';
-  readonly defaultContract = '5c96230b6fffeaeb7434cce26e1b52dd07cbc82257ff9a4854840432bea81373';
+  readonly defaultContract = '140dd223f902ac573d24f7c754ba85ba3f36de90914d6884d149f3dfa772ba80';
+  readonly defaultTimeout = 10000;
 
   wallet;
   contract: Contract;
@@ -34,23 +37,28 @@ export class ChainbankAgentService {
   }
 
   validateKeyFormat(key: string): boolean {
-    return this.validateU8Array(key, 64);
+    return this.validateU8Array(key, ChainbankAgentService.keyLength);
   }
 
   validateContractFormat(contractAddress: string): boolean {
-    return this.validateU8Array(contractAddress, 32);
+    return this.validateU8Array(contractAddress, ChainbankAgentService.addressLength);
   }
 
   validateAddressFormat(address: string): boolean {
-    return this.validateU8Array(address, 32);
+    return this.validateU8Array(address, ChainbankAgentService.addressLength);
+  }
+
+  canEditClerk(): boolean {
+    return this.actor.privilege === Privilege.Admin;
+  }
+
+  canEditCustomer(): boolean {
+    return this.actor.privilege === Privilege.Admin || this.actor.privilege === Privilege.Clerk;
   }
 
   private validateU8Array(content: string, len: number): boolean {
-    if (content.length !== len * 2) {
-      return false;
-    } else {
-      return [...content].every(c => ChainbankAgentService.hexCharSet.has(c));
-    }
+    const reg = new RegExp(`^${ChainbankAgentService.hexCharSet}{${ChainbankAgentService.formatFactor * len}}$`);
+    return Boolean(content.match(reg));
   }
 
   validateApiAddress(apiAddress: string): boolean {
@@ -79,13 +87,6 @@ export class ChainbankAgentService {
     if (!AppConfig.production) {
       this.localStorage.setItem('dev_actor', this.actor);
     }
-    this.wavelet.pollConsensus({
-      onRoundEnded: message => {
-        this.contract.fetchAndPopulateMemoryPages().then(_ => {
-          this.updateSubscriber.next(message);
-        });
-      }
-    });
   }
 
   checkActor() {
@@ -101,52 +102,63 @@ export class ChainbankAgentService {
     return res['logs'] as any;
   }
 
-  async enableClerk(identity: string) {
+  async* enableActor(identity: string, privilege: Privilege) {
     this.validateAddressFormat(identity);
-    await this.contract.call(
+    let funcName;
+    if (privilege === Privilege.Clerk) {
+      funcName = 'enable_clerk';
+    } else if (privilege === Privilege.Customer) {
+      funcName = 'enable_customer';
+    } else {
+      throw new PermissionDeniedException();
+    }
+    yield await this.contract.call(
       this.wallet,
-      'enable_clerk',
+      funcName,
       JSBI.BigInt(0), // amount to send
-      JSBI.BigInt(GAS_LIMIT), // gas limit
+      JSBI.BigInt(ChainbankAgentService.GAS_LIMIT), // gas limit
       JSBI.BigInt(0), // gas deposit (not explained)
-      {type: 'bytes', value: identity}
+      {type: 'raw', value: identity}
     );
+    return await this.detectRoundEnd();
   }
 
-  async disableClerk(identity: string) {
+  async* disableActor(identity: string, privilege: Privilege) {
     this.validateAddressFormat(identity);
-    await this.contract.call(
+    let funcName;
+    if (privilege === Privilege.Clerk) {
+      funcName = 'disable_clerk';
+    } else if (privilege === Privilege.Customer) {
+      funcName = 'disable_customer';
+    } else {
+      throw new PermissionDeniedException();
+    }
+    yield await this.contract.call(
       this.wallet,
-      'disable_clerk',
+      funcName,
       JSBI.BigInt(0), // amount to send
-      JSBI.BigInt(GAS_LIMIT), // gas limit
+      JSBI.BigInt(ChainbankAgentService.GAS_LIMIT), // gas limit
       JSBI.BigInt(0), // gas deposit (not explained)
-      {type: 'bytes', value: identity}
+      {type: 'raw', value: identity},
     );
+    return await this.detectRoundEnd();
   }
 
-  async enableCustomer(identity: string) {
-    this.validateAddressFormat(identity);
-    await this.contract.call(
-      this.wallet,
-      'enable_customer',
-      JSBI.BigInt(0), // amount to send
-      JSBI.BigInt(GAS_LIMIT), // gas limit
-      JSBI.BigInt(0), // gas deposit (not explained)
-      {type: 'bytes', value: identity}
-    );
-  }
-
-  async disableCustomer(identity: string) {
-    this.validateAddressFormat(identity);
-    await this.contract.call(
-      this.wallet,
-      'disable_customer',
-      JSBI.BigInt(0), // amount to send
-      JSBI.BigInt(GAS_LIMIT), // gas limit
-      JSBI.BigInt(0), // gas deposit (not explained)
-      {type: 'bytes', value: identity},
-    );
+  detectRoundEnd() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        reject(new TimeoutException());
+      }, this.defaultTimeout);
+      this.wavelet.pollConsensus({
+        onRoundEnded: message => {
+          this.contract.fetchAndPopulateMemoryPages().then(c => {
+            resolve(message);
+          }).catch(e => {
+            reject(e);
+          });
+        }
+      });
+    });
   }
 
   async transfer(sender: string, receiver: string, amount: JSBI) {
@@ -156,19 +168,30 @@ export class ChainbankAgentService {
       this.wallet,
       'transfer',
       JSBI.BigInt(0), // amount to send
-      JSBI.BigInt(GAS_LIMIT), // gas limit
+      JSBI.BigInt(ChainbankAgentService.GAS_LIMIT), // gas limit
       JSBI.BigInt(0), // gas deposit (not explained)
-      {type: 'bytes', value: sender},
-      {type: 'bytes', value: receiver},
-      {type: 'bytes', value: JSBI.toString()}
+      {type: 'raw', value: sender},
+      {type: 'raw', value: receiver},
+      {type: 'raw', value: JSBI.toString()}
     );
+  }
+
+  checkActors(): Actor[] {
+    try {
+      const results = this.exposeResult(
+        this.contract.test(this.wallet, 'get_actors', JSBI.BigInt(0), []));
+      const actorsStr = results[0] ? results[0].split('\n') : [];
+      return actorsStr.map(a => Actor.parseLog(a));
+    } catch (e) {
+      throw new PermissionDeniedException();
+    }
   }
 
   checkTransactions(identity: string): Transaction[] {
     this.validateAddressFormat(identity);
     try {
       const results = this.exposeResult(
-        this.contract.test(this.wallet, 'get_transactions', JSBI.BigInt(0), [{type: 'bytes', value: identity}]));
+        this.contract.test(this.wallet, 'get_transactions', JSBI.BigInt(0), [{type: 'raw', value: identity}]));
       const transactionsStr = results[0] ? results[0].split('\n') : [];
       return transactionsStr.map(tl => Transaction.parseLog(tl));
     } catch (e) {

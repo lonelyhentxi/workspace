@@ -197,7 +197,7 @@ impl Bank {
                     Privilege::Clerk => Ok(Actor {
                         identity: target,
                         privilege: Privilege::Clerk,
-                        enabled: true,
+                        enabled: false,
                     }),
                     _ => Err(PERMISSION_DENIED.to_string())
                 }
@@ -236,7 +236,7 @@ impl Bank {
                         Privilege::Customer => Ok(Actor {
                             identity: target,
                             privilege: Privilege::Customer,
-                            enabled: true,
+                            enabled: false,
                         }),
                         _ => Err(PERMISSION_DENIED.to_string()),
                     }

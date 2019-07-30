@@ -23,7 +23,7 @@ const routes: Routes = [
         component: ClerkConsoleComponent,
       },
       {
-        path: 'customer',
+        path: 'customer/:',
         component: CustomerConsoleComponent,
       }
     ]

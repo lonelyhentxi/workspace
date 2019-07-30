@@ -1,6 +1,8 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {toCanvas} from 'qrcode';
-import {Actor, ChainbankAgentService, Privilege} from '@app/feature/services/chainbank-agent';
+import {Actor, ChainbankAgentService, Privilege, requestProgress} from '@app/feature/services/chainbank-agent';
+import {Router} from '@angular/router';
+import {NzNotificationService} from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-clerk-console',
@@ -9,18 +11,24 @@ import {Actor, ChainbankAgentService, Privilege} from '@app/feature/services/cha
 })
 export class ClerkConsoleComponent implements AfterViewInit, OnInit {
 
-  listOfData: Actor[] = [];
-
-  ngOnInit(): void {
-    Array(100).fill(0).forEach(()=>this.addRow());
+  constructor(
+    private readonly chainbank: ChainbankAgentService,
+    private readonly router: Router,
+    private readonly notification: NzNotificationService,
+  ) {
   }
+
+  listOfData: Actor[] = [];
+  createClerkVisible = false;
+  createCustomerVisible = false;
+  customerAddressToCreate = '';
+  clerkAddressToCreate = '';
 
   @ViewChild('coverCanvas', {static: false})
   coverCanvas: ElementRef;
 
-  constructor(
-    private readonly chainbank: ChainbankAgentService,
-  ) {
+  ngOnInit(): void {
+    this.refreshTable();
   }
 
   async ngAfterViewInit() {
@@ -30,37 +38,51 @@ export class ClerkConsoleComponent implements AfterViewInit, OnInit {
       });
   }
 
-  addRow(): void {
-    this.listOfData = [
-      ...this.listOfData,
-      {
-        identity: this.chainbank.actor.identity,
-        privilege: this.chainbank.actor.privilege,
-        enabled: this.chainbank.actor.enabled,
-      }
-    ];
+  refreshTable() {
+    this.listOfData = this.chainbank.checkActors();
   }
 
-  enableCustomer() {
-
+  toggleCreateCustomer() {
+    this.createCustomerVisible = !this.createCustomerVisible;
   }
 
-  enableClerk() {
-
+  async confirmCreateCustomer(identity: string) {
+    await this.enableActor({identity,privilege: Privilege.Customer});
+    this.toggleCreateCustomer();
   }
 
-  disableActor(id: string): void {
-    this.listOfData = this.listOfData.filter(d => d.identity !== id);
+  toggleCreateClerk() {
+    this.createClerkVisible = !this.createClerkVisible;
   }
 
-  canDisable(privilege: Privilege) {
-    const selfPrivilege = this.chainbank.actor.privilege;
-    if(selfPrivilege===Privilege.Clerk) {
-      return privilege===Privilege.Customer;
-    } else if(selfPrivilege===Privilege.Admin) {
-      return privilege!==Privilege.Admin;
+  async confirmCreateClerk(identity: string) {
+    await this.enableActor({identity,privilege: Privilege.Clerk});
+    this.toggleCreateClerk();
+  }
+
+  async enableActor(actor: { identity, privilege }) {
+    const taskFunc = () => this.chainbank.enableActor(actor.identity, actor.privilege);
+    await requestProgress(taskFunc, this.notification);
+    this.refreshTable();
+  }
+
+  async disableActor(actor: { identity, privilege }) {
+    const taskFunc = () => this.chainbank.disableActor(actor.identity, actor.privilege);
+    await requestProgress(taskFunc, this.notification);
+    this.refreshTable();
+  }
+
+  canEdit(privilege: Privilege) {
+    if(privilege===Privilege.Customer) {
+      return this.chainbank.canEditCustomer();
+    } else if(privilege===Privilege.Clerk) {
+      return this.chainbank.canEditClerk();
     } else {
       return false;
     }
+  }
+
+  checkActor(actor: Actor) {
+    this.router.navigate(['..', 'customer', actor.identity]);
   }
 }
