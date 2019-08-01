@@ -23,6 +23,8 @@ import {CustomerConsoleComponent} from '@app/feature/components/console/customer
 import {ClerkConsoleComponent} from '@app/feature/components/console/clerk-console.component';
 import {ChainbankAgentService} from '@app/feature/services/chainbank-agent/chainbank-agent.service';
 import {LocalStorageService} from '@app/feature/services/local-storage.service';
+import { ConsoleProfileComponent } from './feature/components/console/console-profile.component';
+import { ConsoleFrameworkComponent } from './feature/components/console/console-framework.component';
 
 registerLocaleData(en);
 
@@ -36,7 +38,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppComponent,
     LoginComponent,
     CustomerConsoleComponent,
-    ClerkConsoleComponent
+    ClerkConsoleComponent,
+    ConsoleProfileComponent,
+    ConsoleFrameworkComponent
   ],
   imports: [
     BrowserModule,

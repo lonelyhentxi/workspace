@@ -5,7 +5,7 @@ import {ChainbankAgentService} from '@app/feature/services/chainbank-agent';
 @Component({
   selector: 'app-customer-console',
   templateUrl: './customer-console.component.html',
-  styleUrls: ['./customer-console.component.scss','./console.components.scss']
+  styleUrls: ['./customer-console.component.scss']
 })
 export class CustomerConsoleComponent implements OnInit {
 
@@ -19,6 +19,6 @@ export class CustomerConsoleComponent implements OnInit {
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     this.identity = id?id:this.chainbank.actor.identity;
+    console.log(this.identity);
   }
-
 }

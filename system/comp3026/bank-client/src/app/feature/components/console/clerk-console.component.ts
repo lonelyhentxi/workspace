@@ -1,20 +1,20 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {toCanvas} from 'qrcode';
+import {Component, OnInit } from '@angular/core';
 import {Actor, ChainbankAgentService, Privilege, requestProgress} from '@app/feature/services/chainbank-agent';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {NzNotificationService} from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-clerk-console',
   templateUrl: './clerk-console.component.html',
-  styleUrls: ['./clerk-console.component.scss', './console.components.scss']
+  styleUrls: ['./clerk-console.component.scss']
 })
-export class ClerkConsoleComponent implements AfterViewInit, OnInit {
+export class ClerkConsoleComponent implements OnInit {
 
   constructor(
     private readonly chainbank: ChainbankAgentService,
     private readonly router: Router,
     private readonly notification: NzNotificationService,
+    private readonly route: ActivatedRoute,
   ) {
   }
 
@@ -24,18 +24,8 @@ export class ClerkConsoleComponent implements AfterViewInit, OnInit {
   customerAddressToCreate = '';
   clerkAddressToCreate = '';
 
-  @ViewChild('coverCanvas', {static: false})
-  coverCanvas: ElementRef;
-
   ngOnInit(): void {
     this.refreshTable();
-  }
-
-  async ngAfterViewInit() {
-    await toCanvas(this.coverCanvas.nativeElement,
-      this.chainbank.actor.identity, {
-        width: 256
-      });
   }
 
   refreshTable() {
@@ -83,6 +73,6 @@ export class ClerkConsoleComponent implements AfterViewInit, OnInit {
   }
 
   checkActor(actor: Actor) {
-    this.router.navigate(['..', 'customer', actor.identity]);
+    this.router.navigate(['..', 'customer', actor.identity], {relativeTo: this.route});
   }
 }

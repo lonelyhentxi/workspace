@@ -118,8 +118,7 @@ export class LoginComponent implements OnInit {
         console.log(e);
       }
       this.loadingPrompt = 'successfully logged in, jumping...';
-      const consoleUrl = `/${this.chainbank.actor.privilege === Privilege.Customer ? 'customer' : 'clerk'}`;
-      this.router.navigateByUrl(consoleUrl);
+      this.router.navigate(['/','console', this.chainbank.actor.privilege === Privilege.Customer ? 'customer' : 'clerk']);
     }
   }
 }
