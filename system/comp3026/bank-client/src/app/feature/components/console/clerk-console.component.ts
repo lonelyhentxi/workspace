@@ -1,5 +1,5 @@
 import {Component, OnInit } from '@angular/core';
-import {Actor, ChainbankAgentService, Privilege, requestProgress} from '@app/feature/services/chainbank-agent';
+import {Actor, ChainbankAgentService, Privilege, mutationProgress, syncProgress} from '@app/feature/services/chainbank-agent';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NzNotificationService} from 'ng-zorro-antd';
 
@@ -24,11 +24,14 @@ export class ClerkConsoleComponent implements OnInit {
   customerAddressToCreate = '';
   clerkAddressToCreate = '';
 
-  ngOnInit(): void {
-    this.refreshTable();
+  async ngOnInit() {
+    await this.refreshTable(true);
   }
 
-  refreshTable() {
+  async refreshTable(syncing=false) {
+    if(syncing) {
+      await syncProgress(this.chainbank, this.notification);
+    }
     this.listOfData = this.chainbank.checkActors();
   }
 
@@ -52,14 +55,14 @@ export class ClerkConsoleComponent implements OnInit {
 
   async enableActor(actor: { identity, privilege }) {
     const taskFunc = () => this.chainbank.enableActor(actor.identity, actor.privilege);
-    await requestProgress(taskFunc, this.notification);
-    this.refreshTable();
+    await mutationProgress(taskFunc, this.notification);
+    await this.refreshTable(false);
   }
 
   async disableActor(actor: { identity, privilege }) {
     const taskFunc = () => this.chainbank.disableActor(actor.identity, actor.privilege);
-    await requestProgress(taskFunc, this.notification);
-    this.refreshTable();
+    await mutationProgress(taskFunc, this.notification);
+    await this.refreshTable(false);
   }
 
   canEdit(privilege: Privilege) {

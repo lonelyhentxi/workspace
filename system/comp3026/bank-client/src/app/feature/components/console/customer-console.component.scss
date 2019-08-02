@@ -1,0 +1,37 @@
+.console-feature {
+  > .console-feature-balance {
+    display: table;
+    margin-bottom: 10px;
+    width: 100%;
+
+    > nz-tag:nth-child(1) {
+      display: table-cell;
+      width: fit-content;
+      cursor: pointer;
+      background: #eee;
+    }
+
+    > span {
+      display: table-cell;
+      width: 5px;
+    }
+
+    > nz-tag:nth-child(3) {
+      display: table-cell;
+      width: auto;
+    }
+  }
+
+  .transaction-amount {
+    width: available;
+    margin-right: 5px;
+  }
+
+  .transaction-balance {
+    width: fit-content;
+  }
+
+  .transaction-receiver {
+    margin-bottom: 5px;
+  }
+}

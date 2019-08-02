@@ -1,3 +1,5 @@
+import JSBI from 'jsbi';
+
 export enum Privilege {
   Admin = 'Admin',
   Clerk = 'Clerk',
@@ -23,11 +25,11 @@ export class Actor {
 
   static parsePrivilege(privilegeStr: string): Privilege {
     const lowerStr = privilegeStr.toLowerCase();
-    if(lowerStr==='admin') {
+    if (lowerStr === 'admin') {
       return Privilege.Admin;
-    } else if(lowerStr==='clerk') {
+    } else if (lowerStr === 'clerk') {
       return Privilege.Clerk;
-    } else if(lowerStr==='customer') {
+    } else if (lowerStr === 'customer') {
       return Privilege.Customer;
     } else {
       throw new TypeError('error privilege');
@@ -36,9 +38,9 @@ export class Actor {
 
   static parseBool(boolStr): boolean {
     const lowerStr = boolStr.toLowerCase();
-    if(lowerStr==='true') {
+    if (lowerStr === 'true') {
       return true;
-    } else if(lowerStr==='false') {
+    } else if (lowerStr === 'false') {
       return false;
     } else {
       throw new TypeError('error boolean');
@@ -51,11 +53,20 @@ export class Transaction {
     readonly requester: string,
     readonly sender: string,
     readonly receiver: string,
-    readonly amount: string) {}
+    readonly amount: JSBI) {
+  }
 
   static parseLog(log: string): Transaction {
     const fields = log.split(',');
-    return new Transaction(fields[0], fields[1], fields[2], fields[3]);
+    return new Transaction(fields[0], fields[1], fields[2], JSBI.BigInt(fields[3]));
   }
 }
 
+
+export interface RoundEndMessage {
+  tx_id: string;
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface ContractCallResult {
+};

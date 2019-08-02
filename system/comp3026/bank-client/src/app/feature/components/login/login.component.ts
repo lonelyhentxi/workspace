@@ -108,14 +108,12 @@ export class LoginComponent implements OnInit {
     } else {
       try {
         for await (const prompt of this.chainbank.login(this.privateKey, this.api, this.contract)) {
-          console.log(prompt);
           this.loadingPrompt = prompt;
         }
       } catch (e) {
         if (e instanceof ActorNotExistsException) {
           this.messageService.error(e.message);
         }
-        console.log(e);
       }
       this.loadingPrompt = 'successfully logged in, jumping...';
       this.router.navigate(['/','console', this.chainbank.actor.privilege === Privilege.Customer ? 'customer' : 'clerk']);

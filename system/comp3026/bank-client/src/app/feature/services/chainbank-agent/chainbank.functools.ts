@@ -1,6 +1,8 @@
 import {NzNotificationService} from 'ng-zorro-antd';
+import {ChainbankAgentService} from '@app/feature/services/chainbank-agent/chainbank-agent.service';
 
-export async function requestProgress<T>(taskFunc: () => AsyncIterableIterator<T>, notificationService: NzNotificationService) {
+export async function mutationProgress<T>(taskFunc: () => AsyncIterableIterator<T>, notificationService: NzNotificationService):
+  Promise<void> {
   const task = taskFunc();
   try {
     await task.next();
@@ -17,4 +19,14 @@ export async function requestProgress<T>(taskFunc: () => AsyncIterableIterator<T
     throw e;
   }
   notificationService.create('success', 'Request Accepted', res.message);
+}
+
+export async function syncProgress(chainbank: ChainbankAgentService, notificationService: NzNotificationService):
+  Promise<void> {
+  try {
+    await chainbank.syncContract();
+  } catch (e) {
+    notificationService.create('error', 'Failed to sync contract', e.message);
+    throw e;
+  }
 }

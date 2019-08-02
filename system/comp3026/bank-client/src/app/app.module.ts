@@ -1,9 +1,9 @@
 import 'reflect-metadata';
-import '../polyfills'
+import '../polyfills';
 
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {NgModule} from '@angular/core';
+import {APP_INITIALIZER, NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {CoreModule} from '@core/core.module';
@@ -23,8 +23,8 @@ import {CustomerConsoleComponent} from '@app/feature/components/console/customer
 import {ClerkConsoleComponent} from '@app/feature/components/console/clerk-console.component';
 import {ChainbankAgentService} from '@app/feature/services/chainbank-agent/chainbank-agent.service';
 import {LocalStorageService} from '@app/feature/services/local-storage.service';
-import { ConsoleProfileComponent } from './feature/components/console/console-profile.component';
-import { ConsoleFrameworkComponent } from './feature/components/console/console-framework.component';
+import {ConsoleProfileComponent} from './feature/components/console/console-profile.component';
+import {ConsoleFrameworkComponent} from './feature/components/console/console-framework.component';
 
 registerLocaleData(en);
 
@@ -63,6 +63,14 @@ export function HttpLoaderFactory(http: HttpClient) {
     {provide: NZ_I18N, useValue: en_US},
     ChainbankAgentService,
     LocalStorageService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (chainbankService: ChainbankAgentService, localStorageService: LocalStorageService) => {
+        return () => chainbankService.devLoadMock(); },
+      deps: [ChainbankAgentService,
+        LocalStorageService,],
+      multi: true,
+    },
   ],
   bootstrap: [AppComponent]
 })

@@ -1,51 +1,47 @@
 import {Injectable} from '@angular/core';
-import {Contract, Wavelet} from 'wavelet-client';
+import {Contract, Wavelet, Wallet} from 'wavelet-client';
 import JSBI from 'jsbi';
 import {LocalStorageService} from '@app/feature/services/local-storage.service';
 import {AppConfig} from '@app/../environments/environment';
 import {ActorNotExistsException, PermissionDeniedException, TimeoutException} from './chainbank.exceptions';
-import {Actor, Privilege, Transaction} from './chainbank.interfaces';
-import {Subject} from 'rxjs';
+import {Actor, ContractCallResult, Privilege, RoundEndMessage, Transaction} from './chainbank.interfaces';
 
 @Injectable()
 export class ChainbankAgentService {
 
-  static GAS_LIMIT = 250000;
-  static formatFactor = 2;
-  static keyLength = 64;
-  static addressLength = 32;
-  static hexCharSet = '[\\da-fA-F]';
+  readonly GAS_LIMIT = 250000;
+  readonly formatFactor = 2;
+  readonly keyLength = 64;
+  readonly addressLength = 32;
+  readonly hexCharSet = '[\\da-fA-F]';
   readonly defaultApi = 'blockchain.evernightfireworks.com';
   readonly defaultContract = '140dd223f902ac573d24f7c754ba85ba3f36de90914d6884d149f3dfa772ba80';
   readonly defaultTimeout = 10000;
+  readonly amountStep = 0.01;
 
-  wallet;
+
+  wallet: Wallet;
   contract: Contract;
   wavelet: Wavelet;
   actor: Actor = null;
-  updateSubscriber = new Subject();
+
 
   constructor(
     private readonly localStorage: LocalStorageService,
   ) {
-    if (!AppConfig.production) {
-      this.actor = localStorage.getItem<Actor>('dev_actor');
-    }
-    this.updateSubscriber.subscribe(next => {
-      console.log(next);
-    });
   }
 
+
   validateKeyFormat(key: string): boolean {
-    return this.validateU8Array(key, ChainbankAgentService.keyLength);
+    return this.validateU8Array(key, this.keyLength);
   }
 
   validateContractFormat(contractAddress: string): boolean {
-    return this.validateU8Array(contractAddress, ChainbankAgentService.addressLength);
+    return this.validateU8Array(contractAddress, this.addressLength);
   }
 
   validateAddressFormat(address: string): boolean {
-    return this.validateU8Array(address, ChainbankAgentService.addressLength);
+    return this.validateU8Array(address, this.addressLength);
   }
 
   canEditClerk(): boolean {
@@ -57,7 +53,10 @@ export class ChainbankAgentService {
   }
 
   private validateU8Array(content: string, len: number): boolean {
-    const reg = new RegExp(`^${ChainbankAgentService.hexCharSet}{${ChainbankAgentService.formatFactor * len}}$`);
+    if (typeof content !== 'string') {
+      return false;
+    }
+    const reg = new RegExp(`^${this.hexCharSet}{${this.formatFactor * len}}$`);
     return Boolean(content.match(reg));
   }
 
@@ -71,7 +70,7 @@ export class ChainbankAgentService {
     return true;
   }
 
-  async* login(privateKey: string, apiAddress: string, contractAddress: string) {
+  async* login(privateKey: string, apiAddress: string, contractAddress: string): AsyncIterableIterator<string> {
     yield 'linking to chain nodes...';
     const client = new Wavelet('https://' + apiAddress);
     yield 'loading wallet...';
@@ -85,11 +84,11 @@ export class ChainbankAgentService {
     this.contract = contract;
     this.checkActor();
     if (!AppConfig.production) {
-      this.localStorage.setItem('dev_actor', this.actor);
+      this.localStorage.setItem('dev_settings',[privateKey, apiAddress, contractAddress]);
     }
   }
 
-  checkActor() {
+  checkActor(): void {
     try {
       const results = this.exposeResult(this.contract.test(this.wallet, 'get_actor', JSBI.BigInt(0)));
       this.actor = Actor.parseLog(results[0]);
@@ -102,7 +101,28 @@ export class ChainbankAgentService {
     return res['logs'] as any;
   }
 
-  async* enableActor(identity: string, privilege: Privilege) {
+  detectRoundEnd(): Promise<RoundEndMessage> {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        reject(new TimeoutException());
+      }, this.defaultTimeout);
+      this.wavelet.pollConsensus({
+        onRoundEnded: message => {
+          this.contract.fetchAndPopulateMemoryPages().then(_ => {
+            resolve(message);
+          }).catch(e => {
+            reject(e);
+          });
+        }
+      });
+    });
+  }
+
+  async syncContract(): Promise<void> {
+    await this.contract.fetchAndPopulateMemoryPages();
+  }
+
+  async* enableActor(identity: string, privilege: Privilege): AsyncIterableIterator<ContractCallResult | RoundEndMessage> {
     this.validateAddressFormat(identity);
     let funcName;
     if (privilege === Privilege.Clerk) {
@@ -116,14 +136,14 @@ export class ChainbankAgentService {
       this.wallet,
       funcName,
       JSBI.BigInt(0), // amount to send
-      JSBI.BigInt(ChainbankAgentService.GAS_LIMIT), // gas limit
+      JSBI.BigInt(this.GAS_LIMIT), // gas limit
       JSBI.BigInt(0), // gas deposit (not explained)
       {type: 'raw', value: identity}
     );
     return await this.detectRoundEnd();
   }
 
-  async* disableActor(identity: string, privilege: Privilege) {
+  async* disableActor(identity: string, privilege: Privilege): AsyncIterableIterator<ContractCallResult | RoundEndMessage> {
     this.validateAddressFormat(identity);
     let funcName;
     if (privilege === Privilege.Clerk) {
@@ -137,43 +157,27 @@ export class ChainbankAgentService {
       this.wallet,
       funcName,
       JSBI.BigInt(0), // amount to send
-      JSBI.BigInt(ChainbankAgentService.GAS_LIMIT), // gas limit
+      JSBI.BigInt(this.GAS_LIMIT), // gas limit
       JSBI.BigInt(0), // gas deposit (not explained)
       {type: 'raw', value: identity},
     );
     return await this.detectRoundEnd();
   }
 
-  detectRoundEnd() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        reject(new TimeoutException());
-      }, this.defaultTimeout);
-      this.wavelet.pollConsensus({
-        onRoundEnded: message => {
-          this.contract.fetchAndPopulateMemoryPages().then(c => {
-            resolve(message);
-          }).catch(e => {
-            reject(e);
-          });
-        }
-      });
-    });
-  }
-
-  async transfer(sender: string, receiver: string, amount: JSBI) {
+  async *transfer(sender: string, receiver: string, amount: JSBI):AsyncIterableIterator<ContractCallResult| RoundEndMessage> {
     this.validateAddressFormat(sender);
     this.validateAddressFormat(receiver);
-    await this.contract.call(
+    yield await this.contract.call(
       this.wallet,
       'transfer',
       JSBI.BigInt(0), // amount to send
-      JSBI.BigInt(ChainbankAgentService.GAS_LIMIT), // gas limit
+      JSBI.BigInt(this.GAS_LIMIT), // gas limit
       JSBI.BigInt(0), // gas deposit (not explained)
       {type: 'raw', value: sender},
       {type: 'raw', value: receiver},
       {type: 'raw', value: JSBI.toString()}
     );
+    return await this.detectRoundEnd();
   }
 
   checkActors(): Actor[] {
@@ -194,7 +198,8 @@ export class ChainbankAgentService {
         this.contract.test(this.wallet, 'get_transactions', JSBI.BigInt(0), [{type: 'raw', value: identity}]));
       const transactionsStr = results[0] ? results[0].split('\n') : [];
       return transactionsStr.map(tl => Transaction.parseLog(tl));
-    } catch (e) {
+    } catch
+      (e) {
       throw new PermissionDeniedException();
     }
   }
@@ -203,20 +208,30 @@ export class ChainbankAgentService {
     this.validateAddressFormat(identity);
     let transactions;
     try {
-      transactions = yield this.checkTransactions(identity);
+      transactions = this.checkTransactions(identity);
+      yield transactions;
     } catch (e) {
       throw new PermissionDeniedException();
     }
     let balance = JSBI.BigInt(0);
     for (const t of transactions) {
       if (t.sender === identity) {
-        balance = JSBI.subtract(balance, JSBI.BigInt(t.amount));
+        balance = JSBI.subtract(balance, t.amount);
       } else if (t.receiver === identity) {
-        balance = JSBI.add(balance, JSBI.BigInt(t.amount));
+        balance = JSBI.add(balance, t.amount);
       } else {
         throw new TypeError('transaction must relate to identity');
       }
     }
     return balance;
+  }
+
+  async devLoadMock(): Promise<void> {
+    if (!AppConfig.production) {
+      const devSettings = this.localStorage.getItem<[string, string, string]>('dev_settings');
+      if (devSettings) {
+        for await(const _ of this.login(...devSettings)) {}
+      }
+    }
   }
 }

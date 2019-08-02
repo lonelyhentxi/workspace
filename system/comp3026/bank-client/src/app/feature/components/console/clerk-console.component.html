@@ -21,15 +21,15 @@
       <td>{{ data.privilege }}</td>
       <td>{{ data.enabled }}</td>
       <td>
-        <button nz-button style="margin-right: 5px;" *ngIf="data.enabled" nz-popconfirm nzTitle="Sure to check?"
+        <button nz-button style="margin-right: 5px;" nz-popconfirm nzTitle="Sure to check?"
                 (nzOnConfirm)="checkActor(data)">
           Check
         </button>
-        <button nz-button *ngIf="canEdit(data.privilege) && data.enable" nz-popconfirm nzTitle="Sure to disable?"
+        <button nz-button *ngIf="data.enabled && canEdit(data.privilege)" nz-popconfirm nzTitle="Sure to disable?"
                 (nzOnConfirm)="disableActor(data)">
           Disable
         </button>
-        <button nz-button *ngIf="canEdit(data.privilege) && !data.enable" nz-popconfirm nzTitle="Sure to enable?"
+        <button nz-button *ngIf="(!data.enabled) && canEdit(data.privilege)" nz-popconfirm nzTitle="Sure to enable?"
                 (nzOnConfirm)="enableActor(data)">
           Enable
         </button>
@@ -47,7 +47,7 @@
            placeHolder="Please enter clerk address to create or enable"/>
     <div class="ant-form-explain validation-error"
          *ngIf="clerkAddressToCreate!==''&&!chainbank.validateAddressFormat(clerkAddressToCreate)">
-      Address should be 64 characters hex string
+      Address should be {{chainbank.addressLength * chainbank.formatFactor}} characters hex string
     </div>
   </nz-modal>
   <nz-modal [(nzVisible)]="createCustomerVisible" nzTitle="Create or Enable Customer"
@@ -58,7 +58,7 @@
            placeHolder="Please enter customer address to create or enable"/>
     <div class="ant-form-explain validation-error"
          *ngIf="customerAddressToCreate!==''&&!chainbank.validateAddressFormat(customerAddressToCreate)">
-      Address should be 64 characters hex string
+      Address should be {{chainbank.addressLength * chainbank.formatFactor}} characters hex string
     </div>
   </nz-modal>
 </div>
