@@ -21,6 +21,38 @@ export async function mutationProgress<T>(taskFunc: () => AsyncIterableIterator<
   notificationService.create('success', 'Request Accepted', res.message);
 }
 
+export async function* loginProgress(chainbank: ChainbankAgentService, notificationService: NzNotificationService,
+                                     privateKey: string, apiAddress: string, contractAddress: string): AsyncIterableIterator<string> {
+  const task = chainbank.login(privateKey, apiAddress, contractAddress);
+  try {
+    yield (await task.next()).value;
+    yield (await task.next()).value;
+    yield (await task.next()).value;
+  } catch (e) {
+    notificationService.create('error', 'Login failed', e.message);
+    throw e;
+  }
+  try {
+    yield (await task.next()).value;
+  } catch (e) {
+    notificationService.create('error', 'Login failed, cannot link to node', e.message);
+    throw e;
+  }
+  try {
+    yield (await task.next()).value;
+  } catch (e) {
+    notificationService.create('error', 'Login failed, invalid actor', e.message);
+    throw e;
+  }
+  try {
+    yield (await task.next()).value;
+    return (await task.next()).value;
+  } catch (e) {
+    notificationService.create('error', 'Login failed, invalid actor', e.message + ' or invalid private key');
+    throw e;
+  }
+}
+
 export async function syncProgress(chainbank: ChainbankAgentService, notificationService: NzNotificationService):
   Promise<void> {
   try {

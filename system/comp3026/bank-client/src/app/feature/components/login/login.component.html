@@ -1,4 +1,4 @@
-<div  *ngIf="loading==false" nz-row>
+<div  *ngIf="!isLoading()" nz-row>
   <div nz-col nzSpan="10" nzOffset="2">
     <div class="login-welcome">
       <h1>Welcome to Chainbank</h1>
@@ -63,7 +63,7 @@
     </nz-card>
   </div>
 </div>
-<div class="login-loading" *ngIf="loading==true">
+<div class="login-loading" *ngIf="isLoading()">
   <div class="login-loading-content">
     <nz-spin [nzTip]="loadingPrompt" nzSize="large"></nz-spin>
   </div>

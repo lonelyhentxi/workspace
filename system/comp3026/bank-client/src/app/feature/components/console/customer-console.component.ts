@@ -30,7 +30,7 @@ export class CustomerConsoleComponent implements OnInit {
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     this.identity = id ? id : this.chainbank.actor.identity;
-    await this.checkBalance(id);
+    await this.checkBalance(this.identity);
   }
 
 
@@ -59,8 +59,9 @@ export class CustomerConsoleComponent implements OnInit {
   }
 
   async commitTransaction() {
-    this.validateAmount(this.amount);
-    this.chainbank.validateAddressFormat(this.receiver);
+    if(!this.validateAmount(this.amount)||!this.chainbank.validateAddressFormat(this.receiver)) {
+      return;
+    }
     const taskFunc = () => this.chainbank.transfer(this.identity, this.receiver, JSBI.BigInt(this.amount));
     await mutationProgress(taskFunc, this.notification);
     await this.checkBalance(this.identity, false);

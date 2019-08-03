@@ -25,6 +25,7 @@ import {ChainbankAgentService} from '@app/feature/services/chainbank-agent/chain
 import {LocalStorageService} from '@app/feature/services/local-storage.service';
 import {ConsoleProfileComponent} from './feature/components/console/console-profile.component';
 import {ConsoleFrameworkComponent} from './feature/components/console/console-framework.component';
+import {AuthGuard} from '@app/feature/services/chainbank-agent/auth.guard';
 
 registerLocaleData(en);
 
@@ -63,14 +64,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     {provide: NZ_I18N, useValue: en_US},
     ChainbankAgentService,
     LocalStorageService,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (chainbankService: ChainbankAgentService, localStorageService: LocalStorageService) => {
-        return () => chainbankService.devLoadMock(); },
-      deps: [ChainbankAgentService,
-        LocalStorageService,],
-      multi: true,
-    },
+    AuthGuard,
   ],
   bootstrap: [AppComponent]
 })

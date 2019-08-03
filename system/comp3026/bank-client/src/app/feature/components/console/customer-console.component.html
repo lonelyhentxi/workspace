@@ -1,5 +1,5 @@
 <div class="console-feature">
-  <div class="console-feature-balance">
+  <div class="console-feature-balance" *ngIf="chainbank.canEditCustomer()">
     <nz-tag  (click)="backToClerkConsole()">Click To Back</nz-tag>
     <span></span>
     <nz-tag>Target Actor: {{identity}}</nz-tag>
@@ -7,7 +7,7 @@
   <div nz-row>
     <div nz-col nzSpan="15">
       <div>
-        <nz-table #editRowTable nzBordered [nzData]="transactions" [nzPageSize]="5">
+        <nz-table #editRowTable nzBordered [nzData]="transactions" [nzPageSize]="3">
           <thead>
           <tr>
             <th nzWidth="150px">Requester</th>
@@ -49,7 +49,6 @@
           </div>
         </div>
         <div>
-          <nz-tag class="transaction-balance">Balance: {{numericJSBI(balance)}}</nz-tag>
           <nz-input-number nzSize="small" [(ngModel)]="amount" [nzMin]="minAmount"
                            [nzMax]="maxAmount" class="transaction-amount transparent-bg"
                            [nzStep]="chainbank.amountStep" nzPlaceHolder="Amount">
@@ -57,11 +56,14 @@
           <div class="validation-error ant-form-explain" *ngIf="amount!==0&&!validateAmount(amount)">
             Amount should be greater than {{minAmount}} and lower than {{maxAmount}}
           </div>
+          <div>
+            <nz-tag class="transaction-balance">Balance: {{numericJSBI(balance)}}</nz-tag>
+          </div>
         </div>
       </nz-card>
       <ng-template #extraTemplate>
         <button nz-button nzType="primary" nzSize="small" style="float: right" (click)="commitTransaction()"
-                [disabled]="!chainbank.validateAddressFormat(receiver) && !validateAmount(amount)">Commit
+                [disabled]="!chainbank.validateAddressFormat(receiver) || !validateAmount(amount)">Commit
         </button>
       </ng-template>
     </div>

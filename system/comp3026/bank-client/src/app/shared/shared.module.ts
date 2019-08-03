@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {TranslateModule} from '@ngx-translate/core';
 import {PageNotFoundComponent} from './components/';
 import {WebviewDirective} from './directives/';
-import {ExitButtonComponent} from './components/exit-button/exit-button.component';
+import {ControlButtonsComponent} from './components/control-buttons/control-buttons.component';
 import {FrameLogoComponent } from './components/frame-logo/frame-logo.component';
 import {NgZorroAntdModule} from 'ng-zorro-antd';
 import {FormsModule} from '@angular/forms';
@@ -12,7 +12,7 @@ import {FormsModule} from '@angular/forms';
   declarations: [
     PageNotFoundComponent,
     WebviewDirective,
-    ExitButtonComponent,
+    ControlButtonsComponent,
     FrameLogoComponent
   ],
   imports: [
@@ -25,7 +25,7 @@ import {FormsModule} from '@angular/forms';
     FormsModule,
     TranslateModule,
     WebviewDirective,
-    ExitButtonComponent,
+    ControlButtonsComponent,
     FrameLogoComponent,
     NgZorroAntdModule,
   ]

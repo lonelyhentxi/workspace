@@ -5,6 +5,7 @@ import {LoginComponent} from '@app/feature/components/login/login.component';
 import {ClerkConsoleComponent} from '@app/feature/components/console/clerk-console.component';
 import {CustomerConsoleComponent} from '@app/feature/components/console/customer-console.component';
 import {ConsoleFrameworkComponent} from '@app/feature/components/console/console-framework.component';
+import {AuthGuard} from '@app/feature/services/chainbank-agent/auth.guard';
 
 const routes: Routes = [
   {
@@ -22,13 +23,15 @@ const routes: Routes = [
       {
         path: 'console',
         component: ConsoleFrameworkComponent,
+        canActivate: [AuthGuard],
+        canActivateChild: [AuthGuard],
         children: [
           {
             path: 'clerk',
             component: ClerkConsoleComponent,
           },
           {
-            path: 'customer/:',
+            path: 'customer/:id',
             component: CustomerConsoleComponent,
           }
         ]

@@ -23,15 +23,17 @@
   }
 
   .transaction-amount {
-    width: available;
-    margin-right: 5px;
+    width: 100%;
+    margin-bottom: 5px;
   }
 
   .transaction-balance {
-    width: fit-content;
+    width: 100%;
+    margin-bottom: 5px;
   }
 
   .transaction-receiver {
+    width: 100%;
     margin-bottom: 5px;
   }
 }

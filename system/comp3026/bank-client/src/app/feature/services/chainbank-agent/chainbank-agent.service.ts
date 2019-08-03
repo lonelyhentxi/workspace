@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Contract, Wavelet, Wallet} from 'wavelet-client';
+import {Contract, Wallet, Wavelet} from 'wavelet-client';
 import JSBI from 'jsbi';
 import {LocalStorageService} from '@app/feature/services/local-storage.service';
-import {AppConfig} from '@app/../environments/environment';
 import {ActorNotExistsException, PermissionDeniedException, TimeoutException} from './chainbank.exceptions';
 import {Actor, ContractCallResult, Privilege, RoundEndMessage, Transaction} from './chainbank.interfaces';
 
@@ -15,7 +14,7 @@ export class ChainbankAgentService {
   readonly addressLength = 32;
   readonly hexCharSet = '[\\da-fA-F]';
   readonly defaultApi = 'blockchain.evernightfireworks.com';
-  readonly defaultContract = '140dd223f902ac573d24f7c754ba85ba3f36de90914d6884d149f3dfa772ba80';
+  readonly defaultContract = 'd7f7badd0b5f1010ef8ac21cd2920398ae0edfe8508726a7d59307d54558425e';
   readonly defaultTimeout = 10000;
   readonly amountStep = 0.01;
 
@@ -78,27 +77,34 @@ export class ChainbankAgentService {
     yield 'loading contract...';
     const contract = new Contract(client, contractAddress);
     await contract.init();
-    yield 'init your actor...';
     this.wavelet = client;
     this.wallet = wallet;
     this.contract = contract;
-    this.checkActor();
-    if (!AppConfig.production) {
-      this.localStorage.setItem('dev_settings',[privateKey, apiAddress, contractAddress]);
-    }
-  }
-
-  checkActor(): void {
+    yield 'checking your public key...';
     try {
       const results = this.exposeResult(this.contract.test(this.wallet, 'get_actor', JSBI.BigInt(0)));
       this.actor = Actor.parseLog(results[0]);
     } catch (e) {
       throw new ActorNotExistsException();
     }
+    yield 'validating your private key...';
+    await this.contract.call(
+      this.wallet,
+      'get_actor',
+      JSBI.BigInt(0), // amount to send
+      JSBI.BigInt(this.GAS_LIMIT), // gas limit
+      JSBI.BigInt(0), // gas deposit (not explained)
+    );
+    yield 'syncing round...';
+    await this.detectRoundEnd();
+    return 'logged in';
   }
 
   exposeResult(res): string[] {
-    return res['logs'] as any;
+    if (res['result'] || res['result'] === '') {
+      throw new Error(res['result']);
+    }
+    return res['logs'] as string[];
   }
 
   detectRoundEnd(): Promise<RoundEndMessage> {
@@ -123,7 +129,6 @@ export class ChainbankAgentService {
   }
 
   async* enableActor(identity: string, privilege: Privilege): AsyncIterableIterator<ContractCallResult | RoundEndMessage> {
-    this.validateAddressFormat(identity);
     let funcName;
     if (privilege === Privilege.Clerk) {
       funcName = 'enable_clerk';
@@ -132,19 +137,14 @@ export class ChainbankAgentService {
     } else {
       throw new PermissionDeniedException();
     }
-    yield await this.contract.call(
-      this.wallet,
+    yield await this.testCall(
       funcName,
-      JSBI.BigInt(0), // amount to send
-      JSBI.BigInt(this.GAS_LIMIT), // gas limit
-      JSBI.BigInt(0), // gas deposit (not explained)
-      {type: 'raw', value: identity}
+      [{type: 'raw', value: identity}]
     );
     return await this.detectRoundEnd();
   }
 
   async* disableActor(identity: string, privilege: Privilege): AsyncIterableIterator<ContractCallResult | RoundEndMessage> {
-    this.validateAddressFormat(identity);
     let funcName;
     if (privilege === Privilege.Clerk) {
       funcName = 'disable_clerk';
@@ -153,29 +153,21 @@ export class ChainbankAgentService {
     } else {
       throw new PermissionDeniedException();
     }
-    yield await this.contract.call(
-      this.wallet,
+    yield await this.testCall(
       funcName,
-      JSBI.BigInt(0), // amount to send
-      JSBI.BigInt(this.GAS_LIMIT), // gas limit
-      JSBI.BigInt(0), // gas deposit (not explained)
-      {type: 'raw', value: identity},
+      [{type: 'raw', value: identity}]
     );
     return await this.detectRoundEnd();
   }
 
-  async *transfer(sender: string, receiver: string, amount: JSBI):AsyncIterableIterator<ContractCallResult| RoundEndMessage> {
-    this.validateAddressFormat(sender);
-    this.validateAddressFormat(receiver);
-    yield await this.contract.call(
-      this.wallet,
+  async* transfer(sender: string, receiver: string, amount: JSBI): AsyncIterableIterator<ContractCallResult | RoundEndMessage> {
+    yield await this.testCall(
       'transfer',
-      JSBI.BigInt(0), // amount to send
-      JSBI.BigInt(this.GAS_LIMIT), // gas limit
-      JSBI.BigInt(0), // gas deposit (not explained)
-      {type: 'raw', value: sender},
-      {type: 'raw', value: receiver},
-      {type: 'raw', value: JSBI.toString()}
+      [
+        {type: 'raw', value: sender},
+        {type: 'raw', value: receiver},
+        {type: 'string', value: amount.toString()}
+      ]
     );
     return await this.detectRoundEnd();
   }
@@ -183,7 +175,7 @@ export class ChainbankAgentService {
   checkActors(): Actor[] {
     try {
       const results = this.exposeResult(
-        this.contract.test(this.wallet, 'get_actors', JSBI.BigInt(0), []));
+        this.contract.test(this.wallet, 'get_actors', JSBI.BigInt(0)));
       const actorsStr = results[0] ? results[0].split('\n') : [];
       return actorsStr.map(a => Actor.parseLog(a));
     } catch (e) {
@@ -191,29 +183,15 @@ export class ChainbankAgentService {
     }
   }
 
-  checkTransactions(identity: string): Transaction[] {
-    this.validateAddressFormat(identity);
-    try {
-      const results = this.exposeResult(
-        this.contract.test(this.wallet, 'get_transactions', JSBI.BigInt(0), [{type: 'raw', value: identity}]));
-      const transactionsStr = results[0] ? results[0].split('\n') : [];
-      return transactionsStr.map(tl => Transaction.parseLog(tl));
-    } catch
-      (e) {
-      throw new PermissionDeniedException();
-    }
-  }
-
   * checkBalance(identity: string): IterableIterator<Transaction[] | JSBI> {
-    this.validateAddressFormat(identity);
     let transactions;
-    try {
-      transactions = this.checkTransactions(identity);
-      yield transactions;
-    } catch (e) {
-      throw new PermissionDeniedException();
-    }
-    let balance = JSBI.BigInt(0);
+    const results = this.exposeResult(
+      this.contract.test(this.wallet, 'get_transactions', JSBI.BigInt(0), {type: 'raw', value: identity}));
+    const logs = results[0].split('\n').filter(x => x !== '');
+    let balance = JSBI.BigInt(logs[0]);
+    logs.splice(0, 1);
+    transactions = logs.map(l=>Transaction.parseLog(l));
+    yield transactions;
     for (const t of transactions) {
       if (t.sender === identity) {
         balance = JSBI.subtract(balance, t.amount);
@@ -226,12 +204,20 @@ export class ChainbankAgentService {
     return balance;
   }
 
-  async devLoadMock(): Promise<void> {
-    if (!AppConfig.production) {
-      const devSettings = this.localStorage.getItem<[string, string, string]>('dev_settings');
-      if (devSettings) {
-        for await(const _ of this.login(...devSettings)) {}
-      }
+  async testCall(fnName: string, params: { type: string, value: any }[]): Promise<ContractCallResult> {
+    let testRes;
+    try {
+      testRes = this.contract.test(this.wallet, fnName, JSBI.BigInt(0), ...params);
+    } catch {
+      throw new Error('contract params parse error');
     }
+    if (testRes['result']) {
+      throw new Error(testRes['result']);
+    }
+    return await this.contract.call(
+      this.wallet, fnName,
+      JSBI.BigInt(0), JSBI.BigInt(this.GAS_LIMIT), JSBI.BigInt(0),
+      ...params
+    );
   }
 }

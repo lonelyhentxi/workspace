@@ -1,5 +1,5 @@
-import {Component, OnInit } from '@angular/core';
-import {Actor, ChainbankAgentService, Privilege, mutationProgress, syncProgress} from '@app/feature/services/chainbank-agent';
+import {Component, OnInit} from '@angular/core';
+import {Actor, ChainbankAgentService, mutationProgress, Privilege, syncProgress} from '@app/feature/services/chainbank-agent';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NzNotificationService} from 'ng-zorro-antd';
 
@@ -28,8 +28,8 @@ export class ClerkConsoleComponent implements OnInit {
     await this.refreshTable(true);
   }
 
-  async refreshTable(syncing=false) {
-    if(syncing) {
+  async refreshTable(syncing = false) {
+    if (syncing) {
       await syncProgress(this.chainbank, this.notification);
     }
     this.listOfData = this.chainbank.checkActors();
@@ -40,7 +40,7 @@ export class ClerkConsoleComponent implements OnInit {
   }
 
   async confirmCreateCustomer(identity: string) {
-    await this.enableActor({identity,privilege: Privilege.Customer});
+    await this.enableActor({identity, privilege: Privilege.Customer});
     this.toggleCreateCustomer();
   }
 
@@ -49,7 +49,7 @@ export class ClerkConsoleComponent implements OnInit {
   }
 
   async confirmCreateClerk(identity: string) {
-    await this.enableActor({identity,privilege: Privilege.Clerk});
+    await this.enableActor({identity, privilege: Privilege.Clerk});
     this.toggleCreateClerk();
   }
 
@@ -66,9 +66,9 @@ export class ClerkConsoleComponent implements OnInit {
   }
 
   canEdit(privilege: Privilege) {
-    if(privilege===Privilege.Customer) {
+    if (privilege === Privilege.Customer) {
       return this.chainbank.canEditCustomer();
-    } else if(privilege===Privilege.Clerk) {
+    } else if (privilege === Privilege.Clerk) {
       return this.chainbank.canEditClerk();
     } else {
       return false;
@@ -76,6 +76,7 @@ export class ClerkConsoleComponent implements OnInit {
   }
 
   checkActor(actor: Actor) {
-    this.router.navigate(['..', 'customer', actor.identity], {relativeTo: this.route});
+    console.log(actor);
+    this.router.navigate(['customer', actor.identity], {relativeTo: this.route.parent});
   }
 }

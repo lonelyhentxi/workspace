@@ -12,6 +12,7 @@ use hex::FromHex;
 const PERMISSION_DENIED: &'static str = "permission denied";
 const NOT_ENOUGH: &'static str = "not enough";
 const NOT_EXISTS: &'static str = "not existed";
+const NOT_ENABLED: &'static str = "not enabled";
 // const DECIMAL_LENGTH: usize = 64;
 
 fn to_hex_string(bytes: [u8; 32]) -> String {
@@ -79,8 +80,7 @@ impl smart_contract::payload::Readable for TransferRequest {
     fn read_from(buffer: &[u8], pos: &mut u64) -> TransferRequest {
         let sender: [u8; 32] = smart_contract::payload::Readable::read_from(buffer, pos);
         let receiver: [u8; 32] = smart_contract::payload::Readable::read_from(buffer, pos);
-        let amount_str_vec: Vec<u8> = smart_contract::payload::Readable::read_from(buffer, pos);
-        let amount_str = String::from_utf8(amount_str_vec).unwrap();
+        let amount_str: String = smart_contract::payload::Readable::read_from(buffer, pos);
         let amount = Decimal::from_str(&amount_str).unwrap();
         TransferRequest {
             sender,
@@ -98,26 +98,34 @@ struct Bank {
 struct BankUtil;
 
 impl BankUtil {
-    fn validate_clerk_editor(bank: &Bank, requester: &[u8; 32]) -> Result<(), String> {
-        let requester_actor = BankUtil::get_actor(&bank, requester)?;
+    fn validate_clerk_editor(_bank: &Bank, requester_actor: &Actor) -> Result<(), String> {
         match requester_actor.privilege {
             Privilege::Admin => Ok(()),
             _ => Err(PERMISSION_DENIED.into()),
         }
     }
 
-    fn validate_customer_editor(bank: &Bank, requester: &[u8; 32]) -> Result<(), String> {
-        let requester_actor = BankUtil::get_actor(bank, requester)?;
+    fn validate_customer_editor(_bank: &Bank, requester_actor: &Actor) -> Result<(), String> {
         match requester_actor.privilege {
             Privilege::Admin | Privilege::Clerk => Ok(()),
             _ => Err(PERMISSION_DENIED.into())
         }
     }
 
+    fn validate_requester<'a>(bank: &'a Bank, params: &Parameters) -> Result<&'a Actor, String> {
+        let requester = params.sender;
+        let actor = BankUtil::get_actor(&bank, &requester)?;
+        if actor.enabled {
+            Ok(actor)
+        } else {
+            Err(NOT_ENABLED.into())
+        }
+    }
+
     fn get_actor<'a>(bank: &'a Bank, identity: &[u8; 32]) -> Result<&'a Actor, String> {
         match bank.actors.get(identity) {
             Some(actor) => Ok(actor),
-            None => Err(PERMISSION_DENIED.into())
+            None => Err(NOT_EXISTS.into())
         }
     }
 
@@ -163,7 +171,7 @@ impl Bank {
     }
 
     pub fn enable_clerk(&mut self, params: &mut Parameters) -> Result<(), String> {
-        let requester = params.sender;
+        let requester = BankUtil::validate_requester(&self, &params)?;
         BankUtil::validate_clerk_editor(&self, &requester)?;
         let target: [u8; 32] = params.read();
         let target_actor = (match BankUtil::get_actor(&self, &target) {
@@ -188,7 +196,7 @@ impl Bank {
     }
 
     pub fn disable_clerk(&mut self, params: &mut Parameters) -> Result<(), String> {
-        let requester = params.sender;
+        let requester = BankUtil::validate_requester(&self, &params)?;
         BankUtil::validate_clerk_editor(&self, &requester)?;
         let target: [u8; 32] = params.read();
         let target_actor = (match BankUtil::get_actor(&self, &target) {
@@ -209,7 +217,7 @@ impl Bank {
     }
 
     pub fn enable_customer(&mut self, params: &mut Parameters) -> Result<(), String> {
-        let requester = params.sender;
+        let requester = BankUtil::validate_requester(&self, &params)?;
         BankUtil::validate_customer_editor(&self, &requester)?;
         let target: [u8; 32] = params.read();
         let target_actor = (match BankUtil::get_actor(&self, &target) {
@@ -226,7 +234,7 @@ impl Bank {
     }
 
     pub fn disable_customer(&mut self, params: &mut Parameters) -> Result<(), String> {
-        let requester = params.sender;
+        let requester = BankUtil::validate_requester(&self, &params)?;
         BankUtil::validate_customer_editor(&self, &requester)?;
         let target: [u8; 32] = params.read();
         let target_actor =
@@ -247,51 +255,50 @@ impl Bank {
         Ok(())
     }
 
+    #[allow(mutable_borrow_reservation_conflict)]
     pub fn transfer(&mut self, params: &mut Parameters) -> Result<(), String> {
-        let requester = params.sender;
-        let actor = BankUtil::get_actor(&self, &requester)?;
-        if !actor.enabled {
-            return Err(PERMISSION_DENIED.into());
-        };
+        let requester = BankUtil::validate_requester(&self, &params)?;
         let request: TransferRequest = params.read();
-        (match actor.privilege {
+        (match requester.privilege {
             Privilege::Admin | Privilege::Clerk => Ok(request.sender),
-            Privilege::Customer => if requester == request.sender { Ok(request.sender) } else { Err(PERMISSION_DENIED.to_string()) },
+            Privilege::Customer => if requester.identity == request.sender { Ok(request.sender) } else { Err(PERMISSION_DENIED.to_string()) },
         })?;
-        let balance = BankUtil::balance(&self, actor);
+        BankUtil::get_actor(&self, &request.sender)?;
+        BankUtil::get_actor(&self, &request.receiver)?;
+        let balance = BankUtil::balance(&self, requester);
         if balance < request.amount {
             return Err(NOT_ENOUGH.into());
         }
         self.transactions.push_back(Transaction {
-            requester,
+            requester: requester.identity,
             sender: request.sender,
-            receiver: request.sender,
+            receiver: request.receiver,
             amount: request.amount,
         });
         Ok(())
     }
 
     pub fn get_transactions(&mut self, params: &mut Parameters) -> Result<(), String> {
-        let requester = params.sender;
-        let actor = BankUtil::get_actor(&self, &requester)?;
-        if !actor.enabled {
-            return Err(PERMISSION_DENIED.into());
-        }
-        let target = (match actor.privilege {
+        let requester = BankUtil::validate_requester(&self, &params)?;
+        let target = (match requester.privilege {
             Privilege::Admin | Privilege::Clerk => Ok(params.read::<[u8; 32]>()),
             Privilege::Customer => {
-                if params.read::<[u8; 32]>() == requester { Ok(requester) } else { Err(PERMISSION_DENIED.to_string()) }
+                if params.read::<[u8; 32]>() == requester.identity { Ok(requester.identity) } else { Err(PERMISSION_DENIED.to_string()) }
             }
         })?;
+        let target_actor = BankUtil::get_actor(&self, &target)?;
         let mut target_transactions = VecDeque::new();
         for t in &self.transactions {
             if t.sender == target || t.receiver == target {
                 target_transactions.push_back(t);
             }
         }
-        log(&target_transactions.into_iter().map(Transaction::to_string)
-            .collect::<Vec<String>>()
-            .join("\n"));
+        let init_amount = BankUtil::actor_init_amount(&target_actor.privilege);
+        let logs = format!("{}\n{}", &init_amount.to_string(),
+                           &target_transactions.into_iter().map(Transaction::to_string)
+                               .collect::<Vec<String>>()
+                               .join("\n"));
+        log(&logs);
         Ok(())
     }
 
