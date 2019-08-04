@@ -9,7 +9,8 @@
       "@app/*": ["app/*"],
       "@core/*": ["app/core/*"],
       "@shared/*": ["app/shared/*"],
-      "@assets/*": ["assets/*"]
+      "@assets/*": ["assets/*"],
+      "@feature/*": ["feature/*"],
     }
   },
   "exclude": [

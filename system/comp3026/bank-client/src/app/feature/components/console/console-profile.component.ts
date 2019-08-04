@@ -24,7 +24,7 @@ import {toCanvas} from 'qrcode';
 export class ConsoleProfileComponent implements AfterViewInit {
 
   constructor(
-    private readonly chainbank: ChainbankAgentService,
+    readonly chainbank: ChainbankAgentService,
   ) {
   }
 

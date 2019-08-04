@@ -13,7 +13,7 @@ export class CustomerConsoleComponent implements OnInit {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly chainbank: ChainbankAgentService,
+    readonly chainbank: ChainbankAgentService,
     private readonly notification: NzNotificationService,
     private readonly router: Router,
   ) {

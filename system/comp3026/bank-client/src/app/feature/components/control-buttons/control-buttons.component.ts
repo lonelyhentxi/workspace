@@ -6,10 +6,10 @@ import {Router} from '@angular/router';
   selector: 'app-control-buttons',
   template: `
       <div class="app-logout control-button" (click)="logout()">
-          <img src="../../../../assets/img/app_logout.png" alt="app-logout">
+          <img src="assets/img/app_logout.png" alt="app-logout">
       </div>
       <div class="app-exit control-button" (click)="beforeExitApp()">
-          <img src="../../../../assets/img/app_exit.png" alt="app-exit">
+          <img src="assets/img/app_exit.png" alt="app-exit">
       </div>
       <nz-modal [(nzVisible)]="showModal" nzTitle="{{('COMMON.EXIT'|translate).toUpperCase()}}"
                 [nzKeyboard]="false" [nzMaskClosable]="false"

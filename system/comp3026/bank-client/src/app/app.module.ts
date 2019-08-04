@@ -1,9 +1,7 @@
 import 'reflect-metadata';
-import '../polyfills';
-
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {APP_INITIALIZER, NgModule} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {CoreModule} from '@core/core.module';
@@ -15,7 +13,6 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
 import {AppComponent} from './app.component';
 import {en_US, NgZorroAntdModule, NZ_I18N} from 'ng-zorro-antd';
-
 import {registerLocaleData} from '@angular/common';
 import en from '@angular/common/locales/en';
 import {LoginComponent} from '@app/feature/components/login/login.component';
@@ -26,8 +23,12 @@ import {LocalStorageService} from '@app/feature/services/local-storage.service';
 import {ConsoleProfileComponent} from './feature/components/console/console-profile.component';
 import {ConsoleFrameworkComponent} from './feature/components/console/console-framework.component';
 import {AuthGuard} from '@app/feature/services/chainbank-agent/auth.guard';
+import {PageNotFoundComponent} from '@app/feature/components/page-not-found/page-not-found.component';
+import {FrameLogoComponent} from '@app/feature/components/frame-logo/frame-logo.component';
+import {ControlButtonsComponent} from '@app/feature/components/control-buttons/control-buttons.component';
 
 registerLocaleData(en);
+
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -41,17 +42,20 @@ export function HttpLoaderFactory(http: HttpClient) {
     CustomerConsoleComponent,
     ClerkConsoleComponent,
     ConsoleProfileComponent,
-    ConsoleFrameworkComponent
+    ConsoleFrameworkComponent,
+    FrameLogoComponent,
+    ControlButtonsComponent,
+    PageNotFoundComponent,
   ],
   imports: [
-    BrowserModule,
-    FormsModule,
-    CoreModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    NgZorroAntdModule,
     SharedModule,
+    CoreModule,
+    BrowserModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    HttpClientModule,
     AppRoutingModule,
+    NgZorroAntdModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

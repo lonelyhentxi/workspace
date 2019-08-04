@@ -7,10 +7,10 @@ import { shell } from 'electron';
   template: `
       <div class="frame-logo">
           <div (click)="toSite()">
-              <img src="../../../../assets/img/chainbank_logo.svg" width="40" height="40"/>
+              <img src="assets/img/chainbank_logo.svg" width="40" height="40"/>
           </div>
           <div (click)="toSite()">
-              <img src="../../../../assets/img/chainbank_title.svg" width="156" height="48"/>
+              <img src="assets/img/chainbank_title.svg" width="156" height="48"/>
           </div>
       </div>
   `,

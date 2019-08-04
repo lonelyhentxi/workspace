@@ -4,6 +4,7 @@ import JSBI from 'jsbi';
 import {LocalStorageService} from '@app/feature/services/local-storage.service';
 import {ActorNotExistsException, PermissionDeniedException, TimeoutException} from './chainbank.exceptions';
 import {Actor, ContractCallResult, Privilege, RoundEndMessage, Transaction} from './chainbank.interfaces';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable()
 export class ChainbankAgentService {
@@ -13,8 +14,7 @@ export class ChainbankAgentService {
   readonly keyLength = 64;
   readonly addressLength = 32;
   readonly hexCharSet = '[\\da-fA-F]';
-  readonly defaultApi = 'blockchain.evernightfireworks.com';
-  readonly defaultContract = 'd7f7badd0b5f1010ef8ac21cd2920398ae0edfe8508726a7d59307d54558425e';
+  readonly defaultApi = 'chainbank.evernightfireworks.com';
   readonly defaultTimeout = 10000;
   readonly amountStep = 0.01;
 
@@ -27,6 +27,7 @@ export class ChainbankAgentService {
 
   constructor(
     private readonly localStorage: LocalStorageService,
+    private readonly httpClient: HttpClient,
   ) {
   }
 

@@ -1,6 +1,6 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { PageNotFoundComponent } from '@shared/components';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {PageNotFoundComponent} from '@app/feature/components/page-not-found/page-not-found.component';
 import {LoginComponent} from '@app/feature/components/login/login.component';
 import {ClerkConsoleComponent} from '@app/feature/components/console/clerk-console.component';
 import {CustomerConsoleComponent} from '@app/feature/components/console/customer-console.component';
@@ -45,7 +45,8 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true, enableTracing: false })],
+  imports: [RouterModule.forRoot(routes, {useHash: true, enableTracing: false})],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule {
+}

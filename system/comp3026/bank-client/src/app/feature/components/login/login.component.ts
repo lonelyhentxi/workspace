@@ -1,11 +1,11 @@
-import {Component, NgZone, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {LocalStorageService} from '../../services/local-storage.service';
 import {NzMessageService, NzNotificationService} from 'ng-zorro-antd';
 import {ChainbankAgentService} from '@app/feature/services/chainbank-agent/chainbank-agent.service';
-import {ActorNotExistsException} from '@app/feature/services/chainbank-agent/chainbank.exceptions';
 import {Privilege} from '@app/feature/services/chainbank-agent/chainbank.interfaces';
 import {Router} from '@angular/router';
 import {loginProgress} from '@app/feature/services/chainbank-agent';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 
 @Component({
@@ -16,7 +16,7 @@ import {loginProgress} from '@app/feature/services/chainbank-agent';
 export class LoginComponent implements OnInit {
 
   detailedSetting = false;
-  privateKey = '87a6813c3b4cf534b6ae82db9b1409fa7dbd5c13dba5858970b56084c4a930eb400056ee68a7cc2695222df05ea76875bc27ec6e61e8e62317c336157019c405';
+  privateKey = '';
   api = '';
   contract = '';
   loadingPrompt = '';
@@ -26,20 +26,50 @@ export class LoginComponent implements OnInit {
     private readonly messageService: NzMessageService,
     private readonly chainbank: ChainbankAgentService,
     private readonly notificationService: NzNotificationService,
-    private readonly zone: NgZone,
     private readonly router: Router,
+    private readonly httpClient: HttpClient,
   ) {
+  }
+
+  async ngOnInit() {
     this.api = this.localStorage.getItemOrDefault('api_address', this.chainbank.defaultApi);
-    this.contract = this.localStorage.getItemOrDefault('contract_address', this.chainbank.defaultContract);
+    let contract;
+    try {
+      contract = this.localStorage.getItemOrDefault('contract_address', await this.getDefaultContract(this.api));
+    } catch (e) {
+      console.log(e);
+    }
+    this.contract = contract ? contract : '';
   }
 
-  ngOnInit() {
-  }
-
-  resetSetting() {
+  async resetSetting() {
     this.api = this.chainbank.defaultApi;
-    this.contract = this.chainbank.defaultContract;
+    try {
+      this.contract = await this.getDefaultContract(this.api);
+    } catch(e) {
+      console.log(e);
+    }
     this.saveSetting();
+  }
+
+  async getDefaultContract(api: string): Promise<string> {
+    try {
+      if (!this.chainbank.validateApiAddress(api)) {
+        throw new Error('invalid api address format');
+      }
+      const contractLink = 'https://' + (this.api.endsWith('/') ? api + 'default_contract' : api + '/default_contract');
+      const contract = await this.httpClient.get(contractLink, {
+        responseType: 'text'
+      }).toPromise() as string;
+      if (!this.chainbank.validateContractFormat(contract)) {
+        throw new Error('invalid contact format.');
+      } else {
+        return contract;
+      }
+    } catch (e) {
+      this.notificationService.create('error', 'Load Default Contract Fail', e.message);
+      throw e;
+    }
   }
 
   saveSetting() {
@@ -48,9 +78,7 @@ export class LoginComponent implements OnInit {
   }
 
   toggleSetting() {
-    this.zone.run(() => {
-      this.detailedSetting = !this.detailedSetting;
-    });
+    this.detailedSetting = !this.detailedSetting;
   }
 
   beforeImport = (file: File): boolean => {
@@ -83,7 +111,7 @@ export class LoginComponent implements OnInit {
 
 
   alertInvalidFormat(typename: string): void {
-    this.notificationService.create('error','Login failed',`invalid ${typename} format.`);
+    this.notificationService.create('error', 'Failed', `invalid ${typename} format.`);
   }
 
   alertInvalidContract(): void {
@@ -99,7 +127,7 @@ export class LoginComponent implements OnInit {
   }
 
   isLoading() {
-    return this.loadingPrompt!=='' && this.loadingPrompt;
+    return this.loadingPrompt !== '' && this.loadingPrompt;
   }
 
   async login() {
@@ -116,12 +144,16 @@ export class LoginComponent implements OnInit {
           this.loadingPrompt = prompt;
         }
         this.loadingPrompt = 'successfully logged in, jumping...';
-        this.router.navigate(['/','console', this.chainbank.actor.privilege === Privilege.Customer ? 'customer' : 'clerk']);
+        this.router.navigate(['/', 'console', this.chainbank.actor.privilege === Privilege.Customer ? 'customer' : 'clerk']);
       } catch (e) {
         this.loadingPrompt = '';
         throw  e;
       }
     }
     this.loadingPrompt = '';
+  }
+
+  async setDefaultContract() {
+    this.contract = await this.getDefaultContract(this.api);
   }
 }

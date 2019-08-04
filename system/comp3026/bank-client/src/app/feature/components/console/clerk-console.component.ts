@@ -11,7 +11,7 @@ import {NzNotificationService} from 'ng-zorro-antd';
 export class ClerkConsoleComponent implements OnInit {
 
   constructor(
-    private readonly chainbank: ChainbankAgentService,
+    readonly chainbank: ChainbankAgentService,
     private readonly router: Router,
     private readonly notification: NzNotificationService,
     private readonly route: ActivatedRoute,

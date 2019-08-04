@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-electron": {
+    "chainbank": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -32,7 +32,8 @@
             "styles": [
               "src/styles.less"
             ],
-            "scripts": []
+            "scripts": [
+            ]
           },
           "configurations": {
             "dev": {
@@ -74,21 +75,21 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "angular-electron:build"
+            "browserTarget": "chainbank:build"
           },
           "configurations": {
             "dev": {
-              "browserTarget": "angular-electron:build:dev"
+              "browserTarget": "chainbank:build:dev"
             },
             "production": {
-              "browserTarget": "angular-electron:build:production"
+              "browserTarget": "chainbank:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "angular-electron:build"
+            "browserTarget": "chainbank:build"
           }
         },
         "test": {
@@ -131,7 +132,7 @@
         }
       }
     },
-    "angular-electron-e2e": {
+    "chainbank-e2e": {
       "root": "e2e",
       "projectType": "application",
       "architect": {
@@ -149,7 +150,7 @@
       }
     }
   },
-  "defaultProject": "angular-electron",
+  "defaultProject": "chainbank",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",

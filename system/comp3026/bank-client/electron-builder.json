@@ -1,5 +1,5 @@
 {
-  "productName": "angular-electron",
+  "productName": "chainbank",
   "directories": {
     "output": "release/"
   },
@@ -7,7 +7,6 @@
         "**/*",
         "!**/*.ts",
         "!*.code-workspace",
-        "!LICENSE.md",
         "!package.json",
         "!package-lock.json",
         "!src/",

@@ -52,6 +52,9 @@
           <button nz-button (click)="toggleSetting()">
             {{detailedSetting ? 'Hide' : 'Detailed Setting'}}
           </button>
+          <button nz-button *ngIf="detailedSetting==true" (click)="setDefaultContract()">
+            Default Contract
+          </button>
           <button nz-button *ngIf="detailedSetting==true" (click)="saveSetting()">
             Save Setting
           </button>
