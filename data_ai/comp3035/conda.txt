@@ -1,0 +1,5 @@
+conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
+#or
+conda install pytorch torchvision cpuonly -c pytorch
+conda install pandas scrapy scikit-learn numpy tabulate requests matplotlib scipy joblib jupyter
+conda install -c quantopian ta-lib 

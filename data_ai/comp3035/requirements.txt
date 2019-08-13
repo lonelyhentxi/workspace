@@ -1,5 +1,20 @@
 mpl_finance
-matplotlib
-pandas
-scrapy
 baostock
+tensorflow>=2.0
+h2o -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html
+git+https://github.com/keras-team/autokeras@master#egg=autokeras
+tpot
+deap
+update_checker
+tqdm
+stopit
+xgboost
+dask
+dask-ml
+scikit-mdr
+skrebate
+scrapy
+keras
+mypy
+flake8
+kerastuner
