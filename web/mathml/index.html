@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>MathML</title>
+    <script src="//fred-wang.github.io/mathml.css/mspace.js"></script>
   </head>
   <body>
     <div>
@@ -211,6 +212,70 @@
           <mn>0</mn>
           <mi> &#x221E;<!--无穷--> </mi>
         </munderover>
+      </math>
+    </div>
+    <div>
+      <math>
+        <mtable>
+          <mlabeledtr>
+            <mtd>
+              <mn>1</mn>
+            </mtd>
+            <!--label-->
+            <mtd>
+              <mn>A</mn>
+            </mtd>
+            <mtd>
+              <mn>B</mn>
+            </mtd>
+          </mlabeledtr>
+        </mtable>
+      </math>
+    </div>
+    <div>
+      <math>
+        <maction actiontype="toggle">
+          <mrow>
+            <mn>1</mn>
+            <mo>+</mo>
+            <mn>1</mn>
+          </mrow>
+          <mrow>
+            <mo>=</mo>
+            <mn>2</mn>
+          </mrow>
+        </maction>
+      </math>
+    </div>
+    <div>
+      <math>
+        <semantics>
+          <!--Presentation MathML-->
+          <mrow>
+            <msup>
+              <mi>x</mi>
+              <mn>2</mn>
+            </msup>
+            <mo>+</mo>
+            <mi>y</mi>
+          </mrow>
+          <!--Content MathML-->
+          <annotation-xml encoding="MathML-Content">
+            <apply>
+              <plus />
+              <apply>
+                <power />
+                <ci>x</ci>
+                <cn type="integer">2</cn>
+              </apply>
+              <ci>y</ci>
+            </apply>
+          </annotation-xml>
+          <!--<annotation encoding="image/png" src="some/path/formula.png" />-->
+          <annotation encoding="application/x-tex">
+            x^{2}+y
+          </annotation>
+        </semantics>
       </math>
     </div>
   </body>
