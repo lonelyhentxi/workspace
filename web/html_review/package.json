@@ -1,0 +1,23 @@
+{
+  "name": "html_review",
+  "version": "0.1.0",
+  "description": "review html and css knowledge",
+  "main": "server.js",
+  "scripts": {
+    "test": "test",
+    "start": "node server.js"
+  },
+  "author": "lonelyhentai <master@evernightfireworks.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/cheerio": "^0.22.14",
+    "@types/node": "^12.12.9",
+    "@types/socket.io": "^2.1.4"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "rxjs": "^6.5.3",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0"
+  }
+}
