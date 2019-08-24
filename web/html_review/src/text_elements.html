@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8" />
+    <title>Basic Format</title>
+    <script>
+      window.onload = () => {
+        const clockRef = document.querySelector("#clock");
+        setInterval(() => {
+          const date = new Date();
+          clockRef.textContent = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+        }, 1000);
+        setTimeout(() => {
+          window.scrollTo(0, window.innerHeight);
+        }, 3000);
+      };
+    </script>
+  </head>
+  <body>
+    <div>
+      <a href="https://evernightfireworks.com">Evernightfireworks</a>
+    </div>
+    <div>
+      <b>Bold element</b>
+    </div>
+    <div>
+      <strong>Important Element</strong>
+    </div>
+    <div>
+      First is absolute &lt;br&gt;<br />
+      Second is safe &lt;wbr&gt;<wbr />
+    </div>
+    <div>
+      <i>Foreign Lang or Tech Term</i>
+    </div>
+    <div>
+      <em>Important Paragram Content</em>
+    </div>
+    <div>
+      <s>not correct or recheck</s>
+    </div>
+    <div>
+      <del>delete content</del>
+    </div>
+    <div>
+      <u>underline</u>
+    </div>
+    <div>
+      <ins>inserted content</ins>
+    </div>
+    <div>
+      <small>small text, usually used in disclaimer</small>
+    </div>
+    <div>T<sub>i</sub> T<sup>i</sup></div>
+    <div>
+      <code>Code Fragment</code>
+      <var>Variable</var>
+      <samp>Output</samp>
+      <kdb lang="en">Input</kdb>
+    </div>
+    <div>
+      <abbr>Abbreviation</abbr>
+    </div>
+    <div>
+      <dfn>defination</dfn>
+    </div>
+    <div>
+      <q>This is a quote sentence</q>
+    </div>
+    <div>
+      <cite>A cite of other works' title</cite>
+    </div>
+    <div>
+      <ruby>
+        饕<rp>(</rp><rt>tāo</rt><rp>)</rp> 餮<rp>(</rp><rt>tiè</rt><rp>)</rp>
+      </ruby>
+    </div>
+    <div>
+      <bdo dir="rtl">Direction Control</bdo>
+      <bdo dir="ltr">Direction Control</bdo>
+    </div>
+    <div>
+      <mark>Marked Content</mark>
+    </div>
+    <div>
+      <time id="clock"> </time>
+    </div>
+    <div>
+        <span>Common Text</span>
+    </div>
+  </body>
+</html>
