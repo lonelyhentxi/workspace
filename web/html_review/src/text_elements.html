@@ -3,17 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <title>Basic Format</title>
+    <script src="./utils.js"></script>
     <script>
-      window.onload = () => {
-        const clockRef = document.querySelector("#clock");
+        appendScrollToDownOnLoad();
+        appendWindowEvent('onload',()=>{
+          const clockRef = document.querySelector("#clock");
         setInterval(() => {
           const date = new Date();
           clockRef.textContent = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
         }, 1000);
-        setTimeout(() => {
-          window.scrollTo(0, window.innerHeight);
-        }, 3000);
-      };
+        });
     </script>
   </head>
   <body>

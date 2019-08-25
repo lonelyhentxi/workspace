@@ -51,20 +51,27 @@ http.on('request', (req, res) => {
         } else {
             const filepath = path.join(baseDir, filename);
             if (fs.existsSync(filepath) && fs.lstatSync(filepath).isFile()) {
-                const html = fs.readFileSync(filepath, {
+                let content = fs.readFileSync(filepath, {
                     encoding: 'utf-8'
                 });
-                const $ = cheerio.load(html);
-                $('head').append('<script src="./socket.io.js"></script>')
-                $('head').append(
-                    `<script>
-                    const socket = io();
-                    socket.on('reload',()=>{
-                        window.location.reload();
-                    })
-                </script>`)
-                res.writeHead(200, { 'Content-Type': 'text/html' });
-                res.write($.html());
+                let contentType = 'text/plain';
+                if(filepath.endsWith('.html')) {
+                    const $ = cheerio.load(content);
+                    $('head').append('<script src="./socket.io.js"></script>')
+                    $('head').append(
+                        `<script>
+                        const socket = io();
+                        socket.on('reload',()=>{
+                            window.location.reload();
+                        })
+                    </script>`);
+                    content = $.html();
+                    contentType = 'text/html';
+                } else if(filepath.endsWith('.js')) {
+                    contentType = 'application/x-javascript';
+                }
+                res.writeHead(200, { 'Content-Type': contentType });
+                res.write(content);
                 res.end();
             } else {
                 res.writeHead(404, { 'Content-Type': 'text/plain' });
