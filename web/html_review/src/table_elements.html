@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Group Elements</title>
+    <script src="./utils.js"></script>
+    <script>
+      appendScrollToDownOnLoad();
+    </script>
+  </head>
+  <body>
+    <div>
+      <table border="1" style="width: 300px;">
+            <colgroup>
+                <col>
+                <col span="1" style="background: red;">
+             </colgroup>
+        <thead>
+         <caption>This is a example table</caption>
+          <tr>
+            <th>name</th>
+            <th>sex</th>
+            <th>age</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Jack</td>
+            <td>male</td>
+            <td>12</td>
+          </tr>
+          <tr>
+            <td>Mary</td>
+            <td>female</td>
+            <td>20</td>
+          </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4">summary: two people</td>
+            </tr>
+        </tfoot>
+      </table>
+    </div>
+  </body>
+</html>
