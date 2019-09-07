@@ -49,11 +49,16 @@ struct Solution;
 #[cfg(test)]
 mod test  {
     use super::Solution;
+    use std::collections::HashSet;
+    use std::iter::FromIterator;
     #[test]
     fn returns_expected() {
-        assert_eq!(Solution::three_sum(vec![-1, 0, 1, 2, -1, -4]), [
-            [-1, 0, 1],
-            [-1, -1, 2]
-          ]);
+        assert_eq!(
+            HashSet::<Vec<i32>>::from_iter(Solution::three_sum(vec![-1, 0, 1, 2, -1, -4]).into_iter()),
+            HashSet::<Vec<i32>>::from_iter(vec![
+                vec![-1, 0, 1],
+                vec![-1, -1, 2]
+              ].into_iter())
+            );
     }
 }
