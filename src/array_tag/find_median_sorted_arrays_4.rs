@@ -7,6 +7,7 @@
 // @lc code=start
 use std::i32;
 #[allow(clippy::many_single_char_names)]
+#[allow(clippy::cast_lossless)]
 impl Solution {
     pub fn find_median_sorted_arrays(nums1: Vec<i32>, nums2: Vec<i32>) -> f64 {
         let m = nums1.len();
