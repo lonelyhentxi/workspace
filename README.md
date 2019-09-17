@@ -1,5 +1,3 @@
 # impls
 
----
-
-Implementation of datastructure and algorithm books, such as ita, cppcia... 
+Implementation of books, docs, tutorials, reference.

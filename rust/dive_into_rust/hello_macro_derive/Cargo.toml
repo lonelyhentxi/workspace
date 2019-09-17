@@ -1,0 +1,12 @@
+[package]
+name = "hello_macro_derive"
+version = "0.1.0"
+authors = ["lonelyhentai <master@evernightfireworks.com>"]
+edition = "2018"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = "^0.15.4"
+quote = "^0.6.8"

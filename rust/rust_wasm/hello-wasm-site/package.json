@@ -1,0 +1,21 @@
+{
+  "name": "hello-wasm-site",
+  "version": "0.1.0",
+  "description": "site of hello-wasm",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "test",
+    "serve": "webpack-dev-server --config webpack.config.js"
+  },
+  "author": "lonelyhentai <master@evernightfireworks.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@lonelyhentai/hello-wasm": "^0.1.0"
+  },
+  "devDependencies": {
+    "html-webpack-plugin": "^3.2.0",
+    "webpack": "^4.35.3",
+    "webpack-cli": "^3.3.5",
+    "webpack-dev-server": "^3.7.2"
+  }
+}

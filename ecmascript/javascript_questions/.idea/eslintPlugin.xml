@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ESLintProjectComponent">
+    <option name="eslintRcFile" value="" />
+    <option name="builtinRulesPath" value="D:\workspace\impls\impls-es\ecmascript\javascript_questions\node_modules\eslint\lib\rules" />
+    <option name="eslintExecutable" value="D:\workspace\impls\impls-es\ecmascript\javascript_questions\node_modules\.bin\eslint.cmd" />
+    <option name="nodeInterpreter" value="C:\code\nodejs\node.exe" />
+    <option name="pluginEnabled" value="true" />
+    <option name="autoFix" value="true" />
+  </component>
+</project>

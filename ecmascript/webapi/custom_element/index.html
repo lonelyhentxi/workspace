@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>custom element demo</title>
+     <script type="module" src="custom-element.js">
+    </script>
+    <link rel="stylesheet" href="custom-element.css" type="text/css">
+</head>
+<body>
+<x-greeting>X-GREETING</x-greeting>
+<greeting>GREETING</greeting>
+<button onclick="showCustom('x-greeting')">show x-greeting</button>
+<button onclick="showCustom('greeting')">show greeting</button>
+<script type="application/x-javascript" lang="js" rel="script">
+    function showCustom(element) {
+        const target = document.getElementsByTagName(element).item(0);
+        alert(`target is HTMLUnknownElement: ${target instanceof HTMLUnknownElement}, target is HTMLElement: ${target instanceof HTMLElement}`);
+    }
+
+    function customTag(tagName, fn) {
+        Array.from(document.getElementsByTagName(tagName))
+            .forEach(fn)
+    }
+
+    function greetingHandler(element) {
+        element.innerHTML = "你好，世界";
+    }
+
+    customTag("greeting", greetingHandler);
+    customTag("x-greeting", greetingHandler);
+</script>
+</body>
+</html>

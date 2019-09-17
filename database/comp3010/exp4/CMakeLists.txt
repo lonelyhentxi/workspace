@@ -1,0 +1,35 @@
+cmake_minimum_required(VERSION 3.10)
+set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_HOME}/scripts/buildsystems/vcpkg.cmake)
+set(CMAKE_CXX_STANDARD 17)
+
+project(tiny_db_engine)
+
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/cmake-build-debug)
+set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/cmake-build-debug/lib)
+set(VCPKG_INCLUDE_DIR $ENV{VCPKG_HOME}/installed/${VCPKG_TARGET_TRIPLET}/include)
+set(VCPKG_LIBRARY_DIR $ENV{VCPKG_HOME}/installed/${VCPKG_TARGET_TRIPLET}/lib)
+
+file(GLOB_RECURSE PROJECT_SOURCES core/* repl/*)
+
+find_package(Catch2 CONFIG REQUIRED)
+find_package(Boost REQUIRED)
+find_package(Qt5 COMPONENTS Core CONFIG REQUIRED)
+add_subdirectory(lib/extmem)
+add_subdirectory(lib/extmemfs)
+add_subdirectory(lib/cppbtree)
+
+include_directories(${Boost_INCLUDE_DIRS} ${Catch2_INCLUDE_DIRS} ${Qt5_INCLUDE_DIRS} lib/ repl core)
+add_executable(tiny_db_engine main.cpp  ${PROJECT_SOURCES})
+target_link_libraries(tiny_db_engine PRIVATE Catch2::Catch2 ${Boost_LIBRARIES} Qt5::Core extmem extmemfs)
+target_link_libraries(tiny_db_engine INTERFACE cppbtree)
+add_custom_command(TARGET tiny_db_engine PRE_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${EXECUTABLE_OUTPUT_PATH}/data)
+add_custom_command(TARGET tiny_db_engine PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/lib/extmem/data ${EXECUTABLE_OUTPUT_PATH}/data/raw)
+
+file(GLOB_RECURSE PROJECT_TEST_SOURCES spec/*)
+add_executable(tiny_db_engine_test test.cpp ${PROJECT_TEST_SOURCES} ${PROJECT_SOURCES})
+target_include_directories(tiny_db_engine_test PUBLIC ${Boost_INCLUDE_DIRS} ${Catch2_INCLUDE_DIRS} ${Qt5_INCLUDE_DIRS} lib/ repl core)
+set_target_properties(tiny_db_engine_test PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(tiny_db_engine_test PRIVATE Catch2::Catch2 ${Boost_LIBRARIES} Qt5::Core extmem extmemfs)
+target_link_libraries(tiny_db_engine_test INTERFACE cppbtree)
+add_custom_command(TARGET tiny_db_engine_test PRE_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${EXECUTABLE_OUTPUT_PATH}/data)
+add_custom_command(TARGET tiny_db_engine_test PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/lib/extmem/data ${EXECUTABLE_OUTPUT_PATH}/data/raw)
