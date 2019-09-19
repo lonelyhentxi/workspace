@@ -8,3 +8,4 @@ pub mod find_first_and_last_position_of_element_in_sorted_array_34;
 pub mod combination_sum_39;
 pub mod trapping_rain_water_42;
 pub mod permutations_46;
+pub mod rotate_image_48;
