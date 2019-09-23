@@ -11,3 +11,4 @@ pub mod permutations_46;
 pub mod rotate_image_48;
 pub mod maximum_subarray_53;
 pub mod jump_game_55;
+pub mod merge_intervals_56;
