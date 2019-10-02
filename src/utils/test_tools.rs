@@ -1,7 +1,9 @@
 use std::collections::{BTreeSet, HashSet};
 use std::iter::FromIterator;
+use std::hash::Hash;
+use std::fmt::Debug;
 
-pub fn assert_nested_equivalent(left: &[Vec<String>], right: &[Vec<String>]) {
+pub fn assert_nested_equivalent<T: Eq + Ord + Hash + Debug>(left: &[Vec<T>], right: &[Vec<T>]) {
     let left = left.iter()
         .map(|x| BTreeSet::from_iter(x.iter())).collect::<HashSet<_>>();
     let right = right.iter()
