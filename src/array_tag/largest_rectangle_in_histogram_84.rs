@@ -8,7 +8,9 @@
 impl Solution {
     pub fn largest_rectangle_area(heights: Vec<i32>) -> i32 {
         let mut res = 0usize;
-        let mut stack = vec![0];
+        let mut heights = heights;
+        let mut stack = vec![];
+        heights.push(0);
         let mut i = 0i32;
         while i < heights.len() as i32 {
             if stack.is_empty() || heights[*stack.last().unwrap() as usize] < heights[i as usize] { 
@@ -35,5 +37,6 @@ mod test {
     #[test]
     fn returns_expected() {
         assert_eq!(Solution::largest_rectangle_area(vec![2,1,5,6,2,3]),10);
+        assert_eq!(Solution::largest_rectangle_area(vec![1]),1);
     }
 }
