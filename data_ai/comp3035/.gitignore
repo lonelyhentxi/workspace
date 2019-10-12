@@ -557,6 +557,6 @@ fabric.properties
 !.vscode/extensions.json
 
 ### Custom Template
+resources/*
 !**/.gitkeep
-resources/**/*
 .mypy_cache
