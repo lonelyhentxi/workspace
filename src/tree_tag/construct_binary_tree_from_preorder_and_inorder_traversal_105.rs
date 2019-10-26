@@ -64,7 +64,7 @@ impl Solution {
 }
 // @lc code=end
 
-struct Solution;
+pub struct Solution;
 
 use crate::utils::tree::TreeNode;
 
