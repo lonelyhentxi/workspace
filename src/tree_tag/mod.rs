@@ -8,3 +8,4 @@ pub mod maximum_depth_of_binary_tree_104;
 pub mod construct_binary_tree_from_preorder_and_inorder_traversal_105;
 pub mod flatten_binary_tree_to_linked_list_114;
 pub mod best_time_to_buy_and_sell_stock_121;
+pub mod binary_tree_maximum_path_sum_124;
