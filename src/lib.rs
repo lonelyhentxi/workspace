@@ -7,3 +7,4 @@ pub mod linked_list_tag;
 pub mod dp_tag;
 pub mod sort_tag;
 pub mod backtracking_tag;
+pub mod bits_tag;
