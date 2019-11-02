@@ -43,6 +43,8 @@ function ListNode(val) {
      this.next = null;
 }
 
+exports.ListNode = ListNode;
+
 function buildList(array, cycleIndex) {
     let head = new ListNode(-1);
     let current = head;
@@ -61,6 +63,8 @@ function buildList(array, cycleIndex) {
     return head.next;
 }
 
+exports.buildList = buildList;
+
 function testHasCycle() {
     let node1 = buildList([3,2,0,-4],1);
     assert(hasCycle(node1)==true);
@@ -70,4 +74,8 @@ function testHasCycle() {
     assert(hasCycle(node3)==false);
 }
 
-testHasCycle();
+
+
+if (!module.parent) {
+    testHasCycle();
+} 
