@@ -4,3 +4,6 @@
 [submodule "data_ai/comp3005"]
 	path = data_ai/comp3005
 	url = git@github.com:dreamerlin/AI_EX_2.git
+[submodule "data_ai/comp3021/pretrained_models"]
+	path = data_ai/comp3021/pretrained_models
+	url = https://github.com/guoday/CCF-BDCI-Sentiment-Analysis-Baseline

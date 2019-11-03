@@ -1,0 +1,8 @@
+jupyter
+scikit-learn
+jieba
+pkuseg
+thulac
+stanfordcorenlp
+numpy
+pandas
