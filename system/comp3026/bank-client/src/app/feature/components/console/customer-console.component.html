@@ -1,0 +1,71 @@
+<div class="console-feature">
+  <div class="console-feature-balance" *ngIf="chainbank.canEditCustomer()">
+    <nz-tag  (click)="backToClerkConsole()">Click To Back</nz-tag>
+    <span></span>
+    <nz-tag>Target Actor: {{identity}}</nz-tag>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="15">
+      <div>
+        <nz-table #editRowTable nzBordered [nzData]="transactions" [nzPageSize]="3">
+          <thead>
+          <tr>
+            <th nzWidth="150px">Requester</th>
+            <th nzWidth="150px">Sender</th>
+            <th nzWidth="150px">Receiver</th>
+            <th>amount</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let data of editRowTable.data" class="editable-row">
+            <td>
+              <div style="word-break: break-all;">
+                {{data.requester}}
+              </div>
+            </td>
+            <td>
+              <div style="word-break: break-all;">
+                {{data.sender}}
+              </div>
+            </td>
+            <td>
+              <div style="word-break: break-all;">
+                {{data.receiver}}
+              </div>
+            <td>{{ numericJSBI(data.amount) }}</td>
+          </tr>
+          </tbody>
+        </nz-table>
+      </div>
+    </div>
+    <div nz-col nzSpan="8" nzOffset="1">
+      <nz-card [nzHoverable]="false" [nzTitle]="'Start Transaction'" class="transparent-bg" [nzExtra]="extraTemplate">
+        <div>
+          <input class="transparent-bg transaction-receiver"
+                 nzSize="small" nz-input [(ngModel)]="receiver" placeholder="Please enter receiver address"/>
+          <div class="validation-error ant-form-explain"
+               *ngIf="receiver!==''&&!chainbank.validateAddressFormat(receiver)">
+            Address should be {{chainbank.addressLength * chainbank.formatFactor}} characters hex string
+          </div>
+        </div>
+        <div>
+          <nz-input-number nzSize="small" [(ngModel)]="amount" [nzMin]="minAmount"
+                           [nzMax]="maxAmount" class="transaction-amount transparent-bg"
+                           [nzStep]="chainbank.amountStep" nzPlaceHolder="Amount">
+          </nz-input-number>
+          <div class="validation-error ant-form-explain" *ngIf="amount!==0&&!validateAmount(amount)">
+            Amount should be greater than {{minAmount}} and lower than {{maxAmount}}
+          </div>
+          <div>
+            <nz-tag class="transaction-balance">Balance: {{numericJSBI(balance)}}</nz-tag>
+          </div>
+        </div>
+      </nz-card>
+      <ng-template #extraTemplate>
+        <button nz-button nzType="primary" nzSize="small" style="float: right" (click)="commitTransaction()"
+                [disabled]="!chainbank.validateAddressFormat(receiver) || !validateAmount(amount)">Commit
+        </button>
+      </ng-template>
+    </div>
+  </div>
+</div>
