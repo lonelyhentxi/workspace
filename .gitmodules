@@ -7,3 +7,6 @@
 [submodule "data_ai/comp3021/pretrained_models"]
 	path = data_ai/comp3021/pretrained_models
 	url = https://github.com/guoday/CCF-BDCI-Sentiment-Analysis-Baseline
+[submodule "system/chainbank"]
+	path = system/chainbank
+	url = git@github.com:lonelyhentai/chainbank.git
