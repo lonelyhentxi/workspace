@@ -24,7 +24,12 @@
 use std::collections::BinaryHeap;
 
 impl Solution {
-    // drop one list node, then push a heap node so O(1) extra space
+    // drop one list node, then push a heap node so O(1) extra space?
+    // why? because the heap use vec to store data,
+    // and the vec use 1-2x size space while a list node use 2x space
+    // so O(1) is the upper bound
+    // if the size of val is greater than a option plus a box, please use merge sort
+    // or you can box a val then place it into heap
     pub fn sort_list(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
         let mut heap = BinaryHeap::<i32>::new();
         let mut current = head;
