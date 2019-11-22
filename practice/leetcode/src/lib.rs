@@ -9,3 +9,4 @@ pub mod sort_tag;
 pub mod backtracking_tag;
 pub mod bits_tag;
 pub mod design_tag;
+pub mod search_tag;
