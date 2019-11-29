@@ -17,4 +17,10 @@ impl TreeNode {
       right: None
     }
   }
+
+  pub fn build_tree(prefix:Vec<i32>, infix: Vec<i32>) -> Option<Rc<RefCell<TreeNode>>> {
+    use crate::tree_tag::construct_binary_tree_from_preorder_and_inorder_traversal_105::Solution;
+    Solution::build_tree(prefix, infix)
+  }
 }
+
