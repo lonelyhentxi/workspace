@@ -1,7 +1,0 @@
-[package]
-name = "doc_test"
-version = "0.1.0"
-authors = ["lonelyhentai <lonely_hentai@hotmail.com>"]
-edition = "2018"
-
-[dependencies]
