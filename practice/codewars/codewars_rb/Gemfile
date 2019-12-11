@@ -1,0 +1,16 @@
+# frozen_string_literal: true
+
+source 'https://gems.ruby-china.com'
+
+git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
+
+gem 'debase', '~> 0.2.4' # debug
+gem 'fasterer', '~> 0.8.1' # performance improve
+gem 'parser', '~> 2.6'
+gem 'rcodetools', '~> 0.8.5' # code completion
+gem 'reek', '~> 1.3' # code smell detector
+gem 'rspec', '~> 3.8' # spec and test
+gem 'rubocop', '~> 0.77.0' # static code analyzer and code formatter
+gem 'ruby-debug-ide', '~> 0.7.0' # debug
+gem 'solargraph', '~> 0.38.0' # language server
+gem 'yard', '~> 0.9.20' # documentation tool

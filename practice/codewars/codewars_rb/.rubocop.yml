@@ -1,0 +1,17 @@
+Style/FormatString:
+  Enabled: true
+  EnforcedStyle: percent
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: true
+  Max: 32
+
+Metrics/LineLength:
+  Enabled: true
+  Max: 120
+
+Naming/MethodParameterName:
+  Enabled: false

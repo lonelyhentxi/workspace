@@ -1,0 +1,20 @@
+{
+  "name": "codewars",
+  "version": "0.0.1",
+  "description": "typescript trains in codewars",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha -r ts-node/register -r tsconfig-paths/register spec/**/*.spec.ts"
+  },
+  "author": "lonelyhentai <master@evernightfireworks.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chai": "^4.2.7",
+    "@types/mocha": "^5.2.7",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "ts-node": "^7.0.1",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^3.7.3"
+  }
+}
