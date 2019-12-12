@@ -1,22 +1,16 @@
 # frozen_string_literal: true
 
 def who_would_win(monster1, monster2) # rubocop:disable Metrics/AbcSize
-  all_points1 = monster1.hitpoints * monster1.number
-  all_points2 = monster2.hitpoints * monster2.number
-  while monster1.number.postive? || monster2.number.postive?
-    # monster 1 attack
-    all_points2 -= monster1.number * monster1.damage
-    # attack 1 end
-    monster2.number = (all_points2 / monster2.hitpoints).ceil
-    # monster 2 attack
-    all_points1 -= monster2.number * monster2.damage
-    # attack 2 end
-    monster2.number = (all_points1 / monster1.hitpoints).ceil
+  all_points = [(monster1.hitpoints * monster1.number).to_f, (monster2.hitpoints * monster2.number).to_f]
+  numbers = [monster1.number, monster2.number]
+  monsters = [monster1, monster2]
+  current = 0
+  while numbers[current].positive?
+    another = (current + 1) % 2
+    all_points[another] -= numbers[current] * monsters[current].damage # start attack
+    numbers[another] = (all_points[another] / monsters[another].hitpoints).ceil # attack end
+    current = another
   end
-  winner = if monster1.number <= 0
-             monster2
-           else
-             monster1
-           end
-  "#{winner.number} #{winner.type}(s) won"
+  winner = (current + 1) % 2
+  "#{numbers[winner]} #{monsters[winner].type}(s) won"
 end

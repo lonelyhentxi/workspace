@@ -6,10 +6,10 @@
 def search_substr(full_text, search_text, allow_over_tapping = true)
   match_list = []
   counter = 0
-  search_list = search_text.split('')
+  search_list = search_text.split('').select { |x| not x.empty? }
   search_length = search_text.length
   if search_length > full_text.length || search_length.zero?
-    counter
+    return counter
   else
     (0...search_length).each do |i|
       match_list.push full_text[i]
