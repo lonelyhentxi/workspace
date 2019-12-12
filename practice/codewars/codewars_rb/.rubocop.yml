@@ -21,3 +21,6 @@ Metrics/CyclomaticComplexity:
 
 Metrics/AbcSize:
   Enabled: false
+
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
