@@ -20,7 +20,7 @@ namespace codewars
 				t.push_back('#');
 			}
 			t.push_back('@');
-			const int length = t.size();
+			const int length = static_cast<int>(t.size());
 			auto p = vector<int>(length, 0);
 			auto r = 0;
 			auto c = 0;

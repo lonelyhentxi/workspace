@@ -56,9 +56,9 @@ namespace codewars
 			int64_t p = 1;
 			auto it = array.rbegin();
 			while (it != array.rend()) {
-				int a = p >= 4 ? 4 + (p % 4) : p;
-				int b = *it >= 20 ? 20 + (*it % 20) : *it;
-				p = pow(b, a);
+				int64_t a = p >= 4 ? 4 + (p % 4) : p;
+				int64_t b = *it >= 20 ? 20 + (*it % 20) : *it;
+				p = static_cast<int64_t>(pow(b, a));
 				it++;
 			}
 			return p % 10;

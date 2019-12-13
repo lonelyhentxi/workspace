@@ -4,6 +4,7 @@
 #include <vector>
 #include <cassert>
 #include <cmath>
+#include <string>
 
 namespace codewars {
     namespace double_cola {
@@ -15,7 +16,7 @@ namespace codewars {
             int repeat = 1;
             long long drunk_times = 1;
             const size_t size = names.size();
-            while (drunk_times * size < r) {
+            while (drunk_times * static_cast<long long>(size) < r) {
                 drunk_times += repeat*2;
                 repeat *= 2;
             }
