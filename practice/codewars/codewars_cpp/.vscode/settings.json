@@ -2,5 +2,24 @@
     "python.testing.promptToConfigure": false,
     "python.testing.pytestEnabled": false,
     "python.testing.unittestEnabled": false,
-    "python.testing.nosetestsEnabled": false
+    "python.testing.nosetestsEnabled": false,
+    "cmake.generator": "Ninja",
+    "cmake.configureSettings": {
+      "CMAKE_MAKE_PROGRAM": "${env:NINJA_HOME}/ninja"
+    },
+    "cmake.configureOnOpen": true,
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "C_Cpp.default.cppStandard": "c++17",
+    "C_Cpp.default.cStandard": "c11",
+    "C_Cpp.default.includePath": [
+      "${env:VCPKG_HOME}"
+    ],
+    "catch2TestExplorer.executables": [
+      {
+        "name": "${filename}",
+        "description": "${relDirpath}/",
+        "pattern": "cmake-build-{Debug,debug,release,Release}/{test,Test,TEST}*"
+      }
+    ],
+    "cmake.buildDirectory": "${workspaceFolder}/cmake-build-${buildType}"
 }

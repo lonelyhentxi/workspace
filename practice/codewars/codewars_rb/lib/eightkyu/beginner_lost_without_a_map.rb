@@ -4,4 +4,5 @@ def maps(x)
   x.each do |item|
     res.push(item * 2)
   end
+  res
 end
