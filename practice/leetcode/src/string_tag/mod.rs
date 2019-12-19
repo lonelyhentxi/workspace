@@ -6,3 +6,4 @@ pub mod generate_parentheses_22;
 pub mod longest_valid_parentheses_32;
 pub mod group_anagrams_49;
 pub mod minimum_window_substring_76;
+pub mod length_of_last_word_58;
