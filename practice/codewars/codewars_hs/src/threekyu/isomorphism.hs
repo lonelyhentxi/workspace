@@ -1,18 +1,15 @@
-module ISO where
+module ThreeKyu.Isomorphism where
 
 import Control.Monad
 import Data.Void
-
 
 type ISO a b = (a -> b, b -> a)
 
 substL :: ISO a b -> (a -> b)
 substL = fst
 
-
 substR :: ISO a b -> (b -> a)
 substR = snd
-
 
 isoBool :: ISO Bool Bool
 isoBool = (id, id)
@@ -20,10 +17,8 @@ isoBool = (id, id)
 isoBoolNot :: ISO Bool Bool
 isoBoolNot = (not, not)
 
-
 refl :: ISO a a
 refl = (id, id)
-
 
 symm :: ISO a b -> ISO b a
 symm (x, y) = (y, x)
@@ -72,9 +67,6 @@ isoUnMaybe (ab, ba) = (f, g)
                             Nothing -> error "impossible"
                             Just y -> y
 
-
-
-
 isoEU :: ISO (Either [()] ()) (Either [()] Void)
 isoEU = (f, g)
   where
@@ -82,16 +74,10 @@ isoEU = (f, g)
     f (Left x) = Left $ () : x
     g (Left []) = Right ()
     g (Left (_:xs)) = Left xs
-    
-
-
-
-
-
-
 
 isoSymm :: ISO (ISO a b) (ISO b a)
 isoSymm = (f, g)
   where
     f (ab, ba) = (ba, ab)
     g (ab, ba) = (ba, ab)
+    
