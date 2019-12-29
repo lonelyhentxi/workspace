@@ -24,3 +24,20 @@ impl TreeNode {
   }
 }
 
+#[macro_export]
+macro_rules! tree_node {
+  ($elem: expr, $left: expr, $right: expr) => {
+    Some(Rc::new(RefCell::new(
+      TreeNode {
+      val: $elem,
+      left: $left,
+      right: $right
+      }
+    )))
+  }
+}
+
+#[macro_export]
+macro_rules! tree_leaf {
+  ($elem: expr) => { tree_node!($elem, None, None) }
+}

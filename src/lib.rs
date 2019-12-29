@@ -10,3 +10,5 @@ pub mod backtracking_tag;
 pub mod math_tag;
 pub mod design_tag;
 pub mod search_tag;
+pub mod greedy_tag;
+pub mod graph_tag;
