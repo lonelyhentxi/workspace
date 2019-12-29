@@ -7,3 +7,7 @@ pub mod longest_valid_parentheses_32;
 pub mod group_anagrams_49;
 pub mod minimum_window_substring_76;
 pub mod length_of_last_word_58;
+pub mod remove_invalid_parentheses_301;
+pub mod decode_string_394;
+pub mod find_all_anagrams_in_a_string_438;
+pub mod palindromic_substrings_647;

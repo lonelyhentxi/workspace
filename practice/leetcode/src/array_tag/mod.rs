@@ -19,3 +19,5 @@ pub mod kth_largest_element_in_an_array_215;
 pub mod product_of_array_except_self_238;
 pub mod sliding_window_maximum_239;
 pub mod move_zeroes_283;
+pub mod top_k_frequent_elements_347;
+pub mod daily_temperatures_739;
