@@ -163,7 +163,50 @@ _ =
     (m + (n + p)) + q
   ∎
 
--- @stretch: exercise `finite-+-assoc` ignore
+-- @stretch: exercise `finite-+-assoc` start
+
+-- Day 0
+
+-- Day 1
+-- 0: ℕ
+
+--Day 2
+-- 1: ℕ
+-- (0 + 0) + 0 ≡ 0 + (0 + 0)
+
+-- Day 3
+-- 2: ℕ
+-- (0 + 0) + 1 ≡ 0 + (0 + 1)
+-- (0 + 1) + 0 ≡ 0 + (1 + 0)
+-- (0 + 1) + 1 ≡ 0 + (1 + 1)
+-- (1 + 0) + 0 ≡ 1 + (0 + 0)
+-- (1 + 0) + 1 ≡ 1 + (0 + 1)
+-- (1 + 1) + 0 ≡ 1 + (1 + 0)
+-- (1 + 1) + 1 ≡ 1 + (1 + 1)
+
+-- Day 4
+-- 3 : ℕ
+-- (0 + 0) + 2 ≡ 0 + (0 + 2)
+-- (0 + 1) + 2 ≡ 0 + (1 + 2)
+-- (0 + 2) + 0 ≡ 0 + (2 + 0)
+-- (0 + 2) + 1 ≡ 0 + (2 + 1)
+-- (0 + 2) + 2 ≡ 0 + (2 + 2)
+-- (1 + 0) + 2 ≡ 1 + (0 + 2)
+-- (1 + 1) + 2 ≡ 1 + (1 + 2)
+-- (1 + 2) + 0 ≡ 1 + (2 + 0)
+-- (1 + 2) + 1 ≡ 1 + (2 + 1)
+-- (1 + 2) + 2 ≡ 1 + (2 + 2)
+-- (2 + 0) + 0 ≡ 2 + (0 + 0)
+-- (2 + 0) + 1 ≡ 2 + (0 + 1)
+-- (2 + 0) + 2 ≡ 2 + (0 + 2)
+-- (2 + 1) + 0 ≡ 2 + (1 + 0)
+-- (2 + 1) + 1 ≡ 2 + (1 + 1)
+-- (2 + 1) + 2 ≡ 2 + (1 + 2)
+-- (2 + 2) + 0 ≡ 2 + (2 + 0)
+-- (2 + 2) + 1 ≡ 2 + (2 + 1)
+-- (2 + 2) + 2 ≡ 2 + (2 + 2)
+
+-- @stretch: exercise `finite-+-assoc` end
 
 +-assoc' : ∀ ( m n p : ℕ ) → (m + n) + p ≡ m + (n + p)
 +-assoc' zero n p = refl
@@ -365,5 +408,8 @@ identity-to-from zero = refl
 identity-to-from (suc n) rewrite comm-+-from (to n) | identity-to-from n  = refl
 
 -- ⟨⟩ !== ⟨⟩ O
+-- @todo: rewrite with ∃-syntax
 
 -- @stretch: exercise `Bin-laws` end
+
+-- import Data.Nat.Properties using (+-assoc; +-identityʳ; +-suc; +-comm)
