@@ -1,27 +1,38 @@
 # minisys-assembler
 
-This online site was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.8.
+This project is the 9-th task of the "Computer Design and Practice" course to implement a `Minisys` assembler. There is a one-to-one correspondence between assembly instructions and instructions, that is, the process of literal translation.
 
-## Development server
+The core gui service is at [src/app/minisys-32-assembler](src/app/minisys-32-assembler) and the lib is at [src/app/minisys-32-assembler/assembler-lib](src/app/minisys-32-assembler/assembler-lib).
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## GUI
 
-## Code scaffolding
+![gui-0](./gui_0.png)
+![gui-1](./gui_1.png)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Installation
 
-## Build
+Ensure you have node and npm installed, then please install all the dependencies.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+```bash
+npm install
+# or yarn
+yarn install
+```
 
-## Running unit tests
+## Usage
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Start the gui services:
 
-## Running end-to-end tests
+```bash
+npm run start
+```
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+Open your browser with the url `http://127.0.0.1:4200` the copy asm code to the left, select the memory size, than click `assemble`, you will get the `code coe` file and the `data coe` file.
 
-## Further help
+## Test ASM File
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+See at [./cputest.asm](./cputest.asm).
+
+## LICENSE
+
+[MIT](./LICENSE)

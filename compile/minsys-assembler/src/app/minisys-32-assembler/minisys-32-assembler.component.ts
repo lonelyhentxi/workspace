@@ -26,8 +26,8 @@ export class Minisys32AssemblerComponent {
             memory_initialization_vector =<br>${memory};`;
     } catch (e) {
       console.debug(e);
-      this.output[0]='错误的输入';
-      this.output[1]='错误的输入';
+      this.output[0]='错误的输入: ' + e.message;
+      this.output[1]='错误的输入: ' + e.message;
     }
   }
 }

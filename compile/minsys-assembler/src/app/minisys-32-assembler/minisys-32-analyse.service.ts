@@ -15,15 +15,18 @@ export class Minisys32AnalyseService {
   private splitter = /[(),\[\]]/.compile();
 
   public instructionFormat([operator, operands]: [AssemblyFragment, AssemblyFragment[]]): ParseFragment[] {
-    const opRender = this.operatorRepo.get(operator.code);
-    if (opRender.type === 'r') {
-      return this.rFormat(opRender, operator, operands);
-    } else if (opRender.type === 'i') {
-      return this.iFormat(opRender, operator, operands);
-    } else if (opRender.type === 'j') {
-      return this.jFormat(opRender, operator, operands);
+    try {
+      const opRender = this.operatorRepo.get(operator.code);
+      if (opRender.type === 'r') {
+        return this.rFormat(opRender, operator, operands);
+      } else if (opRender.type === 'i') {
+        return this.iFormat(opRender, operator, operands);
+      } else if (opRender.type === 'j') {
+        return this.jFormat(opRender, operator, operands);
+      }
+    } catch(e) {
+      throw new Error(`${operator.code} is invalid operator`);
     }
-    throw new Error('invalid operator');
   }
 
   public dataFormat(frag:AssemblyFragment):ParseFragment {

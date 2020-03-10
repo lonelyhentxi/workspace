@@ -1,4 +1,4 @@
-import { ParseFragment } from '../interface/index';
+import {ParseFragment} from '../interface/index';
 import {Injectable} from '@angular/core';
 
 @Injectable()
