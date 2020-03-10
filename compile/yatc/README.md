@@ -329,7 +329,7 @@ The value of the variable is to take the variable from the corresponding address
 
 ### Custom Operator Invocation
 
-调用一元操作符即转换成调用一个变量的 `unary’operator_name’`，同理调用二元操作符即转换成调用两个变量的 `binary’ operator_name’`。
+Invoking a unary operator translates into `unary’operator_name’` that calls a variable, and invoking a binary operator translates into` binary ’operator_name’` that calls two variables.
 
 ```llir
 %unop = call double @"unary’operator_name’"(double param)
