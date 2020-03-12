@@ -1,0 +1,13 @@
+.LearnCanvas {
+}
+
+.LearnCanvas-gallery {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.LearnCanvas-canvas {
+    box-shadow: 1px 1px 1px #aaa;
+    border-radius: 4px;
+    margin: 1rem;
+}
