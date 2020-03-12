@@ -10,6 +10,7 @@
     "@types/node": "^12.12.29",
     "@types/react": "^16.9.23",
     "@types/react-dom": "^16.9.5",
+    "gl-matrix": "^3.2.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-router": "^5.1.2",
@@ -39,6 +40,7 @@
     ]
   },
   "devDependencies": {
+    "@types/gl-matrix": "^2.4.5",
     "@types/react-router": "^5.1.4",
     "@types/react-router-dom": "^5.1.3"
   }

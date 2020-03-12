@@ -9,7 +9,7 @@ import {
 import logo from './logo.svg';
 import './App.css';
 import LearnCanvas from './learn_canvas/LearnCanvas';
-import SecondCanvas from './second_canvas/SecondCanvas';
+import LearnWebGL from './learn_webgl/LearnWebGL';
 
 function App() {
   return (
@@ -28,8 +28,8 @@ function App() {
           <NavLink 
           className="App-menu-link" 
           activeClassName="App-menu-link-active"
-          to="/second-canvas">
-            Second Canvas
+          to="/learn-webgl">
+            Learn WebGL
           </NavLink>
         </aside>
         <main className="App-main">
@@ -40,8 +40,8 @@ function App() {
             <Route path='/learn-canvas'>
               <LearnCanvas />
             </Route>
-            <Route path="/second-canvas">
-              <SecondCanvas/>
+            <Route path="/learn-webgl">
+              <LearnWebGL />
             </Route>
           </Switch>
         </main>
