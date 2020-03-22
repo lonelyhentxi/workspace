@@ -1,0 +1,9 @@
+.LearnWebGL-gallery {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.LearnWebGL-canvas {
+    box-shadow: 1px 1px 1px #eee;
+    margin: 1rem;
+}
