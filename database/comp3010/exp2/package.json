@@ -1,0 +1,23 @@
+{
+  "name": "comp3010-exp2",
+  "version": "0.1.0",
+  "description": "exp2 of comp3010, 2019 spring.",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/commander": "^2.12.2",
+    "@types/lodash": "^4.14.123",
+    "@types/mysql": "^2.15.5",
+    "@types/node": "^11.11.1",
+    "commander": "^2.19.0",
+    "lodash": "^4.17.11",
+    "mysql": "^2.16.0",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.3.3333"
+  }
+}

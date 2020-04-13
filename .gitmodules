@@ -1,0 +1,12 @@
+[submodule "data_ai/comp3006/fastText"]
+	path = data_ai/comp3006/fastText
+	url = git@github.com:facebookresearch/fastText.git
+[submodule "data_ai/comp3005"]
+	path = data_ai/comp3005
+	url = git@github.com:dreamerlin/AI_EX_2.git
+[submodule "data_ai/comp3021/pretrained_models"]
+	path = data_ai/comp3021/pretrained_models
+	url = https://github.com/guoday/CCF-BDCI-Sentiment-Analysis-Baseline
+[submodule "system/chainbank"]
+	path = system/chainbank
+	url = git@github.com:lonelyhentai/chainbank.git

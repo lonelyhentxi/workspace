@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>MathML</title>
+    <script src="//fred-wang.github.io/mathml.css/mspace.js"></script>
+  </head>
+  <body>
+    <div>
+      <math>
+        <mi> y </mi>
+        <mi> sin </mi>
+        <mi mathvariant="monospace"> x </mi>
+        <mi mathvariant="bold"> &pi; </mi>
+      </math>
+    </div>
+    <!--<mglyph src=my-glyph.png alt="my glyph"></mglyph>-->
+    <div>
+      <math>
+        <mn> 0 </mn>
+        <mn> 1.337 </mn>
+        <mn> twelve </mn>
+        <mn> XVI </mn>
+        <mn> 2e10 </mn>
+      </math>
+    </div>
+    <div>
+      <math>
+        <mrow>
+          <mn>5</mn>
+          <mo>+</mo>
+          <mn>5</mn>
+        </mrow>
+        <mrow>
+          <mo>[</mo>
+          <mrow>
+            <mn>0</mn>
+            <mo>;</mo>
+            <mo>1</mo>
+          </mrow>
+          <mo>)</mo>
+        </mrow>
+      </math>
+    </div>
+    <div>
+      <math>
+        <mrow>
+          <ms lquote='"' rquote='"'>abc</ms>
+        </mrow>
+      </math>
+    </div>
+    <div>
+      <math>
+        <mi>x</mi>
+        <mspace width="40px"></mspace>
+        <mi>y</mi>
+      </math>
+    </div>
+    <div>
+      <math>
+        <mtext>毕达哥拉斯定理</mtext>
+        <mtext>/* 在这里注释 */</mtext>
+      </math>
+    </div>
+    <div>
+      <math>
+        <menclose notation="radical">
+          <msup><mi>a</mi><mn>2</mn></msup>
+          <mo>+</mo>
+          <msup><mi>b</mi><mn>2</mn></msup>
+        </menclose>
+      </math>
+    </div>
+    <div>
+      <math>
+        <merror>
+          <mrow>
+            <mtext>除以0：</mtext>
+            <mfrac>
+              <mn>1</mn>
+              <mn>0</mn>
+            </mfrac>
+          </mrow>
+        </merror>
+      </math>
+    </div>
+    <div>
+      <math>
+        <mfenced open="{" close="}" separators=";;,">
+          <mi>a</mi>
+          <mi>b</mi>
+          <mi>c</mi>
+          <mi>d</mi>
+          <mi>e</mi>
+        </mfenced>
+      </math>
+    </div>
+    <div>
+      <mfrac bevelled>
+        <mfrac>
+          <mi>a</mi>
+          <mi>b</mi>
+        </mfrac>
+        <mfrac>
+          <mi>c</mi>
+          <mi>d</mi>
+        </mfrac>
+      </mfrac>
+    </div>
+    <div>
+      <math>
+        <mrow>
+          <merror>
+            <mpadded width="20px">
+              <mi>x</mi>
+            </mpadded>
+          </merror>
+          <mo>+</mo>
+          <mphantom>
+            <mi>y</mi>
+            <mo>+</mo>
+          </mphantom>
+          <mi>z</mi>
+        </mrow>
+      </math>
+    </div>
+    <div>
+      <math>
+        <mroot>
+          <mi>x</mi>
+          <mn>3</mn>
+        </mroot>
+      </math>
+    </div>
+    <div>
+      <math>
+        <msqrt>
+          <mi>x</mi>
+        </msqrt>
+      </math>
+    </div>
+    <div>
+      <math>
+        <mstyle displaystyle="true" mathcolor="teal">
+          <mrow>
+            <mi>i</mi>
+            <mo form="infix">=</mo>
+            <mn>1</mn>
+          </mrow>
+        </mstyle>
+      </math>
+    </div>
+    <div>
+      <math>
+        <mmultiscripts>
+          x,y,z
+        </mmultiscripts>
+      </math>
+    </div>
+    <div>
+      <math>
+        <mover accent="true">
+          <mrow>
+            <mi>x</mi>
+            <mo>+</mo>
+            <mi>y</mi>
+            <mo>+</mo>
+            <mi>z</mi>
+          </mrow>
+          <mo>&#x23DE;<!--上花括号--></mo>
+        </mover>
+      </math>
+    </div>
+    <div>
+      <math>
+        <msub>
+          <mi>X</mi>
+          <mn>1</mn>
+        </msub>
+      </math>
+    </div>
+    <div>
+      <math displaystyle="true">
+        <msubsup>
+          <mo>&#x222B;<!--积分--></mo>
+          <mn>0</mn>
+          <mn>1</mn>
+        </msubsup>
+      </math>
+    </div>
+    <div>
+      <math>
+        <munder accent="true">
+          <mrow>
+            <mi>x</mi>
+            <mo>+</mo>
+            <mi>y</mi>
+            <mo>+</mo>
+            <mi>z</mi>
+          </mrow>
+          <mo>
+            &#x23DF;
+            <!--下花括号-->
+          </mo>
+        </munder>
+      </math>
+    </div>
+    <div>
+      <math displaystyle="true">
+        <munderover>
+          <mo> &#x222B;<!--积分--> </mo>
+          <mn>0</mn>
+          <mi> &#x221E;<!--无穷--> </mi>
+        </munderover>
+      </math>
+    </div>
+    <div>
+      <math>
+        <mtable>
+          <mlabeledtr>
+            <mtd>
+              <mn>1</mn>
+            </mtd>
+            <!--label-->
+            <mtd>
+              <mn>A</mn>
+            </mtd>
+            <mtd>
+              <mn>B</mn>
+            </mtd>
+          </mlabeledtr>
+        </mtable>
+      </math>
+    </div>
+    <div>
+      <math>
+        <maction actiontype="toggle">
+          <mrow>
+            <mn>1</mn>
+            <mo>+</mo>
+            <mn>1</mn>
+          </mrow>
+          <mrow>
+            <mo>=</mo>
+            <mn>2</mn>
+          </mrow>
+        </maction>
+      </math>
+    </div>
+    <div>
+      <math>
+        <semantics>
+          <!--Presentation MathML-->
+          <mrow>
+            <msup>
+              <mi>x</mi>
+              <mn>2</mn>
+            </msup>
+            <mo>+</mo>
+            <mi>y</mi>
+          </mrow>
+          <!--Content MathML-->
+          <annotation-xml encoding="MathML-Content">
+            <apply>
+              <plus />
+              <apply>
+                <power />
+                <ci>x</ci>
+                <cn type="integer">2</cn>
+              </apply>
+              <ci>y</ci>
+            </apply>
+          </annotation-xml>
+          <!--<annotation encoding="image/png" src="some/path/formula.png" />-->
+          <annotation encoding="application/x-tex">
+            x^{2}+y
+          </annotation>
+        </semantics>
+      </math>
+    </div>
+  </body>
+</html>
