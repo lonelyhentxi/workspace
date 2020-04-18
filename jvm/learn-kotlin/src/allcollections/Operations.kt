@@ -412,13 +412,13 @@ fun collectionAggregateOperations() {
 
             val sum = numbers.reduce { sum, element -> sum + element }
             println(sum)
-            val sumDoubled = numbers.fold(0) { sum, element -> sum + element * 2 }
+            val sumDoubled = numbers.fold(0) { sum1, element -> sum1 + element * 2 }
             println(sumDoubled)
         }
         run {
             // from right
             val numbers = listOf(5, 2, 10, 4)
-            val sumDoubledRight = numbers.foldRight(0) { element, sum -> sum + element * 2 }
+            val sumDoubledRight = numbers.foldRight(0) { element, sum1 -> sum1 + element * 2 }
             println(sumDoubledRight)
         }
         run {
