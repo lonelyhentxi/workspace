@@ -2,9 +2,7 @@ import React, {useRef,useEffect} from 'react';
 import './LearnThreeJS.css';
 
 function LearnThreeJS() {
-    const webGLPainters = [
-        renderBasic, renderCube
-    ];
+    const webGLPainters = [];
     const webGLCanvasRefs = useRef<HTMLCanvasElement[]>(new Array(webGLPainters.length));
     const webGLPainterSizes = new Array(webGLPainters.length).fill([640, 480]);
     webGLPainters.reverse();

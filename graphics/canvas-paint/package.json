@@ -10,6 +10,7 @@
     "@types/node": "^14.0.13",
     "@types/react": "^16.9.38",
     "@types/react-dom": "^16.9.8",
+    "autoprefixer": "^9.8.0",
     "gl-matrix": "^3.3.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
