@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ActivityLifeCycleTest</string>
+    <string name="title_activity_main">ActivityLifeCycleTest</string>
+</resources>
