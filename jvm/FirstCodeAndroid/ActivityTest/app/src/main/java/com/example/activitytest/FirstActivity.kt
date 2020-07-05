@@ -1,7 +1,6 @@
 package com.example.activitytest
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -9,13 +8,13 @@ import android.view.MenuItem
 import android.widget.Toast
 import kotlinx.android.synthetic.main.first_layout.*
 
-class FirstActivity : AppCompatActivity() {
+class FirstActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("FirstActivity", this.toString())
         setContentView(R.layout.first_layout)
 
-        button1.setOnClickListener {
+        startSecondActivityImplicit.setOnClickListener {
             val data = "Hello "
             Toast.makeText(this, "You clicked Button 1, jumping", Toast.LENGTH_SHORT).show()
             val intent = Intent("com.example.activitytest.ACTION_START")
@@ -27,6 +26,10 @@ class FirstActivity : AppCompatActivity() {
         openFirstActivity.setOnClickListener {
             val intent = Intent(this, FirstActivity::class.java)
             startActivity(intent)
+        }
+
+        startSecondActivityExplicit.setOnClickListener {
+            SecondActivity.actionStart(this, "data1", "data2")
         }
     }
 
@@ -51,5 +54,10 @@ class FirstActivity : AppCompatActivity() {
                 Log.d("FirstActivity", "returned data is $returnedData")
             }
         }
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        Log.d("FirstActivity", "onRestart")
     }
 }

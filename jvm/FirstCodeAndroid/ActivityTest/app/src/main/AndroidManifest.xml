@@ -12,14 +12,14 @@
         android:theme="@style/Theme.ActivityTest">
         <activity
             android:name=".FirstActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:label="This is First Activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SecondActivity">
+        <activity android:name=".SecondActivity" android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="com.example.activitytest.ACTION_START" />
 

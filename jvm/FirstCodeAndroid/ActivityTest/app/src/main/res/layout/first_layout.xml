@@ -6,10 +6,10 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/startSecondActivityImplicit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Go to Second Activity"
+        android:text="Go to Second Activity Implicit"
         />
 
     <Button
@@ -18,4 +18,12 @@
         android:layout_height="wrap_content"
         android:text="Open First Activity Again"
         />
+
+    <Button
+        android:id="@+id/startSecondActivityExplicit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Go to Second Activity Explicit"
+        />
+
 </androidx.appcompat.widget.LinearLayoutCompat>
