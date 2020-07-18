@@ -23,6 +23,82 @@
       }
     </script>
     <script>
+      try {
+        const { assert } = chai;
+        const match = R.curry((what, str) => str.match(what));
+
+        const replace = R.curry((what, replacement, str) => str.replace(what, replacement));
+
+        const filter = R.curry((f, arr) => arr.filter(f));
+
+        const map = R.curry((f, ary) => ary.map(f));
+
+        const hasSpaces = match(/\s+/g);
+
+        repl(hasSpaces("Hello world"), hasSpaces('sapceless'));
+
+        const findSpaces = filter(hasSpaces);
+
+        repl(findSpaces(["tori_spelling", "tori amos"]));
+
+        const noVowels = replace(/[aeiou]/ig);
+
+        const censored = noVowels("*");
+
+        repl(censored("Chocolate Rain"));
+
+        const split = R.curry((sep, str) => str.split(sep));
+
+        const words = split(' ');
+
+        const sentences = map(words);
+
+        const filterQs = filter(match(/q/i));
+
+        const _keepHighest = (x, y) => x >= y ? x : y;
+
+        const reduce = R.curry((f, init, xs) => xs.reduce(f, init));
+
+        const max = reduce(_keepHighest, -Infinity);
+
+        const slice = R.curry((from, to, xs) => xs.slice(from, to));
+        const take = slice(0);
+
+        assert.deepEqual(words("Jingle bells Batman smells"), ['Jingle', 'bells', 'Batman', 'smells']);
+        assert.deepEqual(sentences(["Jingle bells Batman smells", "Robin laid an egg"]), [['Jingle', 'bells', 'Batman', 'smells'], ['Robin', 'laid', 'an', 'egg']]);
+        assert.deepEqual(filterQs(['quick', 'camels', 'quarry', 'over', 'quails']), ['quick', 'quarry', 'quails']);
+        assert.equal(max([323, 523, 554, 123, 5234]), 5234);
+        assert.deepEqual(slice(1)(3)(['a', 'b', 'c']), ['b', 'c']);
+        assert.deepEqual(take(2)(['a', 'b', 'c']), ['a', 'b']);
+
+        const compose  = (...args) => {
+          if (args.length === 0) {
+            return undefined;
+          }
+          const x = args[args.length - 1];
+          for(const f of args.slice(0, )) {
+
+          }
+        }
+        const toUpperCase = x => x.toUpperCase();
+        const exclaim = x => x + '!';
+        const short = compose(exclaim, toUpperCase);
+        repl(short('send in the clowns'));
+
+        const head = x => x[0];
+        const reverse = reduce((acc, x) => [x].concat(acc), []);
+        const last = compose(head, reverse);
+        repl(last(['jumpkick', 'roundhouse', 'uppercut']));
+
+        const lastUpper = compose(toUpperCase, head, reverse);
+        repl(lastUpper(['jumpkick', 'roundhouse', 'uppercut']));
+
+        repl(compose(exclaim, toUpperCase, head, reverse)(['jumpkick', 'roundhouse', 'uppercut']));
+        const loudLastUpper = compose(exclaim, toUpperCase, head, reverse);
+        repl(loudLastUpper(['jumpkick', 'roundhouse', 'uppercut']));
+      } catch (e) {
+        error(e);
+      }
     </script>
   </body>
 </html>
