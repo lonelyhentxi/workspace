@@ -1,0 +1,13 @@
+[package]
+name = "iron-gcd"
+version = "0.1.0"
+authors = ["lonelyhentai <master@evernightfireworks.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+iron = "0.6.1"
+mime = "0.3.16"
+router = "0.6.0"
+urlencoded = "0.6.0"
