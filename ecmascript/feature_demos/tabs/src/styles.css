@@ -1,0 +1,32 @@
+.App {
+  width: 375px;
+  height: 667px;
+}
+
+.tabs {
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: scroll;
+  position: relative;
+}
+
+.tab {
+  padding: 10px 10px 0 10px;
+  white-space: nowrap;
+  height: 47px;
+  position: relative;
+}
+
+.tab-selected .tab-text {
+  color: rgba(255, 73, 44, 1);
+}
+
+.selected-decoration {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  border-radius: 1px;
+  background-color: rgba(255, 73, 44, 1);
+  transition: all 300ms ease;
+}
