@@ -1,0 +1,56 @@
+.app {
+  width: 300px;
+}
+
+.ant-card-meta {
+  margin-bottom: 8px;
+}
+
+.custom-color-picker .ant-row {
+  margin-bottom: 0 !important;
+}
+
+.custom-color-picker .ant-form-item {
+  margin-bottom: 0;
+}
+
+.inline-item.ant-form-item {
+  display: flex;
+}
+
+.inline-item.ant-form-item > .ant-form-item-control {
+  flex: 1;
+}
+
+.linear-gradient-first-row {
+  display: flex;
+}
+
+.linear-gradient-actions button {
+  margin-left: 4px;
+}
+
+.linear-gradient-stops-container {
+  box-sizing: border-box;
+  height: 16px;
+  padding: 8px;
+  width: 100%;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  position: relative;
+}
+
+.linear-gradient-stop {
+  height: 24px;
+  width: 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  background-color: white;
+  position: absolute;
+  transform: translateX(-50%);
+  top: -4px;
+}
+
+.linear-gradient-stop.linear-gradient-stop-selected {
+  border-color: #1890ff;
+}
