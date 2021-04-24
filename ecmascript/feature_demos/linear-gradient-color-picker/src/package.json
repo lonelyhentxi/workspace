@@ -1,0 +1,11 @@
+{
+  "main": "index.js",
+  "dependencies": {
+    "react-dom": "latest",
+    "react": "latest",
+    "antd": "latest"
+  },
+  "keywords": [],
+  "name": "linear-gradient-color-picker",
+  "description": ""
+}

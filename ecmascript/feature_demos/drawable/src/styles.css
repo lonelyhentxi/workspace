@@ -1,0 +1,26 @@
+.App {
+  font-family: sans-serif;
+}
+
+.drawable {
+  width: 400px;
+  height: 400px;
+  background-color: aqua;
+  clip-path: circle(50% at center);
+  position: relative;
+}
+
+.sector {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.sector-content {
+  position: absolute;
+  left: 50%;
+  top: 25%;
+  transform: translate(-50%, -50%);
+}
