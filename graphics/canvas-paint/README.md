@@ -6,4 +6,6 @@ Review everything that can paint on canvas such as canvas rendering 2D context, 
 
 - [x] Canvas
 - [ ] WebGL
+    - [] Pure WebGL
+    - [] three.js
 - [ ] SVG

@@ -1,0 +1,9 @@
+.LearnThreeJS-gallery {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.LearnThreeJS-canvas {
+    box-shadow: 1px 1px 1px #eee;
+    margin: 1rem;
+}
