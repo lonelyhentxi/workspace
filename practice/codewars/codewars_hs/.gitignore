@@ -1,0 +1,4 @@
+.stack-work/
+codewars-hs.cabal
+*~
+stack.yaml.lock # no strict request
