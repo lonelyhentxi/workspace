@@ -2,7 +2,7 @@ fn main() {}
 
 #[cfg(test)]
 mod tests {
-  use swc_common::DUMMY_SP;
+  use swc_common::{ DUMMY_SP, Span };
   use swc_core::{
     ecma::{
       ast::*,
@@ -13,6 +13,7 @@ mod tests {
     },
     quote, quote_expr,
   };
+  use swc_atoms::{ js_word, JsWord };
 
   #[test]
   fn test_quote() {
@@ -49,8 +50,11 @@ mod tests {
 
   #[test]
   fn test_utils_quotes () {
+    // quote_str
     assert_eq!(quote_str!("hahaha"), Str { span: DUMMY_SP, value: "hahaha".into(), raw: None });
+    // quote_ident
     assert_eq!(quote_ident!("hahaha"), Ident { span: DUMMY_SP, sym: "hahaha".into(), optional: false });
+    // member_expr
     assert_eq!(member_expr!(DUMMY_SP, Function.prototype.bind), Box::new(
       Expr::Member(MemberExpr { 
         span: DUMMY_SP, 
@@ -63,5 +67,32 @@ mod tests {
         prop: MemberProp::Ident(quote_ident!("bind")) 
       })
     ));
+    // quote_expr
+    assert_eq!(
+      swc_core::ecma::utils::quote_expr!(DUMMY_SP, null),
+      Expr::Lit(Lit::Null (Null { span: DUMMY_SP }))
+    )
+  }
+
+  #[test]
+  fn test_js_word () {
+    let word = js_word!("undefined");
+    assert_eq!(JsWord::from("undefined"), word);
+  }
+
+  #[test]
+  fn test_utils_factory_methods () {
+    use swc_core::ecma::utils::ExprFactory;
+
+    {
+      let first = Lit::Num(Number { span: DUMMY_SP, value: 0.0, raw: None });
+      assert_eq!(
+        first.clone().as_arg(),
+        ExprOrSpread {
+          spread: None,
+          expr: Box::new(Expr::Lit(first))
+        }
+      )
+    }
   }
 }
