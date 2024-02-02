@@ -1,0 +1,3 @@
+[workspace]
+members = ["crates/toytun-server", "crates/toytun-client"]
+resolver = "2"

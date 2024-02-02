@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  toytun-server:
+    image: toytun-server
+    build: 
+      context: .
+      dockerfile: ./scripts/toytun-server.dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - toytun-network
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+
+  toytun-client:
+    image: toytun-client
+    build: 
+      context: .
+      dockerfile: ./scripts/toytun-client.dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - toytun-server
+    networks:
+      - toytun-network
+
+networks:
+  toytun-network:
+    name: toytun-network
+    driver: bridge
