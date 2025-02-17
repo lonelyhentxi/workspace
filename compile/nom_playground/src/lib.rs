@@ -1,4 +1,5 @@
 #![feature(assert_matches)]
+pub mod json;
 use nom::{
     IResult, Parser,
     branch::alt,
@@ -31,10 +32,7 @@ pub fn recognize_curly_2(input: &str) -> IResult<&str, &str> {
 }
 
 pub fn parse_boolean(input: &str) -> IResult<&str, bool> {
-    alt((
-        map(tag("true"), |_| true), 
-        map(tag("false"), |_| false)
-    )).parse(input)
+    alt((map(tag("true"), |_| true), map(tag("false"), |_| false))).parse(input)
 }
 
 #[cfg(test)]
@@ -72,8 +70,8 @@ mod tests {
     }
 
     #[test]
-    fn test_boolean () {
-        assert_matches!("true false", Ok((" false", true)));
-        assert_matches!("1true false", Err(..));
+    fn test_boolean() {
+        assert_matches!(parse_boolean("true false"), Ok((" false", true)));
+        assert_matches!(parse_boolean("1true false"), Err(..));
     }
 }
