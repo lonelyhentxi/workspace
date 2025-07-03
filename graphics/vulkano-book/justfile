@@ -1,0 +1,14 @@
+prepare-vulkan-archlinux:
+    sudo pacman -Sy base-devel vulkan-devel vulkan-tools
+
+prepare-vulkan-swrast-archlinux: prepare-vulkan-archlinux
+    sudo pacman -Sy vulkan-swrast
+
+prepare-vulkan-intel-archlinux: prepare-vulkan-archlinux
+    sudo pacman -Sy vulkan-intel
+
+prepare-vulkan-nvidia-archlinux: prepare-vulkan-archlinux
+    sudo pacman -Sy vulkan-nvidia
+
+prepare-vulkan-amd-archlinux: prepare-vulkan-archlinux
+    sudo pacman -Sy vulkan-amd
